@@ -2,7 +2,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import React from "react";
 import { AppSidebar } from "../../../components/ui/app-sidebar";
 import Image from "next/image";
-import logo from "../../../assets/Images/logo.webp";
+import logo from "../../../assets/Images/logo.png";
 import { User } from "lucide-react";
 import { cookies } from "next/headers";
 

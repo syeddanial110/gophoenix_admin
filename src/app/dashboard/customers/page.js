@@ -1,6 +1,7 @@
 import UIButton from "@/components/UIButton/UIButton";
 import UIModal from "@/components/UIModal/UIModal";
 import UITypography from "@/components/UITypography/UITypography";
+import UsersTable from "@/containers/Customers/UsersTable";
 import React from "react";
 
 const Customers = () => {
@@ -15,9 +16,12 @@ const Customers = () => {
         </div>
       </div>
       <div>
-        <UIModal modalBtnText="Click">
-          
-        </UIModal>
+        <UIModal modalBtnText="Click"></UIModal>
+      </div>
+
+      {/* Table */}
+      <div>
+        <UsersTable />
       </div>
     </>
   );

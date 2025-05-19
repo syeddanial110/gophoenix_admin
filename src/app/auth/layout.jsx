@@ -13,8 +13,36 @@ const geistMono = Geist_Mono({
 export default function AuthLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children} {/* No header here */}
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+          <div className="w-full max-w-md">
+            <div className="flex justify-center mb-6">
+              <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-primary-foreground"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
+              </div>
+            </div>
+            <div className="bg-card border border-border rounded-lg shadow-sm p-8">
+              {children}
+            </div>
+            <div className="mt-4 text-center text-sm text-muted-foreground">
+              &copy; {new Date().getFullYear()} Your Company. All rights
+              reserved.
+            </div>
+          </div>
+        </div>
       </body>
     </html>
   );

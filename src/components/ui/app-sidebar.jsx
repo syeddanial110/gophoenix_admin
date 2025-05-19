@@ -23,7 +23,7 @@ import {
   CollapsibleContent,
 } from "@/components/ui/collapsible";
 import Image from "next/image";
-import logo from "../../assets/Images/logo.webp";
+import logo from "../../assets/Images/logo.png";
 import { Navigation_Menu } from "@/utils/navigation";
 import Link from "next/link";
 import UITypography from "../UITypography/UITypography";

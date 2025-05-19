@@ -15,12 +15,12 @@ import {
 export const Navigation_Menu = [
   {
     name: "Home",
-    link: "/",
+    link: "/dashboard",
     icon: Home,
   },
   {
     name: "Orders",
-    link: "/orders",
+    link: "/dashboard/orders",
     icon: BaggageClaim,
   },
   {
@@ -29,17 +29,17 @@ export const Navigation_Menu = [
     subMenu: [
       {
         name: "Collections",
-        link: "/collections",
+        link: "/dashboard/collections",
       },
       {
         name: "Programs",
-        link: "/programs",
+        link: "/dashboard/programs",
       },
     ],
   },
   {
     name: "Customers",
-    link: "/customers",
+    link: "/dashboard/customers",
     icon: User,
   },
   {
@@ -48,27 +48,27 @@ export const Navigation_Menu = [
     subMenu: [
       {
         name: "Blogs",
-        link: "/blogs",
+        link: "/dashboard/blogs",
       },
       {
         name: "Files",
-        link: "/files",
+        link: "/dashboard/files",
       },
       {
         name: "Menus",
-        link: "/menus",
+        link: "/dashboard/menus",
       },
     ],
   },
   {
     name: "Content Editor",
-    link: "/content-editor",
+    link: "/dashboard/content-editor",
     icon: SquarePen,
   },
 ];
 
 export const pathLocations = {
-  dashboard: "/",
+  dashboard: "/dashboard/home",
   content: {},
   programs: "/",
 };

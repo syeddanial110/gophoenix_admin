@@ -16,8 +16,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import UITextField from "@/components/InputFields/UITextField";
+import { apiPost } from "@/apis/ApiRequest";
+import { ApiEndpoints } from "@/utils/ApiEndpoints";
+import UIButton from "@/components/UIButton/UIButton";
+import { toast } from "sonner";
+import { setToken } from "@/apis/Auth";
+import { useDispatch, useSelector } from "react-redux";
+import { signin } from "@/store/actions/AUTH";
+import { useRouter } from "next/navigation";
+import { pathLocations } from "@/utils/navigation";
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const form = useForm({
     resolver: yupResolver(loginScehma),
@@ -26,10 +37,36 @@ const LoginForm = () => {
       password: "", // Add this if your schema requires it
     },
   });
+  const signinData = useSelector((state) => state?.SignInReducer);
+  console.log("signinData", signinData);
 
-  function onSubmit(data) {
+  function onSubmit(data, e) {
+    e.preventDefault(); // Prevent default form submission
     // Fixed typo in function name
     console.log("data", data);
+    const dataObj = {
+      email: data.email,
+      password: data.password,
+    };
+    apiPost(
+      `${ApiEndpoints.auth.base}${ApiEndpoints.auth.login}`,
+      dataObj,
+      (res) => {
+        console.log("res", res);
+        if (!res.success) {
+          toast.error(res.message);
+        }
+        if (res.success) {
+          toast.success(res.message);
+          setToken(res.data.token);
+          dispatch(signin(res.data));
+          router.push(pathLocations.dashboard);
+        }
+      },
+      (err) => {
+        console.log("err", err);
+      }
+    );
   }
 
   const togglePasswordVisibility = () => {
@@ -59,7 +96,12 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <UIButton
+          type="contained"
+          icon={false}
+          title="Submit"
+          btnType="submit"
+        />
       </form>
     </Form>
   );

@@ -2,7 +2,7 @@ import React from "react";
 import { Search, User, ShoppingBag } from "lucide-react";
 import DesktopNavigationMenu from "./NavigationMenu/NavigationMenu";
 import Image from "next/image";
-import logo from "../../assets/Images/logo.webp";
+import logo from "../../assets/Images/logo.png";
 import { SideNavigation } from "./SideNavigation/SideNavigation";
 
 const Header = ({ children }) => {

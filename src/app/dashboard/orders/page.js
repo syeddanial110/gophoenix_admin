@@ -3,7 +3,7 @@ import UITypography from "@/components/UITypography/UITypography";
 import Head from "next/head";
 import Image from "next/image";
 import React, { useEffect } from "react";
-import Young_Doug_About_Us from "../../assets/Images/Young_Doug_About_Us.avif";
+import Young_Doug_About_Us from "../../../assets/Images/Young_Doug_About_Us.avif";
 
 // export const metadata = {
 //   title: "ABout",
