@@ -2,8 +2,8 @@ import axios from "axios";
 import { getToken } from "./Auth";
 import API from "./interceptor";
 
-export const BASEURL = "https://e0b0-182-188-236-202.ngrok-free.app/api";
-
+export const BASEURL = "https://wcx78p18-5000.inc1.devtunnels.ms/api";
+export const ImageBaseUrl = "https://wcx78p18-5000.inc1.devtunnels.ms/";
 export const apiBaseUrl = `${BASEURL}`;
 
 export function getCommonHeaders(h) {
@@ -77,7 +77,7 @@ export function apiGet(endpoint, onSuccess, onFailure, headers) {
 
 export function apiPut(endPoint, body, onSuccess, onFailure, headers) {
   API.put(apiBaseUrl + endPoint, body, {
-    headers: getCommonHeaders(headers),
+    headers: getCommonCustomHeaders(headers),
   })
     .then((response) => {
       onSuccess(response.data);

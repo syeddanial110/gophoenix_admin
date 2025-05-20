@@ -14,7 +14,7 @@ export const ApiEndpoints = {
     delete: "/delete",
   },
   categories: {
-    base: "/categories",
+    base: "/category",
     getAll: "/get",
     getById: "/getById",
     create: "/create",

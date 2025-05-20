@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getToken } from "./Auth";
 
-const BASEURL = "https://e0b0-182-188-236-202.ngrok-free.app/api";
+const BASEURL = "https://wcx78p18-5000.inc1.devtunnels.ms/api";
 const API = axios.create({ baseURL: BASEURL });
 
 API.interceptors.request.use(

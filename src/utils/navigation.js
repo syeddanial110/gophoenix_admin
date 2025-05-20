@@ -15,7 +15,7 @@ import {
 export const Navigation_Menu = [
   {
     name: "Home",
-    link: "/dashboard",
+    link: "/dashboard/home",
     icon: Home,
   },
   {
@@ -28,12 +28,16 @@ export const Navigation_Menu = [
     icon: Tag,
     subMenu: [
       {
-        name: "Collections",
-        link: "/dashboard/collections",
+        name: "Category",
+        link: "/dashboard/products/category",
+      },
+      {
+        name: "Sub Category",
+        link: "/dashboard/products/sub-category",
       },
       {
         name: "Programs",
-        link: "/dashboard/programs",
+        link: "/dashboard/products/products",
       },
     ],
   },

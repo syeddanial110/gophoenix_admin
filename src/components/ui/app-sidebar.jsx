@@ -29,33 +29,6 @@ import Link from "next/link";
 import UITypography from "../UITypography/UITypography";
 
 // Menu items.
-const items = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-];
 
 export function AppSidebar() {
   // const pathname = pathname();
@@ -95,7 +68,9 @@ export function AppSidebar() {
                           return (
                             <CollapsibleContent key={ind}>
                               <SidebarGroupContent className="pl-14 mt-2">
-                                <UITypography text={elm.name} />
+                                <Link href={elm.link}>
+                                  <UITypography text={elm.name} />
+                                </Link>
                               </SidebarGroupContent>
                             </CollapsibleContent>
                           );

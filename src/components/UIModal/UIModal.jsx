@@ -8,15 +8,25 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-const UIModal = ({modalBtnText, children}) => {
+const UIModal = ({
+  modalBtnText,
+  btnClassName,
+  btnTriggerOnClick,
+  modalHeaderTitle,
+  open,
+  onOpenChange,
+  children,
+}) => {
   return (
-    <Dialog>
-      <DialogTrigger>{modalBtnText}</DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger onClick={btnTriggerOnClick} className={btnClassName}>
+        {modalBtnText}
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-            {children}
-          {/* <DialogTitle>Are you absolutely sure?</DialogTitle>
-          <DialogDescription>
+          <DialogTitle>{modalHeaderTitle}</DialogTitle>
+          {children}
+          {/* <DialogDescription>
             This action cannot be undone. This will permanently delete your
             account and remove your data from our servers.
           </DialogDescription> */}
