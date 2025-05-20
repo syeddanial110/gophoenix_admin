@@ -4,16 +4,19 @@ import UIFileInput from "@/components/InputFields/UIFileInput";
 import UIInputField from "@/components/InputFields/UIInputField";
 import UIButton from "@/components/UIButton/UIButton";
 import UITypography from "@/components/UITypography/UITypography";
+import { getAllCategories } from "@/store/actions/category";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
 import { slugify } from "@/utils/slugify";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const EditCategoryDataForm = ({ setModalOpen }) => {
   const categoryDataReducer = useSelector(
     (state) => state?.EditCategoryDataReducer?.data
   );
+  const dispatch = useDispatch();
 
   const [categoryData, setCategoryData] = useState({
     id: "",
@@ -48,25 +51,13 @@ const EditCategoryDataForm = ({ setModalOpen }) => {
       (res) => {
         console.log("res", res);
         setModalOpen(false);
-        getAllCategory();
+        toast.success(res?.message);
+        dispatch(getAllCategories());
       },
       (err) => {
         console.log("err", err);
       },
       { "Content-Type": "multipart/form-data" }
-    );
-  };
-
-  const getAllCategory = () => {
-    apiGet(
-      `${ApiEndpoints.categories.base}${ApiEndpoints.categories.getAll}`,
-      (res) => {
-        console.log("res", res);
-        setCategoryData(res?.data);
-      },
-      (err) => {
-        console.log("err", err);
-      }
     );
   };
 

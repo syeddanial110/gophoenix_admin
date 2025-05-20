@@ -30,7 +30,7 @@ const AddCategoryModal = ({ setModalOpen }) => {
 
   const handleFileUpload = (e) => {
     console.log("e.target.files", e.target.files);
-    setCategoryData({ ...categoryData, categoryImage: e.target.files[0].name });
+    setCategoryData({ ...categoryData, categoryImage: e.target.files[0] });
   };
 
   const handleAddCategory = () => {

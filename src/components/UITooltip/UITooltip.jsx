@@ -8,8 +8,8 @@ import {
 
 const UITooltip = ({ children }) => {
   return (
-    <TooltipProvider>
-      <Tooltip>{children}</Tooltip>
+    <TooltipProvider >
+      <Tooltip >{children}</Tooltip>
     </TooltipProvider>
   );
 };

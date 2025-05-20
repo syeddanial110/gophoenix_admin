@@ -1,5 +1,5 @@
 "use client";
-import { apiGet, ImageBaseUrl } from "@/apis/ApiRequest";
+import { apiDelete, apiGet, ImageBaseUrl } from "@/apis/ApiRequest";
 import { Spinner } from "@/components/ui/spinner";
 import UIModal from "@/components/UIModal/UIModal";
 import UITable from "@/components/UITable/UITable";
@@ -13,20 +13,40 @@ import { useDispatch, useSelector } from "react-redux";
 import EditCategoryDataForm from "./EditCategoryDataForm";
 import UITooltip from "@/components/UITooltip/UITooltip";
 import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import UIButton from "@/components/UIButton/UIButton";
+import { toast } from "sonner";
 
 const CategoryTable = () => {
-  const [categoryData, setCategoryData] = useState([]);
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState(false);
   const categoryDataReducer = useSelector(
     (state) => state?.GetAllCategoriesReducer?.res
   );
-  console.log("categoryDataReducer", categoryDataReducer);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const handleTooltipClose = () => {
+    setTooltipOpen(false);
+  };
 
   const handleModalOpen = () => {
     setModalOpen(!modalOpen);
   };
 
+  const handleCategoryDelete = (row) => {
+    apiDelete(
+      `${ApiEndpoints.categories.base}${ApiEndpoints.categories.delete}/${row?.id}`,
+      (res) => {
+        console.log("res", res);
+        toast.success(res?.message);
+        dispatch(getAllCategories());
+      },
+      (err) => {
+        console.log("err", err);
+      }
+    );
+  };
+
+  console.log("categoryDataReducer", categoryDataReducer);
   const columns = [
     {
       name: <UITypography text="Name" />,
@@ -92,8 +112,24 @@ const CategoryTable = () => {
           >
             <EditCategoryDataForm setModalOpen={setModalOpen} />
           </UIModal>
-
-          <Trash />
+          <UITooltip>
+            <TooltipTrigger open={tooltipOpen} onOpenChange={setTooltipOpen}>
+              <Trash />
+            </TooltipTrigger>
+            <TooltipContent>
+              <div className="flex flex-col gap-2">
+                <UITypography text="Are you sure you want to delete this category?" />
+                <div className="flex items-center gap-2">
+                  <UIButton
+                    type="contained"
+                    icon={false}
+                    title="Yes"
+                    btnOnclick={() => handleCategoryDelete(row)}
+                  />
+                </div>
+              </div>
+            </TooltipContent>
+          </UITooltip>
         </>
       ),
     },
