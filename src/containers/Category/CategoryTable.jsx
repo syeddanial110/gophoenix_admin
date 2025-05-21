@@ -24,9 +24,6 @@ const CategoryTable = () => {
   );
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
-  const handleTooltipClose = () => {
-    setTooltipOpen(false);
-  };
 
   const handleModalOpen = () => {
     setModalOpen(!modalOpen);

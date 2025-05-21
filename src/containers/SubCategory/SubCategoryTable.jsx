@@ -1,16 +1,60 @@
 "use client";
-import { apiGet } from "@/apis/ApiRequest";
+import { apiDelete, apiGet, ImageBaseUrl } from "@/apis/ApiRequest";
 import { Spinner } from "@/components/ui/spinner";
+import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import UIModal from "@/components/UIModal/UIModal";
 import UITable from "@/components/UITable/UITable";
+import UITooltip from "@/components/UITooltip/UITooltip";
 import UITypography from "@/components/UITypography/UITypography";
+import {
+  editSubCategoryData,
+  getAllSubCategories,
+} from "@/store/actions/subCategory";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
-import { DeleteIcon, Trash } from "lucide-react";
-import React, { useEffect } from "react";
+import { DeleteIcon, PencilLine, Trash } from "lucide-react";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import EditSubCategoryDataForm from "./EditSubCategoryDataForm";
+import UIButton from "@/components/UIButton/UIButton";
+import { toast } from "sonner";
+import { getAllCategories } from "@/store/actions/category";
 
 const SubCategoryTable = () => {
+  const dispatch = useDispatch();
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const subCategoryDataReducer = useSelector(
+    (state) => state?.GetAllSubCategoriesReducer?.res
+  );
+
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const handleModalOpen = () => {
+    setModalOpen(!modalOpen);
+  };
+
+  const handleCategoryDelete = (row) => {
+    apiDelete(
+      `${ApiEndpoints.categories.base}${ApiEndpoints.categories.delete}/${row?.id}`,
+      (res) => {
+        console.log("res", res);
+        toast.success(res?.message);
+        dispatch(getAllCategories());
+      },
+      (err) => {
+        console.log("err", err);
+      }
+    );
+  };
+
+  const handleEditClick = (row) => {
+    dispatch(editSubCategoryData(row));
+  };
+
   const columns = [
     {
-      name: <UITypography text="Name" />,
+      name: <UITypography text="Sub Category Name" />,
       selector: (row) => row.name,
       sortable: true,
       cell: (row) => {
@@ -18,19 +62,48 @@ const SubCategoryTable = () => {
       },
     },
     {
-      name: <UITypography text={"Email"} />,
-      selector: (row) => row.email,
+      name: <UITypography text="Category Name" />,
+      selector: (row) => row.categoryName,
       sortable: true,
       cell: (row) => {
-        return <UITypography text={row?.email} />;
+        return <UITypography text={row?.categoryName} />;
       },
     },
     {
-      name: <UITypography text="Phone Number" />,
-      selector: (row) => row.phoneNumber,
+      name: <UITypography text="Slug" />,
+      selector: (row) => row.slug,
       sortable: true,
       cell: (row) => {
-        return <UITypography text={row.phoneNumber} />;
+        return <UITypography text={row.slug} />;
+      },
+    },
+    {
+      name: <UITypography text="Image" />,
+      selector: (row) => row?.image,
+      sortable: true,
+      cell: (row) => {
+        return (
+          <UITooltip>
+            <TooltipTrigger>
+              <Image
+                src={`${ImageBaseUrl}${row?.image}`}
+                alt={row?.image}
+                width={40}
+                height={40}
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <div className="">
+                <Image
+                  src={`${ImageBaseUrl}${row?.image}`}
+                  alt={row?.image}
+                  width={100}
+                  height={100}
+                />
+              </div>
+            </TooltipContent>
+          </UITooltip>
+        );
       },
     },
     {
@@ -42,57 +115,44 @@ const SubCategoryTable = () => {
       },
       cell: (row) => (
         <>
-          <Trash />
+          <UIModal
+            onOpenChange={handleModalOpen}
+            open={modalOpen}
+            modalBtnText={<PencilLine />}
+            btnClassName="hover:cursor-pointer"
+            btnTriggerOnClick={() => handleEditClick(row)}
+            modalHeaderTitle="Edit Category"
+          >
+            <EditSubCategoryDataForm setModalOpen={setModalOpen} />
+          </UIModal>
+          <UITooltip>
+            <TooltipTrigger open={tooltipOpen} onOpenChange={setTooltipOpen}>
+              <Trash />
+            </TooltipTrigger>
+            <TooltipContent>
+              <div className="flex flex-col gap-2">
+                <UITypography text="Are you sure you want to delete this category?" />
+                <div className="flex items-center gap-2">
+                  <UIButton
+                    type="contained"
+                    icon={false}
+                    title="Yes"
+                    btnOnclick={() => handleCategoryDelete(row)}
+                  />
+                </div>
+              </div>
+            </TooltipContent>
+          </UITooltip>
         </>
       ),
     },
   ];
-  const data = [
-    {
-      id: "2204 86 3M121 3k",
-      name: "Beetlejuice",
-      plan: "1988",
-      elapsedTime: "15 days",
-      planProgress: "24 % completed",
-    },
-    {
-      id: "2204 86 3M131 3k",
-      name: "Beetlejuice",
-      plan: "1988",
-      elapsedTime: "15 days",
-      planProgress: "24 % completed",
-    },
-    {
-      id: "2204286 3M11 3k",
-      name: "Beetlejuice",
-      plan: "1988",
-      elapsedTime: "15 days",
-      planProgress: "24 % completed",
-    },
-    {
-      id: "2204 86 33M11 3k",
-      name: "Beetlejuice",
-      plan: "1988",
-      elapsedTime: "15 days",
-      planProgress: "24 % completed",
-    },
-  ];
-
-  const getAllCategory = () => {
-    apiGet(
-      `${ApiEndpoints.categories.base}${ApiEndpoints.categories.getAll}`,
-      (res) => {
-        console.log("res", res);
-      },
-      (err) => {
-        console.log("err", err);
-      }
-    );
-  };
 
   useEffect(() => {
-    getAllCategory();
+    dispatch(getAllSubCategories());
   }, []);
+
+  console.log("subCategoryDataReducer", subCategoryDataReducer);
 
   const LinearIndeterminate = () => {
     return <Spinner />;
@@ -100,10 +160,14 @@ const SubCategoryTable = () => {
   return (
     <UITable
       columns={columns}
-      data={data}
+      data={
+        subCategoryDataReducer?.res &&
+        subCategoryDataReducer?.res?.data?.length > 0 &&
+        subCategoryDataReducer?.res?.data
+      }
       pagination={true}
       // progressPending={true}
-      noDataComponent={LinearIndeterminate}
+      // noDataComponent={LinearIndeterminate}
     />
   );
 };
