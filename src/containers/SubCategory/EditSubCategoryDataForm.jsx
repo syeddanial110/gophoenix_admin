@@ -14,7 +14,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
-const EditSubCategoryDataForm = () => {
+const EditSubCategoryDataForm = ({ setModalOpen }) => {
   const subCategoryDataReducer = useSelector(
     (state) => state?.EditSubCategoryDataReducer?.data
   );
@@ -24,11 +24,11 @@ const EditSubCategoryDataForm = () => {
   const dispatch = useDispatch();
 
   const [subCategoryData, setSubCategoryData] = useState({
-    id: "",
-    subCategoryName: "",
-    subCategoryImage: "",
-    categoryId: "",
-    categorName: "",
+    id: subCategoryDataReducer.data.id,
+    subCategoryName: subCategoryDataReducer.data.name,
+    subCategoryImage: subCategoryDataReducer.data.image,
+    categoryId: subCategoryDataReducer.data.categoryId,
+    categoryName: "",
   });
 
   const handleInputChange = (e) => {
@@ -50,20 +50,22 @@ const EditSubCategoryDataForm = () => {
     if (selectedItem) {
       setSubCategoryData({
         ...subCategoryData,
-        categoryId: selectedItem,
+        categoryId: selectedItem.id,
+        categoryName: selectedItem.name,
       });
     }
   };
 
   const handleEditCategory = () => {
     const dataObj = {
-      name: subCategoryData.categoryName,
-      image: subCategoryData.categoryImage,
+      name: subCategoryData.subCategoryName,
+      image: subCategoryData.subCategoryImage,
+      categoryId: subCategoryData.categoryId,
       //   slug: categoryData.categorySlug,
     };
     console.log("dataObj", dataObj);
     apiPut(
-      `${ApiEndpoints.categories.base}${ApiEndpoints.categories.update}/${categoryData.id}`,
+      `${ApiEndpoints.categories.base}${ApiEndpoints.categories.update}/${subCategoryData.id}`,
       dataObj,
       (res) => {
         console.log("res", res);
@@ -79,38 +81,47 @@ const EditSubCategoryDataForm = () => {
   };
 
   useEffect(() => {
-    if (subCategoryDataReducer?.data) {
-        // const category_name = subCategoryDataReducer?.res?.data?.find((item) => )
-      setSubCategoryData({
-        id: subCategoryDataReducer?.data?.id,
-        subCategoryName: subCategoryDataReducer?.data?.name,
-        subCategoryImage: subCategoryDataReducer?.data?.image,
-        categoryId: subCategoryDataReducer?.data?.categoryId,
-      });
+    if (!getAllCategoriesData?.res?.data.length > 0) {
+      return; // Don't proceed if either piece of data is missing
     }
 
+    const selectedCategory = getAllCategoriesData.res.data.find(
+      (item) => item.id == subCategoryDataReducer.data.categoryId
+    );
+
+    setSubCategoryData({
+      ...subCategoryData,
+      categoryName: selectedCategory.name,
+    });
+  }, [getAllCategoriesData?.res?.data.length]); // More specific dependencies
+
+  useEffect(() => {
+    // First, fetch categories if not already loaded
     dispatch(getAllCategories());
-  }, []);
+  }, []); // This effect runs once on mount
 
   console.log("subCategoryDataReducer", subCategoryDataReducer);
   console.log("categoryData", subCategoryData);
+  console.log("getAllCategoriesData", getAllCategoriesData);
 
   return (
     <>
       <div className="flex flex-col gap-3 mt-3">
         <UIInputField
           isLable={true}
-          lableName="Category Name"
+          lableName="Sub Category Name"
           name="categoryName"
           value={subCategoryData.subCategoryName}
           onChange={handleInputChange}
         />
         <UISelect
+          isLabel={true}
+          labelName="Select Category Type"
           name="categoryId" // Add this
           onChange={handleInputChange}
-          placeholder="Select Category"
+          placeholder={subCategoryData.categoryName}
           onValueChange={handleSelectChange}
-          value={subCategoryData.categoryId?.toString()}
+          // value={subCategoryData.categoryName.toString()}
         >
           {getAllCategoriesData?.res &&
             getAllCategoriesData?.res?.data.length > 0 &&

@@ -4,6 +4,7 @@ import { EditCategoryDataReducer } from "./editCategoryDataReducer";
 import { GetAllCategoriesReducer } from "./getAllCategoriesReducer";
 import { GetAllSubCategoriesReducer } from "./getAllSubCategoriesReducer";
 import { EditSubCategoryDataReducer } from "./editSubCategoryDataReducer";
+import { GetAllProductsReducer } from "./getAllProductsReducer";
 
 export default combineReducers({
   SignInReducer,
@@ -11,4 +12,5 @@ export default combineReducers({
   GetAllCategoriesReducer,
   GetAllSubCategoriesReducer,
   EditSubCategoryDataReducer,
+  GetAllProductsReducer,
 });

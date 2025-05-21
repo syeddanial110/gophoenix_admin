@@ -72,6 +72,7 @@ export const Navigation_Menu = [
 ];
 
 export const pathLocations = {
+  login: "/auth/login",
   dashboard: "/dashboard/home",
   content: {},
   programs: "/",

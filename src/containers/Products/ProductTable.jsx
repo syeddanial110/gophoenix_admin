@@ -1,79 +1,88 @@
-"use client";
-import { apiDelete, apiGet, ImageBaseUrl } from "@/apis/ApiRequest";
-import { Spinner } from "@/components/ui/spinner";
+import { ImageBaseUrl } from "@/apis/ApiRequest";
 import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import UIButton from "@/components/UIButton/UIButton";
 import UIModal from "@/components/UIModal/UIModal";
 import UITable from "@/components/UITable/UITable";
 import UITooltip from "@/components/UITooltip/UITooltip";
 import UITypography from "@/components/UITypography/UITypography";
-import {
-  editSubCategoryData,
-  getAllSubCategories,
-} from "@/store/actions/subCategory";
-import { ApiEndpoints } from "@/utils/ApiEndpoints";
-import { DeleteIcon, PencilLine, Trash } from "lucide-react";
+import { getAllProducts } from "@/store/actions/products";
+import { PencilLine, Trash } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import EditSubCategoryDataForm from "./EditSubCategoryDataForm";
-import UIButton from "@/components/UIButton/UIButton";
-import { toast } from "sonner";
-import { getAllCategories } from "@/store/actions/category";
 
-const SubCategoryTable = () => {
+const ProductTable = () => {
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState(false);
-
-  const subCategoryDataReducer = useSelector(
-    (state) => state?.GetAllSubCategoriesReducer?.res
-  );
-
   const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const allProducts = useSelector((state) => state?.GetAllProductsReducer?.res);
 
   const handleModalOpen = () => {
     setModalOpen(!modalOpen);
   };
 
-  const handleCategoryDelete = (row) => {
-    apiDelete(
-      `${ApiEndpoints.subCategory.base}${ApiEndpoints.categories.delete}/${row?.id}`,
-      (res) => {
-        toast.success(res?.message);
-        dispatch(getAllSubCategories());
-      },
-      (err) => {
-        console.log("err", err);
-      }
-    );
-  };
-
-  const handleEditClick = (row) => {
-    dispatch(editSubCategoryData(row));
-  };
+  const handleCategoryDelete = (row) => {};
 
   const columns = [
     {
-      name: <UITypography text="Sub Category Name" />,
-      selector: (row) => row.name,
+      name: <UITypography text="Product Name" />,
+      selector: (row) => row?.productName,
       sortable: true,
       cell: (row) => {
-        return <UITypography text={row?.name} />;
+        return <UITypography text={row?.productName} />;
       },
     },
     {
-      name: <UITypography text="Category Name" />,
-      selector: (row) => row.categoryName,
+      name: <UITypography text={"URL"} />,
+      selector: (row) => row?.slug,
+      sortable: true,
+      cell: (row) => {
+        return <UITypography text={row?.slug} />;
+      },
+    },
+    {
+      name: <UITypography text={"Description"} />,
+      selector: (row) => row?.description,
+      sortable: true,
+      cell: (row) => {
+        return <UITypography text={row?.description} />;
+      },
+    },
+    {
+      name: <UITypography text={"Category Name"} />,
+      selector: (row) => row?.categoryName,
       sortable: true,
       cell: (row) => {
         return <UITypography text={row?.categoryName} />;
       },
     },
     {
-      name: <UITypography text="Slug" />,
-      selector: (row) => row.slug,
+      name: <UITypography text={"Sub Category Name"} />,
+      selector: (row) => row?.subCategoryName,
       sortable: true,
       cell: (row) => {
-        return <UITypography text={row.slug} />;
+        return (
+          <UITypography
+            text={row?.subCategoryName == null ? "-" : row?.subCategoryName}
+          />
+        );
+      },
+    },
+    {
+      name: <UITypography text={"Price"} />,
+      selector: (row) => row?.price,
+      sortable: true,
+      cell: (row) => {
+        return <UITypography text={row?.price} />;
+      },
+    },
+    {
+      name: <UITypography text={"Payment Type"} />,
+      selector: (row) => row?.paymentType,
+      sortable: true,
+      cell: (row) => {
+        return <UITypography text={row?.paymentType} />;
       },
     },
     {
@@ -122,7 +131,7 @@ const SubCategoryTable = () => {
             btnTriggerOnClick={() => handleEditClick(row)}
             modalHeaderTitle="Edit Category"
           >
-            <EditSubCategoryDataForm setModalOpen={setModalOpen} />
+            {/* <EditCategoryDataForm setModalOpen={setModalOpen} /> */}
           </UIModal>
           <UITooltip>
             <TooltipTrigger open={tooltipOpen} onOpenChange={setTooltipOpen}>
@@ -148,19 +157,18 @@ const SubCategoryTable = () => {
   ];
 
   useEffect(() => {
-    dispatch(getAllSubCategories());
+    dispatch(getAllProducts());
   }, []);
 
-  const LinearIndeterminate = () => {
-    return <Spinner />;
-  };
+  console.log("allProducts", allProducts);
+
   return (
     <UITable
       columns={columns}
       data={
-        subCategoryDataReducer?.res &&
-        subCategoryDataReducer?.res?.data?.length > 0 &&
-        subCategoryDataReducer?.res?.data
+        allProducts?.res &&
+        allProducts?.res?.data?.data?.length > 0 &&
+        allProducts?.res?.data?.data
       }
       pagination={true}
       // progressPending={true}
@@ -169,4 +177,4 @@ const SubCategoryTable = () => {
   );
 };
 
-export default SubCategoryTable;
+export default ProductTable;

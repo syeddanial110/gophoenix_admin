@@ -14,7 +14,7 @@ const UIInputField = ({
     <>
       {isLable ? (
         <>
-          <UITypography variant="h6" text={lableName} />
+          <UITypography variant="h6" text={lableName} className='!text-[14px]' />
           <Input
             placeholder={placeholder}
             onChange={onChange}

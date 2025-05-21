@@ -6,15 +6,49 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import UITypography from "../UITypography/UITypography";
 
-const UISelect = ({ placeholder, onValueChange, value, children }) => {
+const UISelect = ({
+  isLabel,
+  labelName,
+  placeholder,
+  onValueChange,
+  value,
+  children,
+}) => {
   return (
-    <Select onValueChange={onValueChange} value={value}>
-      <SelectTrigger className="w-full">
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent>{children}</SelectContent>
-    </Select>
+    <>
+      {isLabel ? (
+        <>
+          <UITypography
+            variant="h6"
+            text={labelName}
+            className="!text-[14px]"
+          />
+          <Select
+            onValueChange={onValueChange}
+            value={value}
+            className="text-black"
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder={placeholder} />
+            </SelectTrigger>
+            <SelectContent>{children}</SelectContent>
+          </Select>
+        </>
+      ) : (
+        <Select
+          onValueChange={onValueChange}
+          value={value}
+          className="text-black"
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent>{children}</SelectContent>
+        </Select>
+      )}
+    </>
   );
 };
 

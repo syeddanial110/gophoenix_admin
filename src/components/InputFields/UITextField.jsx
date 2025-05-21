@@ -40,7 +40,7 @@ const UITextField = ({ type, formLabel, field, ...rest }) => {
         </>
       ) : (
         <>
-          {formLabel && <FormLabel>Email</FormLabel>}
+          {formLabel && <FormLabel>{formLabel}</FormLabel>}
           <FormControl>
             <Input placeholder="your@email.com" {...field} {...rest} />
           </FormControl>

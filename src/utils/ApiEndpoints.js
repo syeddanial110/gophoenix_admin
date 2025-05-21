@@ -30,7 +30,7 @@ export const ApiEndpoints = {
     delete: "/delete",
   },
   products: {
-    base: "/products",
+    base: "/product",
     getAll: "/getAllProduct",
     // getById: "/getById",
     create: "/createProduct",

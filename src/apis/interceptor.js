@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getToken } from "./Auth";
+import { pathLocations } from "@/utils/navigation";
 
 const BASEURL = "https://wcx78p18-5000.inc1.devtunnels.ms/api";
 const API = axios.create({ baseURL: BASEURL });
@@ -23,7 +24,7 @@ API.interceptors.response.use(
   },
   async (error) => {
     if (error.response?.status === 401) {
-      window.location.href = "/login";
+      window.location.href = pathLocations.login;
     }
     return Promise.reject(error);
   }
