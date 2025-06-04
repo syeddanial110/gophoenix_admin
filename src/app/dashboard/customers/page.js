@@ -1,3 +1,4 @@
+"use client"
 import UIButton from "@/components/UIButton/UIButton";
 import UIModal from "@/components/UIModal/UIModal";
 import UITypography from "@/components/UITypography/UITypography";
