@@ -1,8 +1,19 @@
-"use client"
+"use client";
 import UIButton from "@/components/UIButton/UIButton";
 import UITypography from "@/components/UITypography/UITypography";
-import ImageCarousel from "@/components/UICarousel/ImageCarousel";
-import IconCardCarousel from "@/components/UICarousel/IconCardCarousel";
+
+const ImageCarousel = dynamic(
+  () => import("@/components/UICarousel/ImageCarousel"),
+  {
+    ssr: false,
+  }
+);
+const IconCardCarousel = dynamic(
+  () => import("@/components/UICarousel/IconCardCarousel"),
+  {
+    ssr: false,
+  }
+);
 
 export default function Home() {
   return (
