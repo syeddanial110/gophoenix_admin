@@ -1,17 +1,21 @@
 "use client";
 import UIButton from "@/components/UIButton/UIButton";
 import UITypography from "@/components/UITypography/UITypography";
+import dynamic from 'next/dynamic';
 
 const ImageCarousel = dynamic(
   () => import("@/components/UICarousel/ImageCarousel"),
   {
     ssr: false,
+    loading: () => <div>Loading carousel...</div>
   }
 );
+
 const IconCardCarousel = dynamic(
   () => import("@/components/UICarousel/IconCardCarousel"),
   {
     ssr: false,
+    loading: () => <div>Loading carousel...</div>
   }
 );
 
