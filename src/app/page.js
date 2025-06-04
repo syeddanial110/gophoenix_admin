@@ -1,13 +1,5 @@
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import UICard from "@/components/UICard";
-import UIAccordion from "@/components/UIAccordion/UIAccordion";
+"use client"
 import UIButton from "@/components/UIButton/UIButton";
-import UIProductCard from "@/components/UIProductsCard";
-import UIProgramCard from "@/components/UIProgramCard";
-import UIIconCard from "@/components/UIIconCard/UIIconCard";
-import icon from "../assets/Images/icon.webp";
-import Head from "next/head";
 import UITypography from "@/components/UITypography/UITypography";
 import ImageCarousel from "@/components/UICarousel/ImageCarousel";
 import IconCardCarousel from "@/components/UICarousel/IconCardCarousel";
