@@ -1,5 +1,5 @@
 "use client";
-import { apiGet, apiPost } from "@/apis/ApiRequest";
+import { apiGet, apiPost, ImageBaseUrl } from "@/apis/ApiRequest";
 import UIFileInput from "@/components/InputFields/UIFileInput";
 import UITextField from "@/components/InputFields/UITextField";
 import UIButton from "@/components/UIButton/UIButton";
@@ -19,11 +19,10 @@ import { SelectItem } from "@/components/ui/select";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllSubCategories } from "@/store/actions/subCategory";
 import { toast } from "sonner";
-import UIModal from "@/components/UIModal/UIModal";
-import { Minus, Plus } from "lucide-react";
-import UIInputField from "@/components/InputFields/UIInputField";
+import Image from "next/image";
+import { Cross, X } from "lucide-react";
 
-const AddProductModal = ({ setIsProductAdd }) => {
+const EditProductForm = ({ setIsProductEdit }) => {
   const paymentTypes = [
     { name: "Recurring", value: "recurring" },
     { name: "One Time", value: "one-time" },
@@ -37,56 +36,94 @@ const AddProductModal = ({ setIsProductAdd }) => {
   ];
 
   const dispatch = useDispatch();
+  const editProductData = useSelector(
+    (state) => state?.EditProductDataReducer?.data
+  );
+
+  console.log("editProductData", editProductData);
 
   const form = useForm({
     resolver: yupResolver(addProductSchema),
     defaultValues: {
-      productName: "",
-      locationAddress: "",
-      locationMapLink: "",
-      activities: "",
-      seats: "",
-      minAge: "",
-      maxAge: "",
-      ageException: "",
-      description: "",
-      price: "",
-      intervalCount: "",
+      productName: editProductData?.data?.productName
+        ? editProductData?.data?.productName
+        : "",
+      locationAddress: editProductData?.data?.locationAddress
+        ? editProductData?.data?.locationAddress
+        : "",
+      locationMapLink: editProductData?.data?.locationMapLink
+        ? editProductData?.data?.locationMapLink
+        : "",
+      activities: editProductData?.data?.activities
+        ? editProductData?.data?.activities
+        : "",
+      seats: editProductData?.data?.seats ? editProductData?.data?.seats : "",
+      minAge: editProductData?.data?.minAge
+        ? editProductData?.data?.minAge
+        : "",
+      maxAge: editProductData?.data?.maxAge
+        ? editProductData?.data?.maxAge
+        : "",
+      ageException: editProductData?.data?.ageException
+        ? editProductData?.data?.ageException
+        : "",
+      description: editProductData?.data?.description
+        ? editProductData?.data?.description
+        : "",
+      price: editProductData?.data?.price ? editProductData?.data?.price : "",
+      intervalCount: editProductData?.data?.intervalCount
+        ? editProductData?.data?.intervalCount
+        : "",
     },
   });
 
-  const [startTime, setStartTime] = useState("10:00");
-  const [endTime, setEndTime] = useState("14:00");
+  const [startTime, setStartTime] = useState(
+    editProductData?.data?.startTime || "10:00"
+  );
+  const [endTime, setEndTime] = useState(
+    editProductData?.data?.endTime || "14:00"
+  );
   const [date, setDate] = useState({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
+    from: editProductData?.data?.startDate
+      ? new Date(editProductData.data.startDate)
+      : new Date(),
+    to: editProductData?.data?.endDate
+      ? new Date(editProductData.data.endDate)
+      : new Date(),
   });
 
   const [productData, setProductData] = useState({
-    paymentType: "",
+    paymentType: editProductData?.data?.paymentType
+      ? editProductData?.data?.paymentType
+      : "",
     paymentTypeName: "",
-    paymentInterval: "",
+    paymentInterval: editProductData?.data?.paymentInterval
+      ? editProductData?.data?.paymentInterval
+      : "",
     paymentIntervalName: "",
-    productImage: "",
-    hoverImage: "",
-    galleryImages: [],
-    categoryName: "",
-    categoryId: "",
-    subCategoryName: "",
-    subCategoryId: "",
+    productImage: editProductData?.data?.image
+      ? editProductData?.data?.image
+      : "",
+    hoverImage: editProductData?.data?.hoverImage
+      ? editProductData?.data?.hoverImage
+      : "",
+    galleryImages:
+      editProductData?.data?.galleryImages?.length > 0
+        ? editProductData?.data?.galleryImages
+        : [],
+    categoryName: editProductData?.data?.categoryName
+      ? editProductData?.data?.categoryName
+      : "",
+    categoryId: editProductData?.data?.categoryId
+      ? editProductData?.data?.categoryId
+      : "",
+    subCategoryName: editProductData?.data?.subCategoryName
+      ? editProductData?.data?.subCategoryName
+      : "",
+    subCategoryId: editProductData?.data?.subCategoryId
+      ? editProductData?.data?.subCategoryId
+      : "",
   });
-  const [productOptions, setProductOptions] = useState([
-    {
-      title: "",
-      price: "",
-      currency: "USD",
-    },
-  ]);
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const handleModalOpen = () => {
-    setModalOpen(!modalOpen);
-  };
 
   const subCategoryDataReducer = useSelector(
     (state) => state?.GetAllSubCategoriesReducer?.res
@@ -150,7 +187,6 @@ const AddProductModal = ({ setIsProductAdd }) => {
       image: productData.productImage,
       hoverImage: productData.hoverImage,
       galleryImages: productData.galleryImages,
-      productOptions: productOptions,
     };
     console.log("formData", formData);
     console.log("dataObj", dataObj);
@@ -162,7 +198,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
     //     console.log("res", res);
     //     if (res.success) {
     //       toast.success(res.message);
-    //       setIsProductAdd(false);
+    //       setIsProductEdit(false);
     //       if (res?.data?.message) {
     //         setTimeout(() => {
     //           toast.error(res?.data?.message);
@@ -225,7 +261,6 @@ const AddProductModal = ({ setIsProductAdd }) => {
     }
   };
 
-  // image files input region
   const handleGalleryFileUpload = (e) => {
     const files = Array.from(e.target.files);
 
@@ -241,46 +276,39 @@ const AddProductModal = ({ setIsProductAdd }) => {
       [e.target.name]: e.target.files[0],
     });
   };
-  // end image files input region
 
-  // product options add , remove, on save btn click
-  const handleAddProductOptions = () => {
-    const arr = [...productOptions];
-    arr.push({ title: "", price: "", currency: "USD" });
-    setProductOptions(arr);
+  const handleGalleryImageRemove = (i) => {
+    console.log("remove", i);
   };
-
-  const handleRemoveProductOptions = (ind) => {
-    const filteredOptions = productOptions.filter((_, index) => index !== ind);
-    setProductOptions(filteredOptions);
-  };
-
-  const handleProductOptionChange = (e, ind) => {
-    console.log("ind", ind);
-    const { name, value } = e.target;
-    const updatedOptions = productOptions.map((item, index) => {
-      if (index === ind) {
-        return {
-          ...item,
-          [name]: value,
-        };
-      }
-      return item;
-    });
-    setProductOptions(updatedOptions);
-  };
-
-  const onSaveProductOptions = () => {
-    setModalOpen(false);
-  };
-  console.log("productOptions", productOptions);
-
-  //end region
 
   useEffect(() => {
     dispatch(getAllCategories());
     dispatch(getAllSubCategories());
   }, []);
+
+  // filteration for dropdown of payment types, sub category
+  useEffect(() => {
+    if (subCategoryDataReducer?.res) {
+      let filteredPaymentTypeName = paymentTypes.filter(
+        (item) => item.value == editProductData?.data?.paymentType
+      );
+      let filteredSubCategoryName = [];
+      if (editProductData?.data?.subCategoryName !== null) {
+        filteredSubCategoryName = subCategoryDataReducer?.res?.data.filter(
+          (item) => item.name == editProductData?.data?.subCategoryName
+        );
+      }
+      console.log("filteredSubCategoryName", filteredSubCategoryName);
+      setProductData({
+        ...productData,
+        paymentTypeName: filteredPaymentTypeName[0]?.name,
+        subCategoryName:
+          editProductData?.data?.subCategoryName !== null
+            ? filteredSubCategoryName[0]?.name
+            : null,
+      });
+    }
+  }, [subCategoryDataReducer?.res]);
 
   console.log("subCategoryDataReducer", subCategoryDataReducer);
   console.log("productData", productData);
@@ -289,7 +317,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
     <>
       <div className="border-y-1 border-gray-300 my-4"></div>
       <div className="flex flex-col gap-3 w-[50%]">
-        <UITypography variant="h4" text={"Add Product"} />
+        <UITypography variant="h4" text={"Edit Product"} />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -451,6 +479,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
               labelName="Select Category"
               name="categoryName"
               placeholder={"Category"}
+              value={productData.categoryName}
               onValueChange={(val) =>
                 handleCategorySelectChange(val, "category")
               }
@@ -473,6 +502,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
               onValueChange={(val) =>
                 handleCategorySelectChange(val, "subCategory")
               }
+              value={productData.subCategoryName}
             >
               {subCategoryDataReducer?.res &&
                 subCategoryDataReducer?.res?.data.length > 0 &&
@@ -491,6 +521,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
               name="paymentType"
               placeholder={"Payment Type"}
               onValueChange={handlePaymentTypeSelectChange}
+              value={productData?.paymentType}
             >
               {paymentTypes.map((item, i) => {
                 return (
@@ -537,90 +568,65 @@ const AddProductModal = ({ setIsProductAdd }) => {
             ) : (
               <></>
             )}
-
-            <UITypography variant="h6" text="Add Product Options" />
-            {productOptions[0].title != "" &&
-              productOptions.map((item, ind) => {
-                return (
-                  <div className="border-1 border-gray-400 rounded-full p-4">
-                    {item.title} | {item.price}
-                  </div>
-                );
-              })}
-            <UIModal
-              open={modalOpen}
-              onOpenChange={handleModalOpen}
-              modalBtnText="Add"
-              btnClassName="bg-white text-black border-2 border-grey px-7 py-2 rounded-2xl hover:cursor-pointer"
-              modalHeaderTitle="Add Product for Child"
-            >
-              <div className="flex flex-col gap-4 h-[60vh] overflow-y-scroll">
-                <div className="flex justify-end">
-                  <UIButton
-                    type="contained"
-                    icon={true}
-                    BtnIcon={Plus}
-                    className="border-1 border-grey rounded-full p-0"
-                    btnOnclick={handleAddProductOptions}
-                  />
-                </div>
-
-                {productOptions.map((item, ind) => {
-                  return (
-                    <div className="flex" key={ind}>
-                      <div className="w-[90%]">
-                        <UIInputField
-                          isLable={true}
-                          lableName="Title"
-                          name="title"
-                          value={item.title}
-                          onChange={(e) => handleProductOptionChange(e, ind)}
-                        />
-                        <UIInputField
-                          isLable={true}
-                          lableName="Price"
-                          name="price"
-                          value={item.price}
-                          onChange={(e) => handleProductOptionChange(e, ind)}
-                        />
-                      </div>
-                      {ind !== 0 && (
-                        <div className="w-[10%]">
-                          <UIButton
-                            type="contained"
-                            icon={true}
-                            BtnIcon={Minus}
-                            btnOnclick={() => handleRemoveProductOptions(ind)}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-                <UIButton
-                  type="contained"
-                  icon={false}
-                  title="Save"
-                  btnOnclick={onSaveProductOptions}
-                />
-              </div>
-            </UIModal>
-
             <UIFileInput
               labelName="ProductImage"
               onChange={handleFileInput}
               name="productImage"
             />
+
+            {editProductData.data.image && (
+              <Image
+                src={`${ImageBaseUrl}${editProductData.data.image}`}
+                alt={editProductData.data.image}
+                height={180}
+                width={140}
+              />
+            )}
+
             <UIFileInput
               labelName="Product Hover Image"
               onChange={handleFileInput}
               name="hoverImage"
             />
+            {editProductData.data.hoverImage && (
+              <Image
+                src={`${ImageBaseUrl}${editProductData.data.hoverImage}`}
+                alt={editProductData.data.image}
+                height={180}
+                width={140}
+              />
+            )}
             <UIFileInput
               labelName="Product Gallery Image"
               multiple={true}
               onChange={handleGalleryFileUpload}
             />
+            <div className="flex gap-3">
+              {productData.galleryImages.length > 0 &&
+                productData.galleryImages.map((item, i) => {
+                  return (
+                    <div className="relative">
+                      <div className="absolute right-1 top-1 hover:cursor-pointer">
+                        <UIButton
+                          type="contained"
+                          icon={true}
+                          BtnIcon={X}
+                          className="!bg-white !p-1 rounded"
+                          btnOnclick={() => handleGalleryImageRemove(i)}
+                        />
+                      </div>
+                      <Image
+                        src={`${ImageBaseUrl}${item.imageUrl}`}
+                        alt={item.imageUrl}
+                        key={i}
+                        height={240}
+                        width={240}
+                        objectFit="cover"
+                      />
+                    </div>
+                  );
+                })}
+            </div>
             <UIButton
               type="contained"
               icon={false}
@@ -634,4 +640,4 @@ const AddProductModal = ({ setIsProductAdd }) => {
   );
 };
 
-export default AddProductModal;
+export default EditProductForm;

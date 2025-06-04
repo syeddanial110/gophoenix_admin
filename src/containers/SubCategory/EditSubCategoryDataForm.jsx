@@ -57,16 +57,22 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
   };
 
   const handleEditCategory = () => {
-    const dataObj = {
-      name: subCategoryData.subCategoryName,
-      image: subCategoryData.subCategoryImage,
-      categoryId: subCategoryData.categoryId,
-      //   slug: categoryData.categorySlug,
-    };
-    console.log("dataObj", dataObj);
+    const formData = new FormData();
+
+    formData.append("name", subCategoryData.categoryName);
+    formData.append("image", subCategoryData.subCategoryImage);
+    formData.append("categoryId", subCategoryData.categoryId);
+
+    // const dataObj = {
+    //   name: subCategoryData.subCategoryName,
+    //   image: subCategoryData.subCategoryImage,
+    //   categoryId: subCategoryData.categoryId,
+    //   //   slug: categoryData.categorySlug,
+    // };
+    // console.log("dataObj", dataObj);
     apiPut(
-      `${ApiEndpoints.categories.base}${ApiEndpoints.categories.update}/${subCategoryData.id}`,
-      dataObj,
+      `${ApiEndpoints.subCategory.base}${ApiEndpoints.subCategory.update}/${subCategoryData.id}`,
+      formData,
       (res) => {
         console.log("res", res);
         setModalOpen(false);
@@ -92,6 +98,7 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
     setSubCategoryData({
       ...subCategoryData,
       categoryName: selectedCategory.name,
+      categoryId: selectedCategory.id,
     });
   }, [getAllCategoriesData?.res?.data.length]); // More specific dependencies
 
@@ -110,7 +117,7 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
         <UIInputField
           isLable={true}
           lableName="Sub Category Name"
-          name="categoryName"
+          name="subCategoryName"
           value={subCategoryData.subCategoryName}
           onChange={handleInputChange}
         />
@@ -118,7 +125,6 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
           isLabel={true}
           labelName="Select Category Type"
           name="categoryId" // Add this
-          onChange={handleInputChange}
           placeholder={subCategoryData.categoryName}
           onValueChange={handleSelectChange}
           // value={subCategoryData.categoryName.toString()}

@@ -39,6 +39,10 @@ const EditCategoryDataForm = ({ setModalOpen }) => {
   };
 
   const handleEditCategory = () => {
+    const formData = new FormData();
+
+    formData.append("name", categoryData.categoryName);
+    formData.append("image", categoryData.categoryImage);
     const dataObj = {
       name: categoryData.categoryName,
       image: categoryData.categoryImage,
@@ -47,7 +51,7 @@ const EditCategoryDataForm = ({ setModalOpen }) => {
     console.log("dataObj", dataObj);
     apiPut(
       `${ApiEndpoints.categories.base}${ApiEndpoints.categories.update}/${categoryData.id}`,
-      dataObj,
+      formData,
       (res) => {
         console.log("res", res);
         setModalOpen(false);

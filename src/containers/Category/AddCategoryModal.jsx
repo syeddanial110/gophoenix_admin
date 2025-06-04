@@ -34,14 +34,18 @@ const AddCategoryModal = ({ setModalOpen }) => {
   };
 
   const handleAddCategory = () => {
-    const dataObj = {
-      name: categoryData.categoryName,
-      image: categoryData.categoryImage,
-    };
-    console.log("dataObj", dataObj);
+    const formData = new FormData();
+
+    formData.append("name", categoryData.categoryName);
+    formData.append("image", categoryData.categoryImage);
+    // const dataObj = {
+    //   name: categoryData.categoryName,
+    //   image: categoryData.categoryImage,
+    // };
+    // console.log("dataObj", dataObj);
     apiPost(
       `${ApiEndpoints.categories.base}${ApiEndpoints.categories.create}`,
-      dataObj,
+      formData,
       (res) => {
         console.log("res", res);
         if (res?.success) {

@@ -5,7 +5,7 @@ import { FormControl, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 
-const UITextField = ({ type, formLabel, field, ...rest }) => {
+const UITextField = ({ type, formLabel, field, placeholder, ...rest }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -42,7 +42,7 @@ const UITextField = ({ type, formLabel, field, ...rest }) => {
         <>
           {formLabel && <FormLabel>{formLabel}</FormLabel>}
           <FormControl>
-            <Input placeholder="your@email.com" {...field} {...rest} />
+            <Input placeholder={placeholder} type={type} {...field} {...rest} />
           </FormControl>
         </>
       )}

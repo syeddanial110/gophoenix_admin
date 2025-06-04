@@ -6,6 +6,7 @@ import {
   GetAllProductsConstants,
 } from "@/store/constants";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
+import { toast } from "sonner";
 
 export const editProductData = (data) => (dispatch) => {
   dispatch({
@@ -14,10 +15,10 @@ export const editProductData = (data) => (dispatch) => {
   });
 };
 
-export const getAllProducts = () => (dispatch) => {
+export const getAllProducts = (data) => (dispatch) => {
   dispatch({ type: GetAllProductsConstants.GET_ALL_PRODUCTS_LOADING });
   apiGet(
-    `${ApiEndpoints.products.base}${ApiEndpoints.products.getAll}`,
+    `${ApiEndpoints.products.base}${ApiEndpoints.products.getAll}/?page=${data?.page}`,
     (res) => {
       dispatch({
         type: GetAllProductsConstants.GET_ALL_PRODUCTS_SUCCESS,
@@ -28,6 +29,7 @@ export const getAllProducts = () => (dispatch) => {
       dispatch({
         type: GetAllProductsConstants.GET_ALL_PRODUCTS_ERROR,
       });
+      toast.error(err?.message);
     }
   );
 };

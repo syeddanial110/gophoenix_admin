@@ -33,12 +33,24 @@ const UIButton = ({
           {title}
         </Button>
       ) : type == "contained" && icon == true ? (
-        <Button variant="contained" size="icon" onClick={btnOnclick} {...props}>
+        <Button
+          variant="contained"
+          size="icon"
+          onClick={btnOnclick}
+          className={`hover:cursor-pointer ${className}`}
+          {...props}
+        >
           {<BtnIcon />}
           {title}
         </Button>
       ) : (
-        <Button variant="outline" size="icon" onClick={btnOnclick} {...props}>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={btnOnclick}
+          className={`hover:cursor-pointer ${className}`}
+          {...props}
+        >
           <BtnIcon strokeColor="black" /> {title}
         </Button>
       )}

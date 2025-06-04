@@ -3,7 +3,8 @@ const nextConfig = {
   reactStrictMode: false,
   images: {
     domains: [
-      "wcx78p18-5000.inc1.devtunnels.ms",
+      "sports-new-production.up.railway.app",
+      "res.cloudinary.com",
       // add other allowed domains here
     ],
   },

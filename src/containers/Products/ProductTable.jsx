@@ -1,28 +1,49 @@
-import { ImageBaseUrl } from "@/apis/ApiRequest";
+import { apiDelete, ImageBaseUrl } from "@/apis/ApiRequest";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import UIButton from "@/components/UIButton/UIButton";
 import UIModal from "@/components/UIModal/UIModal";
+import UIPopover from "@/components/UIPopover/UIPopover";
 import UITable from "@/components/UITable/UITable";
 import UITooltip from "@/components/UITooltip/UITooltip";
 import UITypography from "@/components/UITypography/UITypography";
-import { getAllProducts } from "@/store/actions/products";
+import { editProductData, getAllProducts } from "@/store/actions/products";
+import { ApiEndpoints } from "@/utils/ApiEndpoints";
 import { PencilLine, Trash } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
-const ProductTable = () => {
+const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
   const dispatch = useDispatch();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
+  const [perPage, setPerPage] = useState(10);
 
   const allProducts = useSelector((state) => state?.GetAllProductsReducer?.res);
 
-  const handleModalOpen = () => {
-    setModalOpen(!modalOpen);
+  const handleEditClick = (row) => {
+    setIsProductEdit(true);
+    setIsProductAdd(false);
+    dispatch(editProductData(row));
   };
 
-  const handleCategoryDelete = (row) => {};
+  const handleProductDelete = (row) => {
+    apiDelete(
+      `${ApiEndpoints.products.base}${ApiEndpoints.products.delete}/${row.id}`,
+      (res) => {
+        toast.success(res?.message);
+        dispatch(getAllProducts({ page: 1 }));
+      },
+      (err) => {
+        toast.error(err?.message);
+      }
+    );
+  };
 
   const columns = [
     {
@@ -123,42 +144,48 @@ const ProductTable = () => {
       },
       cell: (row) => (
         <>
-          <UIModal
-            onOpenChange={handleModalOpen}
-            open={modalOpen}
-            modalBtnText={<PencilLine />}
-            btnClassName="hover:cursor-pointer"
-            btnTriggerOnClick={() => handleEditClick(row)}
-            modalHeaderTitle="Edit Category"
+          <button
+            onClick={() => handleEditClick(row)}
+            className="hover:cursor-pointer"
           >
-            {/* <EditCategoryDataForm setModalOpen={setModalOpen} /> */}
-          </UIModal>
-          <UITooltip>
-            <TooltipTrigger open={tooltipOpen} onOpenChange={setTooltipOpen}>
-              <Trash />
-            </TooltipTrigger>
-            <TooltipContent>
-              <div className="flex flex-col gap-2">
-                <UITypography text="Are you sure you want to delete this category?" />
-                <div className="flex items-center gap-2">
-                  <UIButton
-                    type="contained"
-                    icon={false}
-                    title="Yes"
-                    btnOnclick={() => handleCategoryDelete(row)}
-                  />
-                </div>
-              </div>
-            </TooltipContent>
-          </UITooltip>
+            <PencilLine />
+          </button>
+
+          <UIPopover
+            btnTrigger={<Trash />}
+            onBtnClick={() => handleProductDelete(row)}
+          ></UIPopover>
         </>
       ),
     },
   ];
 
+  const handlePageChange = (page) => {
+    const data = {
+      page: page,
+    };
+    dispatch(getAllProducts(data));
+  };
+
+  const handlePerRowsChange = async (newPerPage, page) => {
+    const data = {
+      page: page,
+    };
+    dispatch(getAllProducts(data));
+
+    setPerPage(newPerPage);
+  };
+
   useEffect(() => {
-    dispatch(getAllProducts());
+    const data = {
+      page: 1,
+    };
+    dispatch(getAllProducts(data));
   }, []);
+
+  useEffect(() => {
+    setTotalRows(allProducts?.res?.data?.pagination.totalItems);
+  }, [allProducts?.res?.success]);
 
   console.log("allProducts", allProducts);
 
@@ -171,6 +198,10 @@ const ProductTable = () => {
         allProducts?.res?.data?.data
       }
       pagination={true}
+      paginationServer
+      paginationTotalRows={totalRows}
+      onChangeRowsPerPage={handlePerRowsChange}
+      onChangePage={handlePageChange}
       // progressPending={true}
       // noDataComponent={LinearIndeterminate}
     />

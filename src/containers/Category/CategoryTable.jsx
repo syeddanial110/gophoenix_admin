@@ -24,7 +24,6 @@ const CategoryTable = () => {
   );
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
-
   const handleModalOpen = () => {
     setModalOpen(!modalOpen);
   };
@@ -70,7 +69,7 @@ const CategoryTable = () => {
           <UITooltip>
             <TooltipTrigger>
               <Image
-                src={`${ImageBaseUrl}${row?.image}`}
+                src={`${row?.image}`}
                 alt={row?.image}
                 width={40}
                 height={40}
@@ -79,7 +78,7 @@ const CategoryTable = () => {
             <TooltipContent>
               <div className="">
                 <Image
-                  src={`${ImageBaseUrl}${row?.image}`}
+                  src={`${row?.image}`}
                   alt={row?.image}
                   width={100}
                   height={100}
@@ -148,9 +147,9 @@ const CategoryTable = () => {
     <UITable
       columns={columns}
       data={
-        categoryDataReducer?.res &&
-        categoryDataReducer?.res?.data?.length > 0 &&
-        categoryDataReducer?.res?.data
+        categoryDataReducer?.res && categoryDataReducer?.res?.data?.length > 0
+          ? categoryDataReducer?.res?.data
+          : []
       }
       pagination={true}
       // progressPending={true}

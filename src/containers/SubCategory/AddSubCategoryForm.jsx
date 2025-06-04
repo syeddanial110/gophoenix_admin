@@ -48,15 +48,20 @@ const AddSubCategoryForm = ({ setModalOpen }) => {
   };
 
   const handleAddCategory = () => {
-    const dataObj = {
-      name: subCategoryData.subCategoryName,
-      image: subCategoryData.subCategoryImage,
-      categoryId: subCategoryData.categoryId.id,
-    };
-    console.log("dataObj", dataObj);
+    const formData = new FormData();
+
+    formData.append("name", subCategoryData.subCategoryName);
+    formData.append("image", subCategoryData.subCategoryImage);
+    formData.append("categoryId", subCategoryData.categoryId.id);
+    // const dataObj = {
+    //   name: subCategoryData.subCategoryName,
+    //   image: subCategoryData.subCategoryImage,
+    //   categoryId: subCategoryData.categoryId.id,
+    // };
+    // console.log("dataObj", dataObj);
     apiPost(
       `${ApiEndpoints.subCategory.base}${ApiEndpoints.subCategory.create}`,
-      dataObj,
+      formData,
       (res) => {
         console.log("res", res);
         if (res?.success) {

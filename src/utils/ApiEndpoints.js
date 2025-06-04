@@ -35,7 +35,7 @@ export const ApiEndpoints = {
     // getById: "/getById",
     create: "/createProduct",
     // update: "/update",
-    // delete: "/delete",
+    delete: "/deleteProduct",
   },
   pages: {
     base: "/pages",
