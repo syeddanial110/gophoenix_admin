@@ -17,7 +17,7 @@ const Customers = () => {
         </div>
       </div>
       <div>
-        <UIModal modalBtnText="Click"></UIModal>
+        {/* <UIModal modalBtnText="Click"></UIModal> */}
       </div>
 
       {/* Table */}
