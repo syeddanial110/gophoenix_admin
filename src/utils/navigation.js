@@ -41,11 +41,11 @@ export const Navigation_Menu = [
       },
     ],
   },
-  {
-    name: "Customers",
-    link: "/dashboard/customers",
-    icon: User,
-  },
+  // {
+  //   name: "Customers",
+  //   link: "/dashboard/customers",
+  //   icon: User,
+  // },
   {
     name: "Content",
     icon: Image,
