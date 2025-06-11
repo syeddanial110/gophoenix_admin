@@ -29,7 +29,7 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
   const handleEditClick = (row) => {
     setIsProductEdit(true);
     setIsProductAdd(false);
-    dispatch(editProductData(row));
+    dispatch(editProductData({ productId: row?.id }));
   };
 
   const handleProductDelete = (row) => {
@@ -112,26 +112,32 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
       sortable: true,
       cell: (row) => {
         return (
-          <UITooltip>
-            <TooltipTrigger>
-              <Image
-                src={`${ImageBaseUrl}${row?.image}`}
-                alt={row?.image}
-                width={40}
-                height={40}
-              />
-            </TooltipTrigger>
-            <TooltipContent>
-              <div className="">
-                <Image
-                  src={`${ImageBaseUrl}${row?.image}`}
-                  alt={row?.image}
-                  width={100}
-                  height={100}
-                />
-              </div>
-            </TooltipContent>
-          </UITooltip>
+          <>
+            {row?.image !== null ? (
+              <UITooltip>
+                <TooltipTrigger>
+                  <Image
+                    src={`${row?.image}`}
+                    alt={row?.image}
+                    width={40}
+                    height={40}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="">
+                    <Image
+                      src={`${row?.image}`}
+                      alt={row?.image}
+                      width={100}
+                      height={100}
+                    />
+                  </div>
+                </TooltipContent>
+              </UITooltip>
+            ) : (
+              <></>
+            )}
+          </>
         );
       },
     },

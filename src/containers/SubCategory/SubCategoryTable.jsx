@@ -85,7 +85,7 @@ const SubCategoryTable = () => {
           <UITooltip>
             <TooltipTrigger>
               <Image
-                src={`${ImageBaseUrl}${row?.image}`}
+                src={`${row?.image}`}
                 alt={row?.image}
                 width={40}
                 height={40}
@@ -94,7 +94,7 @@ const SubCategoryTable = () => {
             <TooltipContent>
               <div className="">
                 <Image
-                  src={`${ImageBaseUrl}${row?.image}`}
+                  src={`${row?.image}`}
                   alt={row?.image}
                   width={100}
                   height={100}
@@ -159,8 +159,9 @@ const SubCategoryTable = () => {
       columns={columns}
       data={
         subCategoryDataReducer?.res &&
-        subCategoryDataReducer?.res?.data?.length > 0 &&
-        subCategoryDataReducer?.res?.data
+        subCategoryDataReducer?.res?.data?.length > 0
+          ? subCategoryDataReducer?.res?.data
+          : []
       }
       pagination={true}
       // progressPending={true}

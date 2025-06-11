@@ -3,6 +3,8 @@ import { getToken } from "./Auth";
 import API from "./interceptor";
 
 export const BASEURL = "https://sports-new-production.up.railway.app/api";
+// export const BASEURL = "https://wcx78p18-5000.inc1.devtunnels.ms/api";
+// export const ImageBaseUrl = "https://wcx78p18-5000.inc1.devtunnels.ms/";
 export const ImageBaseUrl = "https://sports-new-production.up.railway.app/";
 export const apiBaseUrl = `${BASEURL}`;
 

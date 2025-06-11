@@ -66,7 +66,7 @@ const AddCategoryModal = ({ setModalOpen }) => {
   return (
     <>
       <div className="flex flex-col gap-4">
-        <UITypography variant="h2" text="Add Category" />
+        <UITypography variant="h2" text="Add Sub Category" />
         <div className="flex flex-col gap-3">
           <UIInputField
             name="categoryName"

@@ -1,14 +1,20 @@
+"use client";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AppSidebar } from "../../../components/ui/app-sidebar";
 import Image from "next/image";
 import logo from "../../../assets/Images/logo.png";
 import { User } from "lucide-react";
-import { cookies } from "next/headers";
+import Cookies from 'js-cookie';
 
-const NavigationMenu = async ({ children }) => {
-  const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+const NavigationMenu = ({ children }) => {
+  const [defaultOpen, setDefaultOpen] = useState(false);
+
+  useEffect(() => {
+    const sidebarState = Cookies.get('sidebar_state');
+    setDefaultOpen(sidebarState === 'true');
+  }, []);
+
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />

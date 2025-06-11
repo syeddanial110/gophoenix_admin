@@ -32,9 +32,9 @@ export const ApiEndpoints = {
   products: {
     base: "/product",
     getAll: "/getAllProduct",
-    // getById: "/getById",
+    getById: "/getProductById/",
     create: "/createProduct",
-    // update: "/update",
+    update: "/updateProduct/",
     delete: "/deleteProduct",
   },
   pages: {
@@ -44,5 +44,9 @@ export const ApiEndpoints = {
     create: "/create",
     update: "/update",
     delete: "/delete",
+  },
+  uploadImage: {
+    base: "/image",
+    upload: "/uploadImage",
   },
 };

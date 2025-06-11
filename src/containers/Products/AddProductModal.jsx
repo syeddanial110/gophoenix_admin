@@ -98,33 +98,40 @@ const AddProductModal = ({ setIsProductAdd }) => {
   function onSubmit(data, e) {
     console.log("data", data, e);
 
-    const formData = new FormData();
+    const formattedStartDate = date.from.toISOString().split("T")[0];
+    const formattedEndDate = date.to.toISOString().split("T")[0];
 
-    formData.append("productName", data.productName);
-    formData.append("locationAddress", data.locationAddress);
-    formData.append("locationMapLink", data.locationMapLink);
-    formData.append("startTime", startTime);
-    formData.append("endTime", endTime);
-    formData.append("startDate", date.from);
-    formData.append("endDate", date.to);
-    formData.append("activities", data.activities);
-    formData.append("categoryId", productData.categoryId);
-    formData.append("subCategoryId", productData.subCategoryId);
-    formData.append("seats", data.seats);
-    formData.append("minAge", data.minAge);
-    formData.append("maxAge", data.maxAge);
-    formData.append("ageException", data.ageException);
-    formData.append("description", data.description);
-    formData.append("price", data.price);
-    formData.append("currency", "USD");
-    formData.append("paymentType", productData.paymentType);
-    formData.append("paymentInterval", productData.paymentInterval);
-    formData.append("intervalCount", data.intervalCount);
-    formData.append("image", productData.productImage);
-    formData.append("hoverImage", productData.hoverImage);
-    productData.galleryImages.forEach((val, ind) => {
-      formData.append(`galleryImages`, val);
-    });
+    console.log("formattedStartDate", formattedStartDate);
+    console.log("formattedEndDate", formattedEndDate);
+
+    // const formData = new FormData();
+
+    // formData.append("productName", data.productName);
+    // formData.append("locationAddress", data.locationAddress);
+    // formData.append("locationMapLink", data.locationMapLink);
+    // formData.append("startTime", startTime);
+    // formData.append("endTime", endTime);
+    // formData.append("startDate", formattedStartDate);
+    // formData.append("endDate", formattedEndDate);
+    // formData.append("activities", data.activities);
+    // formData.append("categoryId", productData.categoryId);
+    // formData.append("subCategoryId", productData.subCategoryId);
+    // formData.append("seats", data.seats);
+    // formData.append("minAge", data.minAge);
+    // formData.append("maxAge", data.maxAge);
+    // formData.append("ageException", data.ageException);
+    // formData.append("description", data.description);
+    // formData.append("price", data.price);
+    // formData.append("currency", "USD");
+    // formData.append("paymentType", productData.paymentType);
+    // formData.append("paymentInterval", productData.paymentInterval);
+    // formData.append("intervalCount", data.intervalCount);
+    // formData.append("image", productData.productImage);
+    // formData.append("hoverImage", productData.hoverImage);
+    // formData.append("productOptions", JSON.stringify(productOptions));
+    // productData.galleryImages.forEach((val, ind) => {
+    //   formData.append(`galleryImages`, val);
+    // });
 
     const dataObj = {
       productName: data.productName,
@@ -132,8 +139,8 @@ const AddProductModal = ({ setIsProductAdd }) => {
       locationMapLink: data.locationMapLink,
       startTime: startTime,
       endTime: endTime,
-      startDate: date.from,
-      endDate: date.to,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
       activities: data.activities,
       categoryId: productData.categoryId,
       subCategoryId: productData.subCategoryId,
@@ -152,29 +159,30 @@ const AddProductModal = ({ setIsProductAdd }) => {
       galleryImages: productData.galleryImages,
       productOptions: productOptions,
     };
-    console.log("formData", formData);
+    // console.log("formData", formData);
     console.log("dataObj", dataObj);
 
-    // apiPost(
-    //   `${ApiEndpoints.products.base}${ApiEndpoints.products.create}`,
-    //   formData,
-    //   (res) => {
-    //     console.log("res", res);
-    //     if (res.success) {
-    //       toast.success(res.message);
-    //       setIsProductAdd(false);
-    //       if (res?.data?.message) {
-    //         setTimeout(() => {
-    //           toast.error(res?.data?.message);
-    //         }, 1500);
-    //       }
-    //     }
-    //   },
-    //   (err) => {
-    //     console.log("err", err);
-    //   },
-    //   { "Content-Type": "multipart/form-data" }
-    // );
+    apiPost(
+      `${ApiEndpoints.products.base}${ApiEndpoints.products.create}`,
+      dataObj,
+      (res) => {
+        console.log("res", res);
+        if (res.success) {
+          toast.success(res.message);
+          setIsProductAdd(false);
+          if (res?.data?.message) {
+            setTimeout(() => {
+              toast.error(res?.data?.message);
+            }, 1500);
+          }
+        } else {
+          toast.error(res?.message);
+        }
+      },
+      (err) => {
+        console.log("err", err);
+      }
+    );
   }
 
   const handlePaymentTypeSelectChange = (value) => {
@@ -227,20 +235,76 @@ const AddProductModal = ({ setIsProductAdd }) => {
 
   // image files input region
   const handleGalleryFileUpload = (e) => {
-    const files = Array.from(e.target.files);
+    const formData = new FormData();
 
-    setProductData({
-      ...productData,
-      galleryImages: files,
+    // formData.append("image", e.target.files);
+    const files = Array.from(e.target.files);
+    console.log("e.target.files", e.target.files);
+    files.forEach((val, ind) => {
+      formData.append(`image`, val);
     });
+    if (files?.length > 0) {
+      apiPost(
+        `${ApiEndpoints.uploadImage.base}${ApiEndpoints.uploadImage.upload}`,
+        formData,
+        (res) => {
+          console.log("res", res);
+          if (res?.success) {
+            toast.success(res?.message);
+            const formattedGalleryImages = res?.data.map((image) => ({
+              path: image.url,
+            }));
+            setProductData({
+              ...productData,
+              galleryImages: formattedGalleryImages,
+            });
+          }
+        },
+        (err) => {
+          console.log("err", err);
+        },
+        { "Content-Type": "multipart/form-data" }
+      );
+    }
+
+    // setProductData({
+    //   ...productData,
+    //   galleryImages: files,
+    // });
   };
 
   const handleFileInput = (e) => {
-    setProductData({
-      ...productData,
-      [e.target.name]: e.target.files[0],
+    const formData = new FormData();
+
+    // formData.append("image", e.target.files);
+    const files = Array.from(e.target.files);
+    console.log("e.target.files", e.target.files);
+    files.forEach((val, ind) => {
+      formData.append(`image`, val);
     });
+    if (files?.length > 0) {
+      apiPost(
+        `${ApiEndpoints.uploadImage.base}${ApiEndpoints.uploadImage.upload}`,
+        formData,
+        (res) => {
+          console.log("res", res);
+          if (res?.success) {
+            toast.success(res?.message);
+            setProductData({
+              ...productData,
+              [e.target.name]: res?.data[0]?.url,
+            });
+          }
+        },
+        (err) => {
+          console.log("err", err);
+        },
+        { "Content-Type": "multipart/form-data" }
+      );
+    }
   };
+
+  console.log("productData", productData);
   // end image files input region
 
   // product options add , remove, on save btn click

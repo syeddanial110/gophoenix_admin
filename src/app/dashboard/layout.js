@@ -1,4 +1,3 @@
-import ProtectedRoute from "@/components/hoc/ProtectedRoute";
 import Header from "@/containers/Header/Header";
 import React from "react";
 

@@ -1,5 +1,5 @@
 "use client";
-import { apiGet, apiPost, ImageBaseUrl } from "@/apis/ApiRequest";
+import { apiGet, apiPost, apiPut, ImageBaseUrl } from "@/apis/ApiRequest";
 import UIFileInput from "@/components/InputFields/UIFileInput";
 import UITextField from "@/components/InputFields/UITextField";
 import UIButton from "@/components/UIButton/UIButton";
@@ -20,7 +20,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllSubCategories } from "@/store/actions/subCategory";
 import { toast } from "sonner";
 import Image from "next/image";
-import { Cross, X } from "lucide-react";
+import { Cross, Minus, Plus, X } from "lucide-react";
+import UIModal from "@/components/UIModal/UIModal";
+import UIInputField from "@/components/InputFields/UIInputField";
 
 const EditProductForm = ({ setIsProductEdit }) => {
   const paymentTypes = [
@@ -42,87 +44,76 @@ const EditProductForm = ({ setIsProductEdit }) => {
 
   console.log("editProductData", editProductData);
 
+  const [productData, setProductData] = useState({
+    productName: "",
+    locationAddress: "",
+    locationMapLink: "",
+    startDate: "",
+    endDate: "",
+    startTime: "",
+    endTime: "",
+    activities: "",
+    seats: "",
+    minAge: "",
+    maxAge: "",
+    ageException: "",
+    description: "",
+    price: "",
+    categoryName: "",
+    categoryId: "",
+    subCategoryName: "",
+    subCategoryId: "",
+    paymentTypeValue: "",
+    paymentTypeName: "",
+    paymentIntervalValue: "",
+    paymentIntervalName: "",
+    intervalCount: "",
+    productImage: "",
+    hoverImage: "",
+    galleryImages: [],
+  });
+
+  const [productOptions, setProductOptions] = useState([
+    {
+      title: "",
+      price: "",
+      currency: "USD",
+    },
+  ]);
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [date, setDate] = useState({
+    from: new Date(),
+    to: new Date(),
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleModalOpen = () => {
+    setModalOpen(!modalOpen);
+  };
+
   const form = useForm({
     resolver: yupResolver(addProductSchema),
     defaultValues: {
-      productName: editProductData?.data?.productName
-        ? editProductData?.data?.productName
+      productName: productData?.productName ? productData?.productName : "",
+      locationAddress: productData?.locationAddress
+        ? productData?.locationAddress
         : "",
-      locationAddress: editProductData?.data?.locationAddress
-        ? editProductData?.data?.locationAddress
+      locationMapLink: productData?.locationMapLink
+        ? productData?.locationMapLink
         : "",
-      locationMapLink: editProductData?.data?.locationMapLink
-        ? editProductData?.data?.locationMapLink
-        : "",
-      activities: editProductData?.data?.activities
-        ? editProductData?.data?.activities
-        : "",
-      seats: editProductData?.data?.seats ? editProductData?.data?.seats : "",
-      minAge: editProductData?.data?.minAge
-        ? editProductData?.data?.minAge
-        : "",
-      maxAge: editProductData?.data?.maxAge
-        ? editProductData?.data?.maxAge
-        : "",
-      ageException: editProductData?.data?.ageException
-        ? editProductData?.data?.ageException
-        : "",
-      description: editProductData?.data?.description
-        ? editProductData?.data?.description
-        : "",
-      price: editProductData?.data?.price ? editProductData?.data?.price : "",
-      intervalCount: editProductData?.data?.intervalCount
-        ? editProductData?.data?.intervalCount
+      activities: productData?.activities ? productData?.activities : "",
+      seats: productData?.seats ? productData?.seats : "",
+      minAge: productData?.minAge ? productData?.minAge : "",
+      maxAge: productData?.maxAge ? productData?.maxAge : "",
+      ageException: productData?.ageException ? productData?.ageException : "",
+      description: productData?.description ? productData?.description : "",
+      price: productData?.price ? productData?.price : "",
+      intervalCount: productData?.intervalCount
+        ? productData?.intervalCount
         : "",
     },
-  });
-
-  const [startTime, setStartTime] = useState(
-    editProductData?.data?.startTime || "10:00"
-  );
-  const [endTime, setEndTime] = useState(
-    editProductData?.data?.endTime || "14:00"
-  );
-  const [date, setDate] = useState({
-    from: editProductData?.data?.startDate
-      ? new Date(editProductData.data.startDate)
-      : new Date(),
-    to: editProductData?.data?.endDate
-      ? new Date(editProductData.data.endDate)
-      : new Date(),
-  });
-
-  const [productData, setProductData] = useState({
-    paymentType: editProductData?.data?.paymentType
-      ? editProductData?.data?.paymentType
-      : "",
-    paymentTypeName: "",
-    paymentInterval: editProductData?.data?.paymentInterval
-      ? editProductData?.data?.paymentInterval
-      : "",
-    paymentIntervalName: "",
-    productImage: editProductData?.data?.image
-      ? editProductData?.data?.image
-      : "",
-    hoverImage: editProductData?.data?.hoverImage
-      ? editProductData?.data?.hoverImage
-      : "",
-    galleryImages:
-      editProductData?.data?.galleryImages?.length > 0
-        ? editProductData?.data?.galleryImages
-        : [],
-    categoryName: editProductData?.data?.categoryName
-      ? editProductData?.data?.categoryName
-      : "",
-    categoryId: editProductData?.data?.categoryId
-      ? editProductData?.data?.categoryId
-      : "",
-    subCategoryName: editProductData?.data?.subCategoryName
-      ? editProductData?.data?.subCategoryName
-      : "",
-    subCategoryId: editProductData?.data?.subCategoryId
-      ? editProductData?.data?.subCategoryId
-      : "",
   });
 
   const subCategoryDataReducer = useSelector(
@@ -135,33 +126,39 @@ const EditProductForm = ({ setIsProductEdit }) => {
   function onSubmit(data, e) {
     console.log("data", data, e);
 
-    const formData = new FormData();
+    const formattedStartDate = date.from.toISOString().split("T")[0];
+    const formattedEndDate = date.to.toISOString().split("T")[0];
 
-    formData.append("productName", data.productName);
-    formData.append("locationAddress", data.locationAddress);
-    formData.append("locationMapLink", data.locationMapLink);
-    formData.append("startTime", startTime);
-    formData.append("endTime", endTime);
-    formData.append("startDate", date.from);
-    formData.append("endDate", date.to);
-    formData.append("activities", data.activities);
-    formData.append("categoryId", productData.categoryId);
-    formData.append("subCategoryId", productData.subCategoryId);
-    formData.append("seats", data.seats);
-    formData.append("minAge", data.minAge);
-    formData.append("maxAge", data.maxAge);
-    formData.append("ageException", data.ageException);
-    formData.append("description", data.description);
-    formData.append("price", data.price);
-    formData.append("currency", "USD");
-    formData.append("paymentType", productData.paymentType);
-    formData.append("paymentInterval", productData.paymentInterval);
-    formData.append("intervalCount", data.intervalCount);
-    formData.append("image", productData.productImage);
-    formData.append("hoverImage", productData.hoverImage);
-    productData.galleryImages.forEach((val, ind) => {
-      formData.append(`galleryImages`, val);
-    });
+    console.log("formattedStartDate", formattedStartDate);
+    console.log("formattedEndDate", formattedEndDate);
+
+    // const formData = new FormData();
+
+    // formData.append("productName", data.productName);
+    // formData.append("locationAddress", data.locationAddress);
+    // formData.append("locationMapLink", data.locationMapLink);
+    // formData.append("startTime", startTime);
+    // formData.append("endTime", endTime);
+    // formData.append("startDate", formattedStartDate);
+    // formData.append("endDate", formattedEndDate);
+    // formData.append("activities", data.activities);
+    // formData.append("categoryId", productData.categoryId);
+    // formData.append("subCategoryId", productData.subCategoryId);
+    // formData.append("seats", data.seats);
+    // formData.append("minAge", data.minAge);
+    // formData.append("maxAge", data.maxAge);
+    // formData.append("ageException", data.ageException);
+    // formData.append("description", data.description);
+    // formData.append("price", data.price);
+    // formData.append("currency", "USD");
+    // formData.append("paymentType", productData.paymentTypeValue);
+    // formData.append("paymentInterval", productData.paymentIntervalValue);
+    // formData.append("intervalCount", data.intervalCount);
+    // formData.append("image", productData.productImage);
+    // formData.append("hoverImage", productData.hoverImage);
+    // productData.galleryImages.forEach((val, ind) => {
+    //   formData.append(`galleryImages`, val);
+    // });
 
     const dataObj = {
       productName: data.productName,
@@ -169,8 +166,8 @@ const EditProductForm = ({ setIsProductEdit }) => {
       locationMapLink: data.locationMapLink,
       startTime: startTime,
       endTime: endTime,
-      startDate: date.from,
-      endDate: date.to,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
       activities: data.activities,
       categoryId: productData.categoryId,
       subCategoryId: productData.subCategoryId,
@@ -181,37 +178,38 @@ const EditProductForm = ({ setIsProductEdit }) => {
       description: data.description,
       price: data.price,
       currency: "USD",
-      paymentType: productData.paymentType,
-      paymentInterval: productData.paymentInterval,
+      paymentType: productData.paymentIntervalValue,
+      paymentInterval: productData.paymentIntervalValue,
       intervalCount: data.intervalCount,
       image: productData.productImage,
       hoverImage: productData.hoverImage,
       galleryImages: productData.galleryImages,
     };
-    console.log("formData", formData);
     console.log("dataObj", dataObj);
 
-    // apiPost(
-    //   `${ApiEndpoints.products.base}${ApiEndpoints.products.create}`,
-    //   formData,
-    //   (res) => {
-    //     console.log("res", res);
-    //     if (res.success) {
-    //       toast.success(res.message);
-    //       setIsProductEdit(false);
-    //       if (res?.data?.message) {
-    //         setTimeout(() => {
-    //           toast.error(res?.data?.message);
-    //         }, 1500);
-    //       }
-    //     }
-    //   },
-    //   (err) => {
-    //     console.log("err", err);
-    //   },
-    //   { "Content-Type": "multipart/form-data" }
-    // );
+    apiPut(
+      `${ApiEndpoints.products.base}${ApiEndpoints.products.update}${editProductData?.data?.productId}`,
+      dataObj,
+      (res) => {
+        console.log("res", res);
+        if (res.success) {
+          toast.success(res.message);
+          setIsProductEdit(false);
+          if (res?.data?.message) {
+            setTimeout(() => {
+              toast.error(res?.data?.message);
+            }, 1500);
+          }
+        }
+      },
+      (err) => {
+        console.log("err", err);
+      }
+      // { "Content-Type": "multipart/form-data" }
+    );
   }
+
+  // select downdown functions
 
   const handlePaymentTypeSelectChange = (value) => {
     const selectedItem = paymentTypes.find((item) => item.value === value);
@@ -261,57 +259,226 @@ const EditProductForm = ({ setIsProductEdit }) => {
     }
   };
 
-  const handleGalleryFileUpload = (e) => {
-    const files = Array.from(e.target.files);
+  // end region select downdown functions
 
-    setProductData({
-      ...productData,
-      galleryImages: files,
+  // image files input region
+  const handleGalleryFileUpload = (e) => {
+    const formData = new FormData();
+
+    // formData.append("image", e.target.files);
+    const files = Array.from(e.target.files);
+    console.log("e.target.files", e.target.files);
+    files.forEach((val, ind) => {
+      formData.append(`image`, val);
     });
+    if (files?.length > 0) {
+      apiPost(
+        `${ApiEndpoints.uploadImage.base}${ApiEndpoints.uploadImage.upload}`,
+        formData,
+        (res) => {
+          console.log("res", res);
+          if (res?.success) {
+            toast.success(res?.message);
+            const formattedGalleryImages = res?.data.map((image) => ({
+              path: image.url,
+            }));
+            setProductData({
+              ...productData,
+              galleryImages: [
+                ...productData.galleryImages,
+                ...formattedGalleryImages,
+              ],
+            });
+          }
+        },
+        (err) => {
+          console.log("err", err);
+        },
+        { "Content-Type": "multipart/form-data" }
+      );
+    }
   };
 
   const handleFileInput = (e) => {
-    setProductData({
-      ...productData,
-      [e.target.name]: e.target.files[0],
+    const formData = new FormData();
+
+    // formData.append("image", e.target.files);
+    const files = Array.from(e.target.files);
+    files.forEach((val, ind) => {
+      formData.append(`image`, val);
     });
+    if (files?.length > 0) {
+      apiPost(
+        `${ApiEndpoints.uploadImage.base}${ApiEndpoints.uploadImage.upload}`,
+        formData,
+        (res) => {
+          console.log("res", res);
+          if (res?.success) {
+            toast.success(res?.message);
+            setProductData({
+              ...productData,
+              [e.target.name]: res?.data[0]?.url,
+            });
+          }
+        },
+        (err) => {
+          console.log("err", err);
+        },
+        { "Content-Type": "multipart/form-data" }
+      );
+    }
   };
 
   const handleGalleryImageRemove = (i) => {
-    console.log("remove", i);
+    const filteredGalleryImages = productData.galleryImages.filter(
+      (_, index) => index !== i
+    );
+    setProductData({
+      ...productData,
+      galleryImages: filteredGalleryImages,
+    });
   };
+
+  // end region
+
+  // product options add , remove, on save btn click
+  const handleAddProductOptions = () => {
+    const arr = [...productOptions];
+    arr.push({ title: "", price: "", currency: "USD" });
+    setProductOptions(arr);
+  };
+
+  const handleRemoveProductOptions = (ind) => {
+    const filteredOptions = productOptions.filter((_, index) => index !== ind);
+    setProductOptions(filteredOptions);
+  };
+
+  const handleProductOptionChange = (e, ind) => {
+    console.log("ind", ind);
+    const { name, value } = e.target;
+    const updatedOptions = productOptions.map((item, index) => {
+      if (index === ind) {
+        return {
+          ...item,
+          [name]: value,
+        };
+      }
+      return item;
+    });
+    setProductOptions(updatedOptions);
+  };
+
+  const onSaveProductOptions = () => {
+    setModalOpen(false);
+  };
+  console.log("productOptions", productOptions);
+
+  //end region
 
   useEffect(() => {
     dispatch(getAllCategories());
     dispatch(getAllSubCategories());
   }, []);
 
+  useEffect(() => {
+    setIsLoading(true);
+    apiGet(
+      `${ApiEndpoints.products.base}${ApiEndpoints.products.getById}${editProductData?.data?.productId}`,
+      (res) => {
+        console.log("res", res);
+        setProductData({
+          productName: res?.data?.productName,
+          locationAddress: res?.data?.locationAddress,
+          locationMapLink: res?.data?.locationMapLink,
+          startDate: new Date(res?.data?.startDate),
+          endDate: new Date(res?.data?.endDate),
+          startTime: res?.data?.startTime,
+          endTime: res?.data?.endTime,
+          activities: res?.data?.activities,
+          seats: res?.data?.seats,
+          minAge: res?.data?.minAge,
+          maxAge: res?.data?.maxAge,
+          ageException: res?.data?.ageException,
+          description: res?.data?.description,
+          price: res?.data?.price,
+          categoryName: res?.data?.categoryName,
+          categoryId: res?.data?.categoryId,
+          subCategoryName: res?.data?.subCategoryName,
+          subCategoryId: res?.data?.subCategoryId,
+          paymentTypeValue: res?.data?.paymentType,
+          paymentTypeName: "",
+          paymentIntervalValue: res?.data?.paymentInterval,
+          paymentIntervalName: "",
+          intervalCount: res?.data?.intervalCount,
+          productImage: res?.data?.image,
+          hoverImage: res?.data?.hoverImage,
+          galleryImages: res?.data?.galleryImages,
+        });
+        setDate({
+          from: new Date(res?.data?.startDate),
+          to: new Date(res?.data?.endDate),
+        });
+        setStartTime(res?.data?.startTime);
+        setEndTime(res?.data?.endTime);
+        setProductOptions(res?.data?.productOptions);
+        setIsLoading(false);
+      },
+      (err) => {
+        console.log("err", err);
+      }
+    );
+  }, []);
+
+  // form data setup
+  useEffect(() => {
+    if (productData) {
+      form.reset({
+        productName: productData.productName || "",
+        locationAddress: productData.locationAddress || "",
+        locationMapLink: productData.locationMapLink || "",
+        activities: productData.activities || "",
+        seats: productData.seats || "",
+        minAge: productData.minAge || "",
+        maxAge: productData.maxAge || "",
+        ageException: productData.ageException || "",
+        description: productData.description || "",
+        price: productData.price || "",
+        intervalCount: productData.intervalCount || "",
+      });
+    }
+  }, [productData, form.reset]);
+
   // filteration for dropdown of payment types, sub category
   useEffect(() => {
     if (subCategoryDataReducer?.res) {
-      let filteredPaymentTypeName = paymentTypes.filter(
-        (item) => item.value == editProductData?.data?.paymentType
-      );
-      let filteredSubCategoryName = [];
-      if (editProductData?.data?.subCategoryName !== null) {
-        filteredSubCategoryName = subCategoryDataReducer?.res?.data.filter(
-          (item) => item.name == editProductData?.data?.subCategoryName
+      if (!isLoading) {
+        let filteredPaymentTypeName = paymentTypes.filter(
+          (item) => item.value == productData?.paymentTypeValue
         );
+
+        let filteredSubCategoryName = [];
+
+        filteredSubCategoryName = subCategoryDataReducer?.res?.data.filter(
+          (item) => item.name == productData?.subCategoryName
+        );
+
+        console.log("filteredSubCategoryName", filteredSubCategoryName);
+        setProductData({
+          ...productData,
+          paymentTypeName: filteredPaymentTypeName[0]?.name,
+          subCategoryName:
+            productData?.subCategoryName !== null
+              ? filteredSubCategoryName[0]?.name
+              : null,
+        });
       }
-      console.log("filteredSubCategoryName", filteredSubCategoryName);
-      setProductData({
-        ...productData,
-        paymentTypeName: filteredPaymentTypeName[0]?.name,
-        subCategoryName:
-          editProductData?.data?.subCategoryName !== null
-            ? filteredSubCategoryName[0]?.name
-            : null,
-      });
     }
-  }, [subCategoryDataReducer?.res]);
+  }, [subCategoryDataReducer?.res, isLoading]);
 
   console.log("subCategoryDataReducer", subCategoryDataReducer);
   console.log("productData", productData);
+  console.log("startTime", startTime);
+  console.log("endTime", endTime);
 
   return (
     <>
@@ -521,7 +688,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
               name="paymentType"
               placeholder={"Payment Type"}
               onValueChange={handlePaymentTypeSelectChange}
-              value={productData?.paymentType}
+              value={productData?.paymentTypeValue}
             >
               {paymentTypes.map((item, i) => {
                 return (
@@ -568,16 +735,85 @@ const EditProductForm = ({ setIsProductEdit }) => {
             ) : (
               <></>
             )}
+
+            <UITypography variant="h6" text="Add Product Options" />
+            {productOptions.length > 0 &&
+              productOptions[0].title != "" &&
+              productOptions.map((item, ind) => {
+                return (
+                  <div className="border-1 border-gray-400 rounded-full p-4">
+                    {item.title} | {item.price}
+                  </div>
+                );
+              })}
+            <UIModal
+              open={modalOpen}
+              onOpenChange={handleModalOpen}
+              modalBtnText="Add"
+              btnClassName="bg-white text-black border-2 border-grey px-7 py-2 rounded-2xl hover:cursor-pointer"
+              modalHeaderTitle="Add Product for Child"
+            >
+              <div className="flex flex-col gap-4 h-[60vh] overflow-y-scroll">
+                <div className="flex justify-end">
+                  <UIButton
+                    type="contained"
+                    icon={true}
+                    BtnIcon={Plus}
+                    className="border-1 border-grey rounded-full p-0"
+                    btnOnclick={handleAddProductOptions}
+                  />
+                </div>
+
+                {productOptions.map((item, ind) => {
+                  return (
+                    <div className="flex" key={ind}>
+                      <div className="w-[90%]">
+                        <UIInputField
+                          isLable={true}
+                          lableName="Title"
+                          name="title"
+                          value={item.title}
+                          onChange={(e) => handleProductOptionChange(e, ind)}
+                        />
+                        <UIInputField
+                          isLable={true}
+                          lableName="Price"
+                          name="price"
+                          value={item.price}
+                          onChange={(e) => handleProductOptionChange(e, ind)}
+                        />
+                      </div>
+                      {ind !== 0 && (
+                        <div className="w-[10%]">
+                          <UIButton
+                            type="contained"
+                            icon={true}
+                            BtnIcon={Minus}
+                            btnOnclick={() => handleRemoveProductOptions(ind)}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+                <UIButton
+                  type="contained"
+                  icon={false}
+                  title="Save"
+                  btnOnclick={onSaveProductOptions}
+                />
+              </div>
+            </UIModal>
             <UIFileInput
               labelName="ProductImage"
               onChange={handleFileInput}
               name="productImage"
             />
 
-            {editProductData.data.image && (
+            {productData.productImage && (
               <Image
-                src={`${ImageBaseUrl}${editProductData.data.image}`}
-                alt={editProductData.data.image}
+                src={`${productData.productImage}`}
+                alt={productData.productImage}
                 height={180}
                 width={140}
               />
@@ -588,10 +824,10 @@ const EditProductForm = ({ setIsProductEdit }) => {
               onChange={handleFileInput}
               name="hoverImage"
             />
-            {editProductData.data.hoverImage && (
+            {productData.hoverImage && (
               <Image
-                src={`${ImageBaseUrl}${editProductData.data.hoverImage}`}
-                alt={editProductData.data.image}
+                src={`${productData.hoverImage}`}
+                alt={productData.hoverImage}
                 height={180}
                 width={140}
               />
@@ -607,17 +843,20 @@ const EditProductForm = ({ setIsProductEdit }) => {
                   return (
                     <div className="relative">
                       <div className="absolute right-1 top-1 hover:cursor-pointer">
-                        <UIButton
+                        {/* <UIButton
                           type="contained"
                           icon={true}
                           BtnIcon={X}
                           className="!bg-white !p-1 rounded"
                           btnOnclick={() => handleGalleryImageRemove(i)}
-                        />
+                        /> */}
+                        <div onClick={() => handleGalleryImageRemove(i)}>
+                          <X />
+                        </div>
                       </div>
                       <Image
-                        src={`${ImageBaseUrl}${item.imageUrl}`}
-                        alt={item.imageUrl}
+                        src={item.path}
+                        alt={item.path}
                         key={i}
                         height={240}
                         width={240}

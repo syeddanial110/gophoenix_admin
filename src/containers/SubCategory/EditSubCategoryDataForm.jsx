@@ -7,6 +7,7 @@ import { SelectItem } from "@/components/ui/select";
 import UIButton from "@/components/UIButton/UIButton";
 import UITypography from "@/components/UITypography/UITypography";
 import { getAllCategories } from "@/store/actions/category";
+import { getAllSubCategories } from "@/store/actions/subCategory";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
 import { slugify } from "@/utils/slugify";
 import Image from "next/image";
@@ -59,7 +60,7 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
   const handleEditCategory = () => {
     const formData = new FormData();
 
-    formData.append("name", subCategoryData.categoryName);
+    formData.append("name", subCategoryData.subCategoryName);
     formData.append("image", subCategoryData.subCategoryImage);
     formData.append("categoryId", subCategoryData.categoryId);
 
@@ -77,7 +78,7 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
         console.log("res", res);
         setModalOpen(false);
         toast.success(res?.message);
-        dispatch(getAllCategories());
+        dispatch(getAllSubCategories());
       },
       (err) => {
         console.log("err", err);
