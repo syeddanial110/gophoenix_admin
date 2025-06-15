@@ -5,6 +5,7 @@ const nextConfig = {
     domains: [
       "sports-new-production.up.railway.app",
       "res.cloudinary.com",
+      "wcx78p18-5000.inc1.devtunnels.ms",
       // add other allowed domains here
     ],
   },
