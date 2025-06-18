@@ -184,6 +184,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
       image: productData.productImage,
       hoverImage: productData.hoverImage,
       galleryImages: productData.galleryImages,
+      productOptions: productOptions,
     };
     console.log("dataObj", dataObj);
 

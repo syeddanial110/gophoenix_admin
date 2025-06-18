@@ -2,8 +2,8 @@ import axios from "axios";
 import { getToken } from "./Auth";
 import { pathLocations } from "@/utils/navigation";
 
-// const BASEURL = "https://sports-new-production.up.railway.app/api";
-const BASEURL = "https://wcx78p18-5000.inc1.devtunnels.ms/api";
+const BASEURL = "https://sports-new-production.up.railway.app/api";
+// const BASEURL = "https://wcx78p18-5000.inc1.devtunnels.ms/api";
 const API = axios.create({ baseURL: BASEURL });
 
 API.interceptors.request.use(
