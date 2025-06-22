@@ -62,14 +62,14 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
         return <UITypography text={row?.slug} />;
       },
     },
-    {
-      name: <UITypography text={"Description"} />,
-      selector: (row) => row?.description,
-      sortable: true,
-      cell: (row) => {
-        return <UITypography text={row?.description} />;
-      },
-    },
+    // {
+    //   name: <UITypography text={"Description"} />,
+    //   selector: (row) => row?.description,
+    //   sortable: true,
+    //   cell: (row) => {
+    //     return <UITypography text={row?.description} />;
+    //   },
+    // },
     {
       name: <UITypography text={"Category Name"} />,
       selector: (row) => row?.categoryName,

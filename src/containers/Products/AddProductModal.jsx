@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import UIModal from "@/components/UIModal/UIModal";
 import { Minus, Plus } from "lucide-react";
 import UIInputField from "@/components/InputFields/UIInputField";
+import Editor from "../ContentEditor/Editor";
 
 const AddProductModal = ({ setIsProductAdd }) => {
   const paymentTypes = [
@@ -49,7 +50,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
       minAge: "",
       maxAge: "",
       ageException: "",
-      description: "",
+
       price: "",
       intervalCount: "",
     },
@@ -82,6 +83,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
       currency: "USD",
     },
   ]);
+  const [editorValue, setEditorValue] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleModalOpen = () => {
@@ -148,7 +150,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
       minAge: data.minAge,
       maxAge: data.maxAge,
       ageException: data.ageException,
-      description: data.description,
+      description: editorValue,
       price: data.price,
       currency: "USD",
       paymentType: productData.paymentType,
@@ -278,7 +280,6 @@ const AddProductModal = ({ setIsProductAdd }) => {
 
     // formData.append("image", e.target.files);
     const files = Array.from(e.target.files);
-    console.log("e.target.files", e.target.files);
     files.forEach((val, ind) => {
       formData.append(`image`, val);
     });
@@ -348,6 +349,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
 
   console.log("subCategoryDataReducer", subCategoryDataReducer);
   console.log("productData", productData);
+  console.log('editorValue', editorValue)
 
   return (
     <>
@@ -484,7 +486,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
@@ -493,7 +495,13 @@ const AddProductModal = ({ setIsProductAdd }) => {
                   <FormMessage />
                 </FormItem>
               )}
+            /> */}
+            <UITypography
+              variant="p"
+              className="!font-[600]"
+              text="Description"
             />
+            <Editor editorValue={editorValue} setEditroValue={setEditorValue} />
             <FormField
               control={form.control}
               name="price"

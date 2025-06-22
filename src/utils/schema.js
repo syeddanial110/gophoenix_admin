@@ -18,7 +18,6 @@ export const addProductSchema = yup.object({
   minAge: yup.string().required("Min Age is resquired"),
   maxAge: yup.string().required("Max Age is resquired"),
   ageException: yup.string(),
-  description: yup.string(),
   price: yup.string().required("Price is required"),
   intervalCount: yup.string(),
 });
