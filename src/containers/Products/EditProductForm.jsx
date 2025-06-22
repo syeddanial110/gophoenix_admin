@@ -23,6 +23,7 @@ import Image from "next/image";
 import { Cross, Minus, Plus, X } from "lucide-react";
 import UIModal from "@/components/UIModal/UIModal";
 import UIInputField from "@/components/InputFields/UIInputField";
+import Editor from "../ContentEditor/Editor";
 
 const EditProductForm = ({ setIsProductEdit }) => {
   const paymentTypes = [
@@ -86,6 +87,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
     from: new Date(),
     to: new Date(),
   });
+  const [editorValue, setEditorValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -175,7 +177,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
       minAge: data.minAge,
       maxAge: data.maxAge,
       ageException: data.ageException,
-      description: data.description,
+      description: editorValue,
       price: data.price,
       currency: "USD",
       paymentType: productData.paymentIntervalValue,
@@ -400,7 +402,6 @@ const EditProductForm = ({ setIsProductEdit }) => {
           minAge: res?.data?.minAge,
           maxAge: res?.data?.maxAge,
           ageException: res?.data?.ageException,
-          description: res?.data?.description,
           price: res?.data?.price,
           categoryName: res?.data?.categoryName,
           categoryId: res?.data?.categoryId,
@@ -422,6 +423,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
         setStartTime(res?.data?.startTime);
         setEndTime(res?.data?.endTime);
         setProductOptions(res?.data?.productOptions);
+        setEditorValue(res?.data?.description)
         setIsLoading(false);
       },
       (err) => {
@@ -616,7 +618,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
@@ -625,7 +627,14 @@ const EditProductForm = ({ setIsProductEdit }) => {
                   <FormMessage />
                 </FormItem>
               )}
+            /> */}
+            <UITypography
+              variant="p"
+              className="!font-[600]"
+              text="Description"
             />
+            <Editor editorValue={editorValue} setEditroValue={setEditorValue} />
+
             <FormField
               control={form.control}
               name="price"
