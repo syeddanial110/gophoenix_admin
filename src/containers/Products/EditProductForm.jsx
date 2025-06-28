@@ -180,15 +180,16 @@ const EditProductForm = ({ setIsProductEdit }) => {
       description: editorValue,
       price: data.price,
       currency: "USD",
-      paymentType: productData.paymentIntervalValue,
+      paymentType: productData.paymentTypeValue,
       paymentInterval: productData.paymentIntervalValue,
-      intervalCount: data.intervalCount,
+      intervalCount: parseInt(data.intervalCount),
       image: productData.productImage,
       hoverImage: productData.hoverImage,
       galleryImages: productData.galleryImages,
       productOptions: productOptions,
     };
-    console.log("dataObj", dataObj);
+    // console.log("dataObj", dataObj);
+    // console.log("data", data);
 
     apiPut(
       `${ApiEndpoints.products.base}${ApiEndpoints.products.update}${editProductData?.data?.productId}`,
@@ -220,7 +221,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
       setProductData({
         ...productData,
         paymentTypeName: selectedItem.name,
-        paymentType: selectedItem.value,
+        paymentTypeValue: selectedItem.value,
       });
     }
   };
@@ -231,7 +232,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
       setProductData({
         ...productData,
         paymentIntervalName: selectedItem.name,
-        paymentInterval: selectedItem.value,
+        paymentIntervalValue: selectedItem.value,
       });
     }
   };
@@ -423,7 +424,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
         setStartTime(res?.data?.startTime);
         setEndTime(res?.data?.endTime);
         setProductOptions(res?.data?.productOptions);
-        setEditorValue(res?.data?.description)
+        setEditorValue(res?.data?.description);
         setIsLoading(false);
       },
       (err) => {
@@ -699,6 +700,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
               placeholder={"Payment Type"}
               onValueChange={handlePaymentTypeSelectChange}
               value={productData?.paymentTypeValue}
+              defaultValue={productData?.paymentTypeValue}
             >
               {paymentTypes.map((item, i) => {
                 return (
@@ -708,8 +710,8 @@ const EditProductForm = ({ setIsProductEdit }) => {
                 );
               })}
             </UISelect>
-            {productData.paymentType == "recurring" ||
-            productData.paymentType == "both" ? (
+            {productData.paymentTypeValue == "recurring" ||
+            productData.paymentTypeValue == "both" ? (
               <>
                 <UISelect
                   isLabel={true}

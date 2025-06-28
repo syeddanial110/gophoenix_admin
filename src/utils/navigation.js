@@ -52,15 +52,15 @@ export const Navigation_Menu = [
     subMenu: [
       {
         name: "Blogs",
-        link: "/dashboard/blogs",
+        link: "/dashboard/content/blogs",
       },
       {
         name: "Files",
-        link: "/dashboard/files",
+        link: "/dashboard/content/files",
       },
       {
         name: "Menus",
-        link: "/dashboard/menus",
+        link: "/dashboard/content/menus",
       },
     ],
   },

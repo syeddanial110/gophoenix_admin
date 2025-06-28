@@ -49,4 +49,13 @@ export const ApiEndpoints = {
     base: "/image",
     upload: "/uploadImage",
   },
+  content: {
+    base: "/content",
+    getAll: "/get",
+    getById: "/getById",
+    getBySlug: "/getBySlug",
+    create: "/create",
+    update: "/update",
+    delete: "/delete",
+  },
 };
