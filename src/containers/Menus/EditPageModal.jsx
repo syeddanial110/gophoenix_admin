@@ -31,6 +31,7 @@ const EditPageModal = ({ setModalOpen }) => {
   const handleEditPage = () => {
     const dataObj = {
       name: menuData.pageName,
+      content: menuDataReducer?.data?.data?.content,
     };
     console.log("dataObj", dataObj);
     apiPut(
@@ -53,9 +54,9 @@ const EditPageModal = ({ setModalOpen }) => {
   useEffect(() => {
     if (menuDataReducer?.data?.data) {
       setMenuData({
-        id: menuDataReducer?.data?.id,
-        pageName: menuDataReducer?.data?.name,
-        slug: menuDataReducer?.data?.slug,
+        id: menuDataReducer?.data?.data?.id,
+        pageName: menuDataReducer?.data?.data?.name,
+        slug: menuDataReducer?.data?.data?.slug,
       });
     }
   }, []);

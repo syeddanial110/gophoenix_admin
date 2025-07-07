@@ -121,8 +121,8 @@ const PagesTable = () => {
     <UITable
       columns={columns}
       data={
-        menuDataReducer?.success && menuDataReducer?.data?.data?.length > 0
-          ? menuDataReducer?.data?.data
+        menuDataReducer?.success && menuDataReducer?.data?.length > 0
+          ? menuDataReducer?.data
           : []
       }
       pagination={true}

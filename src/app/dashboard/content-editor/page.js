@@ -22,7 +22,7 @@ const ContentEditor = () => {
 
   const handleSelectChange = (value) => {
     console.log("value", value);
-    const menu = menuDataReducer?.data?.data?.find(
+    const menu = menuDataReducer?.data?.find(
       (item) => String(item.id) === String(value)
     );
     setSelectedPage(menu);
@@ -86,9 +86,9 @@ const ContentEditor = () => {
               value={selectedPage?.id || ""}
               onValueChange={handleSelectChange}
             >
-              {menuDataReducer?.data?.data &&
-                menuDataReducer?.data?.data.length > 0 &&
-                menuDataReducer?.data?.data?.map((item, i) => (
+              {menuDataReducer?.data &&
+                menuDataReducer?.data.length > 0 &&
+                menuDataReducer?.data?.map((item, i) => (
                   <SelectItem key={i} value={item?.id}>
                     {item?.name}
                   </SelectItem>
