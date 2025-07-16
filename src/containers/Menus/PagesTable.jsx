@@ -1,4 +1,4 @@
-import { apiDelete, apiGet, ImageBaseUrl } from "@/apis/ApiRequest";
+import { apiDelete, apiGet, apiPut, ImageBaseUrl } from "@/apis/ApiRequest";
 import { Spinner } from "@/components/ui/spinner";
 import UIModal from "@/components/UIModal/UIModal";
 import UITable from "@/components/UITable/UITable";
@@ -16,10 +16,12 @@ import { toast } from "sonner";
 import { editPageData, getAllMenus } from "@/store/actions/menus";
 import EditCategoryDataForm from "../Category/EditCategoryDataForm";
 import EditPageModal from "./EditPageModal";
+import UISwitch from "@/components/UISwitch/UISwitch";
 
 const PagesTable = () => {
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState(false);
+  const [checked, setChecked] = useState(false);
   const menuDataReducer = useSelector(
     (state) => state?.GetAllMenusReducer?.res
   );
@@ -27,6 +29,22 @@ const PagesTable = () => {
 
   const handleModalOpen = () => {
     setModalOpen(!modalOpen);
+  };
+
+  const handleOnChangeChecked = (value, id) => {
+    console.log("value", value);
+    apiPut(
+      `${ApiEndpoints.content.base}${ApiEndpoints.content.updateToggle}/${id}`,
+      {},
+      (res) => {
+        dispatch(getAllMenus());
+        toast.success("Status Update Successfully");
+        console.log("res", res);
+      },
+      (err) => {
+        console.log("err", err);
+      }
+    );
   };
 
   const handleCategoryDelete = (row) => {
@@ -58,6 +76,19 @@ const PagesTable = () => {
       sortable: true,
       cell: (row) => {
         return <UITypography text={row?.slug} />;
+      },
+    },
+    {
+      name: <UITypography text={"Active/InActive"} />,
+      selector: (row) => row?.isActive,
+      sortable: true,
+      cell: (row) => {
+        return (
+          <UISwitch
+            checked={row?.isActive == 0 ? false : true}
+            onCheckedChange={(value) => handleOnChangeChecked(value, row?.id)}
+          />
+        );
       },
     },
     {
@@ -103,7 +134,7 @@ const PagesTable = () => {
   ];
 
   const handleEditClick = (row) => {
-    console.log('row', row)
+    console.log("row", row);
     dispatch(editPageData(row));
   };
 
@@ -116,7 +147,7 @@ const PagesTable = () => {
   };
 
   console.log("menuDataReducer///////////", menuDataReducer);
-
+  console.log("checked", checked);
   return (
     <UITable
       columns={columns}

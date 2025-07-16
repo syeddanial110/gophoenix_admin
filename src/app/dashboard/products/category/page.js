@@ -21,6 +21,7 @@ const Category = () => {
           onOpenChange={handleModalOpen}
           modalBtnText="Add Category"
           btnClassName="bg-main text-white px-7 py-2 rounded-2xl hover:cursor-pointer"
+          modalHeaderTitle='Add Category'
         >
           <AddCategoryModal setModalOpen={setModalOpen} />
         </UIModal>

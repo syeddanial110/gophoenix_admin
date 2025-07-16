@@ -29,14 +29,13 @@ const AddSubCategoryForm = ({ setModalOpen }) => {
   const handleChange = (e) => {
     const { value, name } = e.target;
 
-    if (name === "subCategoryName") {
-      // Only generate slug for category name changes
-      const slug = slugify(value);
-      setSubCategoryData({ ...subCategoryData, [name]: value, slug: slug });
-    } else {
-      // For other fields, including categoryId from select
-      setSubCategoryData({ ...subCategoryData, [name]: value });
-    }
+    setSubCategoryData({ ...subCategoryData, [name]: value });
+    // if (name === "subCategoryName") {
+    //   // Only generate slug for category name changes
+    // } else {
+    //   // For other fields, including categoryId from select
+    //   setSubCategoryData({ ...subCategoryData, [name]: value });
+    // }
   };
 
   const handleFileUpload = (e) => {
@@ -51,6 +50,7 @@ const AddSubCategoryForm = ({ setModalOpen }) => {
     const formData = new FormData();
 
     formData.append("name", subCategoryData.subCategoryName);
+    formData.append("slug", subCategoryData.slug);
     formData.append("image", subCategoryData.subCategoryImage);
     formData.append("categoryId", subCategoryData.categoryId.id);
     // const dataObj = {
@@ -98,13 +98,12 @@ const AddSubCategoryForm = ({ setModalOpen }) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
-        <UITypography variant="h2" text="Add Category" />
+      <div className="flex flex-col gap-4 mt-3">
         <div className="flex flex-col gap-3">
           <UIInputField
             name="subCategoryName"
             type="text"
-            placeholder="Enter Category Name"
+            placeholder="Enter Sub Category Name"
             isLable={true}
             lableName="Sub Category Name"
             onChange={handleChange}
@@ -116,13 +115,15 @@ const AddSubCategoryForm = ({ setModalOpen }) => {
             placeholder="The url will be"
             isLable={true}
             lableName="URL"
-            disabled
+            onChange={handleChange}
           />
           <UISelect
             name="categoryId" // Add this
             onChange={handleChange}
             placeholder="Select Category"
             onValueChange={handleSelectChange}
+            isLabel={true}
+            labelName="Select Category"
           >
             {getAllCategoriesData?.res &&
               getAllCategoriesData?.res?.data.length > 0 &&
@@ -134,7 +135,14 @@ const AddSubCategoryForm = ({ setModalOpen }) => {
                 );
               })}
           </UISelect>
-          <UIFileInput onChange={handleFileUpload} />
+          <div>
+            <UITypography
+              variant="h6"
+              text="Upload Image"
+              className="!text-[14px]"
+            />
+            <UIFileInput onChange={handleFileUpload} />
+          </div>
           <UIButton
             type="contained"
             icon={false}

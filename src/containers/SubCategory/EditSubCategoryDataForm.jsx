@@ -30,6 +30,7 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
     subCategoryImage: subCategoryDataReducer.data.image,
     categoryId: subCategoryDataReducer.data.categoryId,
     categoryName: "",
+    slug: "",
   });
 
   const handleInputChange = (e) => {
@@ -62,6 +63,7 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
 
     formData.append("name", subCategoryData.subCategoryName);
     formData.append("image", subCategoryData.subCategoryImage);
+    formData.append("slug", subCategoryData.slug);
     formData.append("categoryId", subCategoryData.categoryId);
 
     // const dataObj = {
@@ -122,6 +124,15 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
           value={subCategoryData.subCategoryName}
           onChange={handleInputChange}
         />
+        <UIInputField
+          name="slug"
+          type="text"
+          value={subCategoryData.slug}
+          placeholder="The url will be"
+          isLable={true}
+          lableName="URL"
+          onChange={handleInputChange}
+        />
         <UISelect
           isLabel={true}
           labelName="Select Category Type"
@@ -140,7 +151,14 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
               );
             })}
         </UISelect>
-        <UIFileInput onChange={handleFileInput} />
+        <div>
+          <UITypography
+            variant="h6"
+            text="Upload Image"
+            className="!text-[14px]"
+          />
+          <UIFileInput onChange={handleFileInput} />
+        </div>
         {/* {categoryData.categoryImage &&
           (categoryData.categoryImage.startsWith("http") ||
             categoryData.categoryImage.startsWith("/")) && (

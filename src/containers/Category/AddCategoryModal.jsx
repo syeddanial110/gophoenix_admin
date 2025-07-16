@@ -24,8 +24,7 @@ const AddCategoryModal = ({ setModalOpen }) => {
   const handleChange = (e) => {
     const { value, name } = e.target;
     console.log("e.target", e.target.name);
-    const slug = slugify(value);
-    setCategoryData({ ...categoryData, [name]: value, slug: slug });
+    setCategoryData({ ...categoryData, [name]: value });
   };
 
   const handleFileUpload = (e) => {
@@ -37,6 +36,7 @@ const AddCategoryModal = ({ setModalOpen }) => {
     const formData = new FormData();
 
     formData.append("name", categoryData.categoryName);
+    formData.append("slug", categoryData.slug);
     formData.append("image", categoryData.categoryImage);
     // const dataObj = {
     //   name: categoryData.categoryName,
@@ -65,8 +65,7 @@ const AddCategoryModal = ({ setModalOpen }) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
-        <UITypography variant="h2" text="Add Sub Category" />
+      <div className="flex flex-col gap-4 mt-3">
         <div className="flex flex-col gap-3">
           <UIInputField
             name="categoryName"
@@ -83,9 +82,19 @@ const AddCategoryModal = ({ setModalOpen }) => {
             placeholder="The url will be"
             isLable={true}
             lableName="URL"
-            disabled
+            onChange={handleChange}
+
+            // disabled
           />
-          <UIFileInput onChange={handleFileUpload} />
+          <div>
+            <UITypography
+              variant="h6"
+              text="Upload Image"
+              className="!text-[14px]"
+            />
+
+            <UIFileInput onChange={handleFileUpload} />
+          </div>
           <UIButton
             type="contained"
             icon={false}

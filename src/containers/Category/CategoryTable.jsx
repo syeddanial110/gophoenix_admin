@@ -15,6 +15,7 @@ import UITooltip from "@/components/UITooltip/UITooltip";
 import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import UIButton from "@/components/UIButton/UIButton";
 import { toast } from "sonner";
+import UIPopover from "@/components/UIPopover/UIPopover";
 
 const CategoryTable = () => {
   const dispatch = useDispatch();
@@ -69,7 +70,7 @@ const CategoryTable = () => {
           <UITooltip>
             <TooltipTrigger>
               <Image
-                src={`${row?.image}`}
+                src={`${row?.image != null ? row?.image : ""}`}
                 alt={row?.image}
                 width={40}
                 height={40}
@@ -108,7 +109,12 @@ const CategoryTable = () => {
           >
             <EditCategoryDataForm setModalOpen={setModalOpen} />
           </UIModal>
-          <UITooltip>
+          <UIPopover
+            title="Are you sure you want to delete this category?"
+            btnTrigger={<Trash />}
+            onBtnClick={() => handleCategoryDelete(row)}
+          ></UIPopover>
+          {/* <UITooltip>
             <TooltipTrigger open={tooltipOpen} onOpenChange={setTooltipOpen}>
               <Trash />
             </TooltipTrigger>
@@ -125,7 +131,7 @@ const CategoryTable = () => {
                 </div>
               </div>
             </TooltipContent>
-          </UITooltip>
+          </UITooltip> */}
         </>
       ),
     },

@@ -90,6 +90,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
   const [editorValue, setEditorValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [productName, setProductName] = useState("");
 
   const handleModalOpen = () => {
     setModalOpen(!modalOpen);
@@ -98,7 +99,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
   const form = useForm({
     resolver: yupResolver(addProductSchema),
     defaultValues: {
-      productName: productData?.productName ? productData?.productName : "",
+      productName: productName ? productName : "",
       locationAddress: productData?.locationAddress
         ? productData?.locationAddress
         : "",
@@ -163,7 +164,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
     // });
 
     const dataObj = {
-      productName: data.productName,
+      productName: productName,
       locationAddress: data.locationAddress,
       locationMapLink: data.locationMapLink,
       startTime: startTime,
@@ -390,8 +391,8 @@ const EditProductForm = ({ setIsProductEdit }) => {
       `${ApiEndpoints.products.base}${ApiEndpoints.products.getById}${editProductData?.data?.productId}`,
       (res) => {
         console.log("res", res);
+        setProductName(res?.data?.productName);
         setProductData({
-          productName: res?.data?.productName,
           locationAddress: res?.data?.locationAddress,
           locationMapLink: res?.data?.locationMapLink,
           startDate: new Date(res?.data?.startDate),
@@ -437,7 +438,6 @@ const EditProductForm = ({ setIsProductEdit }) => {
   useEffect(() => {
     if (productData) {
       form.reset({
-        productName: productData.productName || "",
         locationAddress: productData.locationAddress || "",
         locationMapLink: productData.locationMapLink || "",
         activities: productData.activities || "",
@@ -491,20 +491,12 @@ const EditProductForm = ({ setIsProductEdit }) => {
         <UITypography variant="h4" text={"Edit Product"} />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="productName"
-              render={({ field }) => (
-                <FormItem>
-                  <UITextField
-                    field={field}
-                    formLabel="Product Name"
-                    placeholder="Product Name"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
+            <UITypography
+              variant="h6"
+              text="Product Name"
+              className="!text-[14px]"
             />
+            <Editor editorValue={productName} setEditroValue={setProductName} />
             <FormField
               control={form.control}
               name="locationAddress"
@@ -635,22 +627,6 @@ const EditProductForm = ({ setIsProductEdit }) => {
               text="Description"
             />
             <Editor editorValue={editorValue} setEditroValue={setEditorValue} />
-
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <UITextField
-                    field={field}
-                    formLabel="Price"
-                    type="number"
-                    placeholder="eg: 300"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <UISelect
               isLabel={true}

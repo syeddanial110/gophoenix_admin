@@ -51,7 +51,7 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
       selector: (row) => row?.productName,
       sortable: true,
       cell: (row) => {
-        return <UITypography text={row?.productName} />;
+        return <div dangerouslySetInnerHTML={{ __html: row?.productName }} />;
       },
     },
     {
@@ -158,6 +158,7 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
           </button>
 
           <UIPopover
+            title="Are you sure you want to delete this product?"
             btnTrigger={<Trash />}
             onBtnClick={() => handleProductDelete(row)}
           ></UIPopover>

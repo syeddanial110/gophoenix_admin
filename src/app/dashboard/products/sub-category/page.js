@@ -21,6 +21,7 @@ const SubCategory = () => {
           open={modalOpen}
           onOpenChange={handleModalOpen}
           modalBtnText="Add Sub Category"
+          modalHeaderTitle="Add Sub Category"
           btnClassName="bg-main text-white px-7 py-2 rounded-2xl hover:cursor-pointer"
         >
           <AddSubCategoryForm setModalOpen={setModalOpen} />

@@ -27,8 +27,7 @@ const EditCategoryDataForm = ({ setModalOpen }) => {
 
   const handleInputChange = (e) => {
     const { value, name } = e.target;
-    const slug = slugify(value);
-    setCategoryData({ ...categoryData, [name]: value, categorySlug: slug });
+    setCategoryData({ ...categoryData, [name]: value });
   };
 
   const handleFileInput = (e) => {
@@ -42,13 +41,14 @@ const EditCategoryDataForm = ({ setModalOpen }) => {
     const formData = new FormData();
 
     formData.append("name", categoryData.categoryName);
+    formData.append("slug", categoryData.categorySlug);
     formData.append("image", categoryData.categoryImage);
-    const dataObj = {
-      name: categoryData.categoryName,
-      image: categoryData.categoryImage,
-      //   slug: categoryData.categorySlug,
-    };
-    console.log("dataObj", dataObj);
+    // const dataObj = {
+    //   name: categoryData.categoryName,
+    //   image: categoryData.categoryImage,
+    //   url: categoryData.categorySlug,
+    // };
+    // console.log("dataObj", dataObj);
     apiPut(
       `${ApiEndpoints.categories.base}${ApiEndpoints.categories.update}/${categoryData.id}`,
       formData,
@@ -92,10 +92,18 @@ const EditCategoryDataForm = ({ setModalOpen }) => {
         <UIInputField
           isLable={true}
           lableName="URL"
-          disabled
+          name="categorySlug"
+          onChange={handleInputChange}
           value={categoryData.categorySlug}
         />
-        <UIFileInput onChange={handleFileInput} />
+        <div>
+          <UITypography
+            variant="h6"
+            text="Upload Image"
+            className="!text-[14px]"
+          />
+          <UIFileInput onChange={handleFileInput} />
+        </div>
         {/* {categoryData.categoryImage &&
           (categoryData.categoryImage.startsWith("http") ||
             categoryData.categoryImage.startsWith("/")) && (

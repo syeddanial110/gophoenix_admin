@@ -81,20 +81,20 @@ const SubCategoryTable = () => {
       selector: (row) => row?.image,
       sortable: true,
       cell: (row) => {
+        const imageSrc =
+          row?.image &&
+          (row.image.startsWith("http") || row.image.startsWith("/"))
+            ? row.image
+            : "/default-image.png";
         return (
           <UITooltip>
             <TooltipTrigger>
-              <Image
-                src={`${row?.image}`}
-                alt={row?.image}
-                width={40}
-                height={40}
-              />
+              <Image src={imageSrc} alt={imageSrc} width={40} height={40} />
             </TooltipTrigger>
             <TooltipContent>
               <div className="">
                 <Image
-                  src={`${row?.image}`}
+                  src={`${row?.image != null ? row?.image : ""}`}
                   alt={row?.image}
                   width={100}
                   height={100}
@@ -120,7 +120,7 @@ const SubCategoryTable = () => {
             modalBtnText={<PencilLine />}
             btnClassName="hover:cursor-pointer"
             btnTriggerOnClick={() => handleEditClick(row)}
-            modalHeaderTitle="Edit Category"
+            modalHeaderTitle="Edit Sub Category"
           >
             <EditSubCategoryDataForm setModalOpen={setModalOpen} />
           </UIModal>
@@ -154,6 +154,9 @@ const SubCategoryTable = () => {
   const LinearIndeterminate = () => {
     return <Spinner />;
   };
+
+  console.log("subCategoryDataReducer", subCategoryDataReducer);
+
   return (
     <UITable
       columns={columns}

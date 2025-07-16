@@ -50,8 +50,6 @@ const AddProductModal = ({ setIsProductAdd }) => {
       minAge: "",
       maxAge: "",
       ageException: "",
-
-      price: "",
       intervalCount: "",
     },
   });
@@ -62,6 +60,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
     from: new Date(2022, 0, 20),
     to: addDays(new Date(2022, 0, 20), 20),
   });
+  const [productName, setProductName] = useState("");
 
   const [productData, setProductData] = useState({
     paymentType: "",
@@ -136,7 +135,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
     // });
 
     const dataObj = {
-      productName: data.productName,
+      productName: productName,
       locationAddress: data.locationAddress,
       locationMapLink: data.locationMapLink,
       startTime: startTime,
@@ -349,7 +348,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
 
   console.log("subCategoryDataReducer", subCategoryDataReducer);
   console.log("productData", productData);
-  console.log('editorValue', editorValue)
+  console.log("editorValue", editorValue);
 
   return (
     <>
@@ -358,7 +357,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
         <UITypography variant="h4" text={"Add Product"} />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
+            {/* <FormField
               control={form.control}
               name="productName"
               render={({ field }) => (
@@ -371,7 +370,14 @@ const AddProductModal = ({ setIsProductAdd }) => {
                   <FormMessage />
                 </FormItem>
               )}
+            /> */}
+            <UITypography
+              variant="h6"
+              text="Add Product Name"
+              className="!text-[14px]"
             />
+
+            <Editor editorValue={productName} setEditroValue={setProductName} />
             <FormField
               control={form.control}
               name="locationAddress"
@@ -502,7 +508,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
               text="Description"
             />
             <Editor editorValue={editorValue} setEditroValue={setEditorValue} />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="price"
               render={({ field }) => (
@@ -516,7 +522,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             <UISelect
               isLabel={true}

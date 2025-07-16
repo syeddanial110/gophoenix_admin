@@ -7,7 +7,7 @@ import {
 import UITypography from "../UITypography/UITypography";
 import UIButton from "../UIButton/UIButton";
 
-const UIPopover = ({ btnTrigger, onBtnClick }) => {
+const UIPopover = ({ btnTrigger, onBtnClick, title }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -15,7 +15,7 @@ const UIPopover = ({ btnTrigger, onBtnClick }) => {
       <PopoverTrigger>{btnTrigger}</PopoverTrigger>
       <PopoverContent>
         <div className="flex flex-col gap-2">
-          <UITypography text="Are you sure you want to delete this category?" />
+          <UITypography text={title} />
           <div className="flex items-center gap-2">
             <UIButton
               type="contained"

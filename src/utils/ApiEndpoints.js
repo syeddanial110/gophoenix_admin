@@ -57,5 +57,6 @@ export const ApiEndpoints = {
     create: "/create",
     update: "/update",
     delete: "/delete",
+    updateToggle: "/toggle",
   },
 };
