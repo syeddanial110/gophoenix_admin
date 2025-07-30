@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
 import { apiPost, BASEURL } from "@/apis/ApiRequest";
+import styles from "./styles.module.css";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
@@ -52,7 +53,7 @@ const Editor = ({ editorValue, setEditroValue }) => {
           formData,
           (res) => {
             console.log("res", res);
-            
+
             const imageUrl = res?.data[0]?.url; // Adjust according to your API response
             console.log("imageUrl", imageUrl);
             // Insert image into editor
@@ -65,7 +66,6 @@ const Editor = ({ editorValue, setEditroValue }) => {
           },
           { "Content-Type": "multipart/form-data" }
         );
-
       }
     };
   };
@@ -80,13 +80,14 @@ const Editor = ({ editorValue, setEditroValue }) => {
   };
 
   return (
-    <div>
+    <div className={styles.editorWrapper}>
       <ReactQuill
         ref={quillRef}
         theme="snow"
         value={editorValue}
         onChange={setEditroValue}
         modules={modules}
+        className={styles.quillEditor}
       />
     </div>
   );

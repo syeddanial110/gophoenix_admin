@@ -84,7 +84,7 @@ const EditCategoryDataForm = ({ setModalOpen }) => {
       <div className="flex flex-col gap-3 mt-3">
         <UIInputField
           isLable={true}
-          lableName="Category Name"
+          lableName="Collection Name"
           name="categoryName"
           value={categoryData.categoryName}
           onChange={handleInputChange}

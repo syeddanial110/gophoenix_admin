@@ -1,7 +1,7 @@
 export const ApiEndpoints = {
   auth: {
     base: "/auth",
-    login: "/login",
+    login: "/adminLogin",
     register: "/register",
     update: "/update",
   },
@@ -58,5 +58,12 @@ export const ApiEndpoints = {
     update: "/update",
     delete: "/delete",
     updateToggle: "/toggle",
+  },
+  users: {
+    base: "/auth",
+    getAll: "/getUsers",
+    deleteUser: "/deleteUser",
+    disableUser: "/disableUser",
+    updateUserPassword: "/updateUserPassword",
   },
 };

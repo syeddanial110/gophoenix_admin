@@ -53,7 +53,7 @@ const SubCategoryTable = () => {
 
   const columns = [
     {
-      name: <UITypography text="Sub Category Name" />,
+      name: <UITypography text="Class Group Name" />,
       selector: (row) => row.name,
       sortable: true,
       cell: (row) => {
@@ -61,7 +61,7 @@ const SubCategoryTable = () => {
       },
     },
     {
-      name: <UITypography text="Category Name" />,
+      name: <UITypography text="Collection Name" />,
       selector: (row) => row.categoryName,
       sortable: true,
       cell: (row) => {
@@ -69,7 +69,7 @@ const SubCategoryTable = () => {
       },
     },
     {
-      name: <UITypography text="Slug" />,
+      name: <UITypography text="URL" />,
       selector: (row) => row.slug,
       sortable: true,
       cell: (row) => {
@@ -120,7 +120,7 @@ const SubCategoryTable = () => {
             modalBtnText={<PencilLine />}
             btnClassName="hover:cursor-pointer"
             btnTriggerOnClick={() => handleEditClick(row)}
-            modalHeaderTitle="Edit Sub Category"
+            modalHeaderTitle="Edit Class Group"
           >
             <EditSubCategoryDataForm setModalOpen={setModalOpen} />
           </UIModal>

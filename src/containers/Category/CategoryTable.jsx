@@ -105,12 +105,12 @@ const CategoryTable = () => {
             modalBtnText={<PencilLine />}
             btnClassName="hover:cursor-pointer"
             btnTriggerOnClick={() => handleEditClick(row)}
-            modalHeaderTitle="Edit Category"
+            modalHeaderTitle="Edit Collection"
           >
             <EditCategoryDataForm setModalOpen={setModalOpen} />
           </UIModal>
           <UIPopover
-            title="Are you sure you want to delete this category?"
+            title="Are you sure you want to delete this collection?"
             btnTrigger={<Trash />}
             onBtnClick={() => handleCategoryDelete(row)}
           ></UIPopover>

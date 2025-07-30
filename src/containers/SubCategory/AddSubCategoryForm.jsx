@@ -103,9 +103,9 @@ const AddSubCategoryForm = ({ setModalOpen }) => {
           <UIInputField
             name="subCategoryName"
             type="text"
-            placeholder="Enter Sub Category Name"
+            placeholder="Enter Class Group Name"
             isLable={true}
-            lableName="Sub Category Name"
+            lableName="Class Group Name"
             onChange={handleChange}
           />
           <UIInputField
@@ -120,10 +120,10 @@ const AddSubCategoryForm = ({ setModalOpen }) => {
           <UISelect
             name="categoryId" // Add this
             onChange={handleChange}
-            placeholder="Select Category"
+            placeholder="Select Collection"
             onValueChange={handleSelectChange}
             isLabel={true}
-            labelName="Select Category"
+            labelName="Select Collection"
           >
             {getAllCategoriesData?.res &&
               getAllCategoriesData?.res?.data.length > 0 &&

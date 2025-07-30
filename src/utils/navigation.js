@@ -1,3 +1,4 @@
+import { PersonIcon } from "@radix-ui/react-icons";
 import {
   BaggageClaim,
   BookCopy,
@@ -24,19 +25,24 @@ export const Navigation_Menu = [
     icon: BaggageClaim,
   },
   {
-    name: "Products",
+    name: "Users",
+    link: "/dashboard/users",
+    icon: PersonIcon,
+  },
+  {
+    name: "Programs",
     icon: Tag,
     subMenu: [
       {
-        name: "Category",
+        name: "Collection",
         link: "/dashboard/products/category",
       },
       {
-        name: "Sub Category",
+        name: "Class Group",
         link: "/dashboard/products/sub-category",
       },
       {
-        name: "Programs",
+        name: "Class",
         link: "/dashboard/products/products",
       },
     ],
@@ -53,10 +59,6 @@ export const Navigation_Menu = [
       {
         name: "Blogs",
         link: "/dashboard/content/blogs",
-      },
-      {
-        name: "Files",
-        link: "/dashboard/content/files",
       },
       {
         name: "Menus",
@@ -76,4 +78,5 @@ export const pathLocations = {
   dashboard: "/dashboard/home",
   content: {},
   programs: "/",
+  userById : "/dashboard/users"
 };

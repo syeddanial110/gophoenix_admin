@@ -2,6 +2,7 @@ import { apiGet } from "@/apis/ApiRequest";
 import {
   EditCategoryDataConstants,
   EditProductsConstants,
+  EditProductsDataByIdConstants,
   GetAllCategoriesConstants,
   GetAllProductsConstants,
 } from "@/store/constants";
@@ -14,6 +15,7 @@ export const editProductData = (data) => (dispatch) => {
     payload: { data },
   });
 };
+
 
 export const getAllProducts = (data) => (dispatch) => {
   dispatch({ type: GetAllProductsConstants.GET_ALL_PRODUCTS_LOADING });

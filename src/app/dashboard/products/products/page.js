@@ -19,16 +19,16 @@ const Products = () => {
   return (
     <>
       <div className="flex justify-between gap-4">
-        <UITypography variant="h2" text="Products" />
+        <UITypography variant="h2" text="Class" />
         <UIButton
-          type="contained"
+          type={isProductAdd || isProductEdit ? "outlined" : "contained"}
           icon={false}
-          title={isProductAdd || isProductEdit ? "Cancel" : "Add Product"}
+          title={isProductAdd || isProductEdit ? "Cancel" : "Add Class"}
           btnOnclick={handleAddProduct}
         />
       </div>
       {isProductAdd && <AddProductModal setIsProductAdd={setIsProductAdd} />}
-      {isProductEdit && <EditProductForm setIsProductEdit={setIsProductEdit} />}
+      {isProductEdit && <EditProductForm />}
       {!isProductAdd && !isProductEdit && (
         <ProductTable
           setIsProductEdit={setIsProductEdit}

@@ -11,6 +11,7 @@ import { slugify } from "@/utils/slugify";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
+import SEOForm from "../Products/SEOForm";
 
 const EditPageModal = ({ setModalOpen }) => {
   const menuDataReducer = useSelector((state) => state?.EditPageDataReducer);
@@ -19,19 +20,23 @@ const EditPageModal = ({ setModalOpen }) => {
     id: "",
     pageName: "",
     slug: "",
+    metaTitle: "",
+    metaDescription: "",
   });
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { value, name } = e.target;
-    const slug = slugify(value);
-    setMenuData({ ...menuData, [name]: value, slug: slug });
+    setMenuData({ ...menuData, [name]: value });
   };
 
   const handleEditPage = () => {
     const dataObj = {
       name: menuData.pageName,
       content: menuDataReducer?.data?.data?.content,
+      slug: menuData.slug,
+      metaTitle: menuData.metaTitle,
+      metaDescription: menuData.metaDescription,
     };
     console.log("dataObj", dataObj);
     apiPut(
@@ -43,6 +48,9 @@ const EditPageModal = ({ setModalOpen }) => {
           toast.success(res?.message);
           setModalOpen(false);
           dispatch(getAllMenus());
+        }
+        else{
+          toast.error(res?.message);
         }
       },
       (err) => {
@@ -57,6 +65,14 @@ const EditPageModal = ({ setModalOpen }) => {
         id: menuDataReducer?.data?.data?.id,
         pageName: menuDataReducer?.data?.data?.name,
         slug: menuDataReducer?.data?.data?.slug,
+        metaTitle:
+          menuDataReducer?.data?.data?.metaTitle == null
+            ? ""
+            : menuDataReducer?.data?.data?.metaTitle,
+        metaDescription:
+          menuDataReducer?.data?.data?.metaDescription == null
+            ? ""
+            : menuDataReducer?.data?.data?.metaDescription,
       });
     }
   }, []);
@@ -82,7 +98,14 @@ const EditPageModal = ({ setModalOpen }) => {
             placeholder="The url will be"
             isLable={true}
             lableName="URL"
-            disabled
+            onChange={(e) => handleChange(e)}
+          />
+          <SEOForm
+            productName={menuData.pageName}
+            // shortDescription={menuData.me}
+            metaTitle={menuData.metaTitle}
+            metaDescription={menuData.metaDescription}
+            onChange={(e) => handleChange(e)}
           />
           <UIButton
             type="contained"

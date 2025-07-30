@@ -15,13 +15,13 @@ const SubCategory = () => {
   return (
     <>
       <div className="flex justify-between gap-4">
-        <UITypography variant="h2" text="Sub Category" />
+        <UITypography variant="h2" text="Class Group" />
         {/* <UIButton type="contained" icon={false} title="Add Category" /> */}
         <UIModal
           open={modalOpen}
           onOpenChange={handleModalOpen}
-          modalBtnText="Add Sub Category"
-          modalHeaderTitle="Add Sub Category"
+          modalBtnText="Add Class Group"
+          modalHeaderTitle="Add Class Group"
           btnClassName="bg-main text-white px-7 py-2 rounded-2xl hover:cursor-pointer"
         >
           <AddSubCategoryForm setModalOpen={setModalOpen} />

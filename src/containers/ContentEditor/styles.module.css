@@ -1,0 +1,18 @@
+.editorWrapper {
+  position: relative;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.editorWrapper :global(.ql-toolbar) {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+}
+
+.editorWrapper :global(.ql-container) {
+  max-height: 440px;
+  overflow-y: auto;
+}

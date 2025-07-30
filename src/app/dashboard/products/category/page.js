@@ -14,14 +14,14 @@ const Category = () => {
   return (
     <>
       <div className="flex justify-between gap-4">
-        <UITypography variant="h2" text="Category" />
+        <UITypography variant="h2" text="Collection" />
         {/* <UIButton type="contained" icon={false} title="Add Category" /> */}
         <UIModal
           open={modalOpen}
           onOpenChange={handleModalOpen}
-          modalBtnText="Add Category"
+          modalBtnText="Add Collection"
           btnClassName="bg-main text-white px-7 py-2 rounded-2xl hover:cursor-pointer"
-          modalHeaderTitle='Add Category'
+          modalHeaderTitle='Add Collection'
         >
           <AddCategoryModal setModalOpen={setModalOpen} />
         </UIModal>

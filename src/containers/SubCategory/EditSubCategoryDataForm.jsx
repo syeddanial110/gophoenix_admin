@@ -29,8 +29,7 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
     subCategoryName: subCategoryDataReducer.data.name,
     subCategoryImage: subCategoryDataReducer.data.image,
     categoryId: subCategoryDataReducer.data.categoryId,
-    categoryName: "",
-    slug: "",
+    slug: subCategoryDataReducer?.data?.slug,
   });
 
   const handleInputChange = (e) => {
@@ -119,7 +118,7 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
       <div className="flex flex-col gap-3 mt-3">
         <UIInputField
           isLable={true}
-          lableName="Sub Category Name"
+          lableName="Class Group Name"
           name="subCategoryName"
           value={subCategoryData.subCategoryName}
           onChange={handleInputChange}
@@ -135,7 +134,7 @@ const EditSubCategoryDataForm = ({ setModalOpen }) => {
         />
         <UISelect
           isLabel={true}
-          labelName="Select Category Type"
+          labelName="Select Collection"
           name="categoryId" // Add this
           placeholder={subCategoryData.categoryName}
           onValueChange={handleSelectChange}

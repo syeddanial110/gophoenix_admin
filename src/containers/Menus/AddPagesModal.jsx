@@ -11,23 +11,28 @@ import { slugify } from "@/utils/slugify";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
+import SEOForm from "../Products/SEOForm";
 
 const AddPagesModal = ({ setModalOpen }) => {
   const [menuData, setMenuData] = useState({
     pageName: "",
     slug: "",
+    metaTitle: "",
+    metaDescription: "",
   });
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { value, name } = e.target;
-    const slug = slugify(value);
-    setMenuData({ ...menuData, [name]: value, slug: slug });
+    setMenuData({ ...menuData, [name]: value });
   };
 
   const handleAddPage = () => {
     const dataObj = {
       name: menuData.pageName,
+      slug: menuData.slug,
+      metaTitle: menuData.metaTitle,
+      metaDescription: menuData.metaDescription,
     };
     console.log("dataObj", dataObj);
     apiPost(
@@ -47,6 +52,8 @@ const AddPagesModal = ({ setModalOpen }) => {
     );
   };
 
+  console.log("menuData", menuData);
+
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -58,7 +65,7 @@ const AddPagesModal = ({ setModalOpen }) => {
             placeholder="Enter Page Name"
             isLable={true}
             lableName="Page Name"
-            onChange={handleChange}
+            onChange={(e) => handleChange(e)}
           />
           <UIInputField
             name="slug"
@@ -67,7 +74,14 @@ const AddPagesModal = ({ setModalOpen }) => {
             placeholder="The url will be"
             isLable={true}
             lableName="URL"
-            disabled
+            onChange={(e) => handleChange(e)}
+          />
+          <SEOForm
+            productName={menuData.pageName}
+            // shortDescription={menuData.me}
+            metaTitle={menuData.metaTitle}
+            metaDescription={menuData.metaDescription}
+            onChange={(e) => handleChange(e)}
           />
           <UIButton
             type="contained"

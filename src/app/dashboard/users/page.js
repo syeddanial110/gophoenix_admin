@@ -8,7 +8,7 @@ const Users = () => {
   return (
     <>
       <div className="flex justify-between gap-4">
-        <UITypography variant="h2" text="Orders" />
+        <UITypography variant="h2" text="Users" />
         {/* <UIButton type="contained" icon={false} title="Add Category" /> */}
         {/* <UIModal
           open={modalOpen}

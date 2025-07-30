@@ -12,7 +12,6 @@ import { useForm } from "react-hook-form";
 import { addProductSchema } from "@/utils/schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { UIDatePicker } from "@/components/InputFields/UIDatePicker";
-import { addDays } from "date-fns";
 import { UITimePicker } from "@/components/InputFields/UITimePicker";
 import UISelect from "@/components/InputFields/UISelect";
 import { SelectItem } from "@/components/ui/select";
@@ -20,12 +19,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllSubCategories } from "@/store/actions/subCategory";
 import { toast } from "sonner";
 import Image from "next/image";
-import { Cross, Minus, Plus, X } from "lucide-react";
-import UIModal from "@/components/UIModal/UIModal";
+import { Plus, Trash, X } from "lucide-react";
 import UIInputField from "@/components/InputFields/UIInputField";
 import Editor from "../ContentEditor/Editor";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import SEOForm from "./SEOForm";
 
-const EditProductForm = ({ setIsProductEdit }) => {
+const EditProductForm = () => {
   const paymentTypes = [
     { name: "Recurring", value: "recurring" },
     { name: "One Time", value: "one-time" },
@@ -46,20 +46,16 @@ const EditProductForm = ({ setIsProductEdit }) => {
   console.log("editProductData", editProductData);
 
   const [productData, setProductData] = useState({
-    productName: "",
     locationAddress: "",
     locationMapLink: "",
     startDate: "",
     endDate: "",
     startTime: "",
     endTime: "",
-    activities: "",
     seats: "",
     minAge: "",
     maxAge: "",
-    ageException: "",
     description: "",
-    price: "",
     categoryName: "",
     categoryId: "",
     subCategoryName: "",
@@ -70,7 +66,6 @@ const EditProductForm = ({ setIsProductEdit }) => {
     paymentIntervalName: "",
     intervalCount: "",
     productImage: "",
-    hoverImage: "",
     galleryImages: [],
   });
 
@@ -89,30 +84,27 @@ const EditProductForm = ({ setIsProductEdit }) => {
   });
   const [editorValue, setEditorValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
   const [productName, setProductName] = useState("");
-
-  const handleModalOpen = () => {
-    setModalOpen(!modalOpen);
-  };
+  const [cardName, setCardName] = useState("");
+  const [inputData, setInputData] = useState({
+    shortDescription: "",
+    metaTitle: "",
+    metaDescription: "",
+  });
 
   const form = useForm({
     resolver: yupResolver(addProductSchema),
     defaultValues: {
-      productName: productName ? productName : "",
+      slug: productData?.slug ? productData?.slug : "",
       locationAddress: productData?.locationAddress
         ? productData?.locationAddress
         : "",
       locationMapLink: productData?.locationMapLink
         ? productData?.locationMapLink
         : "",
-      activities: productData?.activities ? productData?.activities : "",
       seats: productData?.seats ? productData?.seats : "",
       minAge: productData?.minAge ? productData?.minAge : "",
       maxAge: productData?.maxAge ? productData?.maxAge : "",
-      ageException: productData?.ageException ? productData?.ageException : "",
-      description: productData?.description ? productData?.description : "",
-      price: productData?.price ? productData?.price : "",
       intervalCount: productData?.intervalCount
         ? productData?.intervalCount
         : "",
@@ -126,6 +118,12 @@ const EditProductForm = ({ setIsProductEdit }) => {
     (state) => state?.GetAllCategoriesReducer?.res
   );
 
+  const handleInputChange = (e) => {
+    setInputData({ ...inputData, [e.target.name]: e.target.value });
+  };
+
+  console.log("inputData", inputData);
+
   function onSubmit(data, e) {
     console.log("data", data, e);
 
@@ -135,61 +133,40 @@ const EditProductForm = ({ setIsProductEdit }) => {
     console.log("formattedStartDate", formattedStartDate);
     console.log("formattedEndDate", formattedEndDate);
 
-    // const formData = new FormData();
-
-    // formData.append("productName", data.productName);
-    // formData.append("locationAddress", data.locationAddress);
-    // formData.append("locationMapLink", data.locationMapLink);
-    // formData.append("startTime", startTime);
-    // formData.append("endTime", endTime);
-    // formData.append("startDate", formattedStartDate);
-    // formData.append("endDate", formattedEndDate);
-    // formData.append("activities", data.activities);
-    // formData.append("categoryId", productData.categoryId);
-    // formData.append("subCategoryId", productData.subCategoryId);
-    // formData.append("seats", data.seats);
-    // formData.append("minAge", data.minAge);
-    // formData.append("maxAge", data.maxAge);
-    // formData.append("ageException", data.ageException);
-    // formData.append("description", data.description);
-    // formData.append("price", data.price);
-    // formData.append("currency", "USD");
-    // formData.append("paymentType", productData.paymentTypeValue);
-    // formData.append("paymentInterval", productData.paymentIntervalValue);
-    // formData.append("intervalCount", data.intervalCount);
-    // formData.append("image", productData.productImage);
-    // formData.append("hoverImage", productData.hoverImage);
-    // productData.galleryImages.forEach((val, ind) => {
-    //   formData.append(`galleryImages`, val);
-    // });
-
     const dataObj = {
       productName: productName,
+      cardName: cardName,
       locationAddress: data.locationAddress,
       locationMapLink: data.locationMapLink,
+      slug: data.slug,
       startTime: startTime,
       endTime: endTime,
       startDate: formattedStartDate,
       endDate: formattedEndDate,
-      activities: data.activities,
+      // activities: data.activities,
       categoryId: productData.categoryId,
       subCategoryId: productData.subCategoryId,
       seats: data.seats,
       minAge: data.minAge,
       maxAge: data.maxAge,
-      ageException: data.ageException,
-      description: editorValue,
-      price: data.price,
+      // ageException: data.ageException,
+      descriptidon: editorValue,
+      shortDesc: inputData.shortDescription,
       currency: "USD",
       paymentType: productData.paymentTypeValue,
-      paymentInterval: productData.paymentIntervalValue,
-      intervalCount: parseInt(data.intervalCount),
+      paymentInterval:
+        productData.paymentType == "one-time"
+          ? null
+          : productData.paymentIntervalValue,
+      intervalCount:
+        productData.paymentType == "one-time" ? null : data.intervalCount,
       image: productData.productImage,
-      hoverImage: productData.hoverImage,
       galleryImages: productData.galleryImages,
       productOptions: productOptions,
+      metaTitle: inputData.metaTitle,
+      metaDescription: inputData.metaDescription,
     };
-    // console.log("dataObj", dataObj);
+    console.log("dataObj", dataObj);
     // console.log("data", data);
 
     apiPut(
@@ -199,7 +176,6 @@ const EditProductForm = ({ setIsProductEdit }) => {
         console.log("res", res);
         if (res.success) {
           toast.success(res.message);
-          setIsProductEdit(false);
           if (res?.data?.message) {
             setTimeout(() => {
               toast.error(res?.data?.message);
@@ -228,6 +204,7 @@ const EditProductForm = ({ setIsProductEdit }) => {
   };
 
   const handlePaymentIntervalSelectChange = (value) => {
+    console.log("value", value);
     const selectedItem = paymentInterval.find((item) => item.value === value);
     if (selectedItem) {
       setProductData({
@@ -287,13 +264,17 @@ const EditProductForm = ({ setIsProductEdit }) => {
             const formattedGalleryImages = res?.data.map((image) => ({
               path: image.url,
             }));
-            setProductData({
-              ...productData,
-              galleryImages: [
-                ...productData.galleryImages,
-                ...formattedGalleryImages,
-              ],
-            });
+            // setProductData({
+            //   ...productData,
+            //   galleryImages: [
+            //     ...productData.galleryImages,
+            //     ...formattedGalleryImages,
+            //   ],
+            // });
+            setProductData((prev) => ({
+              ...prev,
+              galleryImages: [...prev.galleryImages, ...formattedGalleryImages],
+            }));
           }
         },
         (err) => {
@@ -320,10 +301,14 @@ const EditProductForm = ({ setIsProductEdit }) => {
           console.log("res", res);
           if (res?.success) {
             toast.success(res?.message);
-            setProductData({
-              ...productData,
+            // setProductData({
+            //   ...productData,
+            //   [e.target.name]: res?.data[0]?.url,
+            // });
+            setProductData((prev) => ({
+              ...prev,
               [e.target.name]: res?.data[0]?.url,
-            });
+            }));
           }
         },
         (err) => {
@@ -342,6 +327,10 @@ const EditProductForm = ({ setIsProductEdit }) => {
       ...productData,
       galleryImages: filteredGalleryImages,
     });
+    // setProductData((prev) => ({
+    //   ...prev,
+    //   galleryImages: [...prev.galleryImages, ...formattedGalleryImages],
+    // }));
   };
 
   // end region
@@ -373,9 +362,6 @@ const EditProductForm = ({ setIsProductEdit }) => {
     setProductOptions(updatedOptions);
   };
 
-  const onSaveProductOptions = () => {
-    setModalOpen(false);
-  };
   console.log("productOptions", productOptions);
 
   //end region
@@ -386,71 +372,74 @@ const EditProductForm = ({ setIsProductEdit }) => {
   }, []);
 
   useEffect(() => {
+    if (!editProductData?.data?.productId) return;
     setIsLoading(true);
     apiGet(
       `${ApiEndpoints.products.base}${ApiEndpoints.products.getById}${editProductData?.data?.productId}`,
       (res) => {
-        console.log("res", res);
         setProductName(res?.data?.productName);
+        form.reset({
+          locationAddress: res?.data.locationAddress || "",
+          locationMapLink: res?.data.locationMapLink || "",
+          seats: res?.data.seats || "",
+          minAge: res?.data.minAge || "",
+          maxAge: res?.data.maxAge || "",
+          intervalCount: res?.data.intervalCount || "",
+        });
         setProductData({
-          locationAddress: res?.data?.locationAddress,
-          locationMapLink: res?.data?.locationMapLink,
-          startDate: new Date(res?.data?.startDate),
-          endDate: new Date(res?.data?.endDate),
-          startTime: res?.data?.startTime,
-          endTime: res?.data?.endTime,
-          activities: res?.data?.activities,
-          seats: res?.data?.seats,
-          minAge: res?.data?.minAge,
-          maxAge: res?.data?.maxAge,
-          ageException: res?.data?.ageException,
-          price: res?.data?.price,
-          categoryName: res?.data?.categoryName,
-          categoryId: res?.data?.categoryId,
-          subCategoryName: res?.data?.subCategoryName,
-          subCategoryId: res?.data?.subCategoryId,
-          paymentTypeValue: res?.data?.paymentType,
+          productName: res?.data?.productName || "",
+          cardName: res?.data?.cardName || "",
+          slug: res?.data?.slug || "",
+          categoryName: res?.data?.categoryName || "",
+          categoryId: res?.data?.categoryId || "",
+          subCategoryName: res?.data?.subCategoryName || "",
+          subCategoryId: res?.data?.subCategoryId || "",
+          paymentTypeValue: res?.data?.paymentType || "",
           paymentTypeName: "",
-          paymentIntervalValue: res?.data?.paymentInterval,
+          paymentIntervalValue: res?.data?.paymentInterval || "",
           paymentIntervalName: "",
-          intervalCount: res?.data?.intervalCount,
-          productImage: res?.data?.image,
-          hoverImage: res?.data?.hoverImage,
-          galleryImages: res?.data?.galleryImages,
+          intervalCount: res?.data?.intervalCount || "",
+          productImage: res?.data?.image || "",
+          galleryImages: res?.data?.galleryImages || [],
         });
         setDate({
           from: new Date(res?.data?.startDate),
           to: new Date(res?.data?.endDate),
         });
-        setStartTime(res?.data?.startTime);
-        setEndTime(res?.data?.endTime);
-        setProductOptions(res?.data?.productOptions);
-        setEditorValue(res?.data?.description);
+        setStartTime(res?.data?.startTime || "");
+        setEndTime(res?.data?.endTime || "");
+        setProductOptions(
+          res?.data?.productOptions?.length > 0
+            ? res?.data?.productOptions
+            : productOptions
+        );
+        setEditorValue(res?.data?.description || "");
         setIsLoading(false);
       },
       (err) => {
         console.log("err", err);
       }
     );
-  }, []);
+    // eslint-disable-next-line
+  }, [editProductData?.data?.productId, form.reset]);
 
   // form data setup
-  useEffect(() => {
-    if (productData) {
-      form.reset({
-        locationAddress: productData.locationAddress || "",
-        locationMapLink: productData.locationMapLink || "",
-        activities: productData.activities || "",
-        seats: productData.seats || "",
-        minAge: productData.minAge || "",
-        maxAge: productData.maxAge || "",
-        ageException: productData.ageException || "",
-        description: productData.description || "",
-        price: productData.price || "",
-        intervalCount: productData.intervalCount || "",
-      });
-    }
-  }, [productData, form.reset]);
+  // useEffect(() => {
+  //   if (productData) {
+  //     form.reset({
+  //       locationAddress: productData.locationAddress || "",
+  //       locationMapLink: productData.locationMapLink || "",
+  //       activities: productData.activities || "",
+  //       seats: productData.seats || "",
+  //       minAge: productData.minAge || "",
+  //       maxAge: productData.maxAge || "",
+  //       ageException: productData.ageException || "",
+  //       description: productData.description || "",
+  //       price: productData.price || "",
+  //       intervalCount: productData.intervalCount || "",
+  //     });
+  //   }
+  // }, [productData, form.reset]);
 
   // filteration for dropdown of payment types, sub category
   useEffect(() => {
@@ -479,139 +468,150 @@ const EditProductForm = ({ setIsProductEdit }) => {
     }
   }, [subCategoryDataReducer?.res, isLoading]);
 
-  console.log("subCategoryDataReducer", subCategoryDataReducer);
-  console.log("productData", productData);
-  console.log("startTime", startTime);
-  console.log("endTime", endTime);
-
+  console.log("productData/////,", productData);
   return (
     <>
       <div className="border-y-1 border-gray-300 my-4"></div>
-      <div className="flex flex-col gap-3 w-[50%]">
-        <UITypography variant="h4" text={"Edit Product"} />
+      <div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <UITypography
-              variant="h6"
-              text="Product Name"
-              className="!text-[14px]"
-            />
-            <Editor editorValue={productName} setEditroValue={setProductName} />
-            <FormField
-              control={form.control}
-              name="locationAddress"
-              render={({ field }) => (
-                <FormItem>
-                  <UITextField
-                    field={field}
-                    formLabel="Location Address"
-                    placeholder="Location Address"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="locationMapLink"
-              render={({ field }) => (
-                <FormItem>
-                  <UITextField
-                    field={field}
-                    formLabel="Location Map Link"
-                    placeholder="Location Map Link"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex justify-between items-center">
+              <UITypography variant="h4" text={"Edit Class"} />
+              <UIButton
+                type="contained"
+                icon={false}
+                title="Submit"
+                btnType="submit"
+              />
+            </div>
+            <div className="flex flex-col gap-3 w-[50%]">
+              <UITypography
+                variant="h6"
+                text="Enter Class Name (This shows on card)"
+                className="!text-[14px] mt-8"
+              />
 
-            <UIDatePicker
-              date={date}
-              setDate={setDate}
-              labelName="Start Date & End Date"
-            />
-            <UITimePicker
-              time={startTime}
-              setTime={setStartTime}
-              labelName="Start Time"
-            />
-            <UITimePicker
-              time={endTime}
-              setTime={setEndTime}
-              labelName="End Time"
-            />
+              <Editor editorValue={cardName} setEditroValue={setCardName} />
+              <UITypography
+                variant="h6"
+                text="Class Name"
+                className="!text-[14px]"
+              />
+              <Editor
+                editorValue={productName}
+                setEditroValue={setProductName}
+              />
+              <UIInputField
+                isLable={true}
+                lableName="Short Description"
+                name="shortDescription"
+                value={inputData.shortDescription}
+                onChange={(e) => handleInputChange(e)}
+              />
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <UITextField
+                      field={field}
+                      formLabel="Enter the product URL"
+                      placeholder="eg: test-url"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="locationAddress"
+                render={({ field }) => (
+                  <FormItem>
+                    <UITextField
+                      field={field}
+                      formLabel="Location Address"
+                      placeholder="Location Address"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="locationMapLink"
+                render={({ field }) => (
+                  <FormItem>
+                    <UITextField
+                      field={field}
+                      formLabel="Location Map Link"
+                      placeholder="Location Map Link"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="activities"
-              render={({ field }) => (
-                <FormItem>
-                  <UITextField
-                    field={field}
-                    formLabel="Activities"
-                    placeholder="Activities"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="seats"
-              render={({ field }) => (
-                <FormItem>
-                  <UITextField
-                    field={field}
-                    formLabel="Seats"
-                    placeholder="eg: 100"
-                    type="number"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="minAge"
-              render={({ field }) => (
-                <FormItem>
-                  <UITextField
-                    field={field}
-                    formLabel="Min Age"
-                    placeholder="eg: 04"
-                    type="number"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="maxAge"
-              render={({ field }) => (
-                <FormItem>
-                  <UITextField
-                    field={field}
-                    formLabel="Max Age"
-                    placeholder="eg: 12"
-                    type="number"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="ageException"
-              render={({ field }) => (
-                <FormItem>
-                  <UITextField field={field} formLabel="Age Exception" />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* <FormField
+              <UIDatePicker
+                date={date}
+                setDate={setDate}
+                labelName="Start Date & End Date"
+              />
+              <UITimePicker
+                time={startTime}
+                setTime={setStartTime}
+                labelName="Start Time"
+              />
+              <UITimePicker
+                time={endTime}
+                setTime={setEndTime}
+                labelName="End Time"
+              />
+
+              <FormField
+                control={form.control}
+                name="seats"
+                render={({ field }) => (
+                  <FormItem>
+                    <UITextField
+                      field={field}
+                      formLabel="Seats"
+                      placeholder="eg: 100"
+                      type="number"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="minAge"
+                render={({ field }) => (
+                  <FormItem>
+                    <UITextField
+                      field={field}
+                      formLabel="Min Age"
+                      placeholder="eg: 04"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="maxAge"
+                render={({ field }) => (
+                  <FormItem>
+                    <UITextField
+                      field={field}
+                      formLabel="Max Age"
+                      placeholder="eg: 12"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
@@ -621,245 +621,298 @@ const EditProductForm = ({ setIsProductEdit }) => {
                 </FormItem>
               )}
             /> */}
-            <UITypography
-              variant="p"
-              className="!font-[600]"
-              text="Description"
-            />
-            <Editor editorValue={editorValue} setEditroValue={setEditorValue} />
+              <UITypography
+                variant="p"
+                className="!font-[600]"
+                text="Description"
+              />
+              <Editor
+                editorValue={editorValue}
+                setEditroValue={setEditorValue}
+              />
 
-            <UISelect
-              isLabel={true}
-              labelName="Select Category"
-              name="categoryName"
-              placeholder={"Category"}
-              value={productData.categoryName}
-              onValueChange={(val) =>
-                handleCategorySelectChange(val, "category")
-              }
-            >
-              {getAllCategoriesData?.res &&
-                getAllCategoriesData?.res?.data.length > 0 &&
-                getAllCategoriesData?.res?.data?.map((item, i) => {
-                  return (
-                    <SelectItem key={i} value={item?.name}>
-                      {item?.name}
-                    </SelectItem>
-                  );
-                })}
-            </UISelect>
-            <UISelect
-              isLabel={true}
-              labelName="Select Sub Category"
-              name="subCategoryName"
-              placeholder={"Sub Category"}
-              onValueChange={(val) =>
-                handleCategorySelectChange(val, "subCategory")
-              }
-              value={productData.subCategoryName}
-            >
-              {subCategoryDataReducer?.res &&
-                subCategoryDataReducer?.res?.data.length > 0 &&
-                subCategoryDataReducer?.res?.data?.map((item, i) => {
-                  return (
-                    <SelectItem key={i} value={item?.name}>
-                      {item?.name}
-                    </SelectItem>
-                  );
-                })}
-            </UISelect>
-
-            <UISelect
-              isLabel={true}
-              labelName="Select Payment Type"
-              name="paymentType"
-              placeholder={"Payment Type"}
-              onValueChange={handlePaymentTypeSelectChange}
-              value={productData?.paymentTypeValue}
-              defaultValue={productData?.paymentTypeValue}
-            >
-              {paymentTypes.map((item, i) => {
-                return (
-                  <SelectItem key={i} value={item?.value}>
-                    {item?.name}
-                  </SelectItem>
-                );
-              })}
-            </UISelect>
-            {productData.paymentTypeValue == "recurring" ||
-            productData.paymentTypeValue == "both" ? (
-              <>
-                <UISelect
-                  isLabel={true}
-                  labelName="Select Payment Interval"
-                  name="paymentInterval"
-                  placeholder={"Payment Interval"}
-                  onValueChange={handlePaymentIntervalSelectChange}
-                >
-                  {paymentInterval.map((item, i) => {
+              <UISelect
+                isLabel={true}
+                labelName="Select Collection"
+                name="categoryName"
+                placeholder={"Collection"}
+                value={productData.categoryName}
+                onValueChange={(val) =>
+                  handleCategorySelectChange(val, "category")
+                }
+              >
+                {getAllCategoriesData?.res &&
+                  getAllCategoriesData?.res?.data.length > 0 &&
+                  getAllCategoriesData?.res?.data?.map((item, i) => {
                     return (
-                      <SelectItem key={i} value={item?.value}>
+                      <SelectItem key={i} value={item?.name}>
                         {item?.name}
                       </SelectItem>
                     );
                   })}
-                </UISelect>
-                <FormField
-                  control={form.control}
-                  name="intervalCount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <UITextField
-                        field={field}
-                        formLabel="intervalCount"
-                        type="number"
-                        placeholder="eg: 2"
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </>
-            ) : (
-              <></>
-            )}
+              </UISelect>
+              <UISelect
+                isLabel={true}
+                labelName="Select Class Group"
+                name="subCategoryName"
+                placeholder={"Class Group"}
+                onValueChange={(val) =>
+                  handleCategorySelectChange(val, "subCategory")
+                }
+                value={productData.subCategoryName}
+              >
+                {subCategoryDataReducer?.res &&
+                  subCategoryDataReducer?.res?.data.length > 0 &&
+                  subCategoryDataReducer?.res?.data?.map((item, i) => {
+                    return (
+                      <SelectItem key={i} value={item?.name}>
+                        {item?.name}
+                      </SelectItem>
+                    );
+                  })}
+              </UISelect>
 
-            <UITypography variant="h6" text="Add Product Options" />
-            {productOptions.length > 0 &&
-              productOptions[0].title != "" &&
-              productOptions.map((item, ind) => {
-                return (
-                  <div className="border-1 border-gray-400 rounded-full p-4">
-                    {item.title} | {item.price}
-                  </div>
-                );
-              })}
-            <UIModal
-              open={modalOpen}
-              onOpenChange={handleModalOpen}
-              modalBtnText="Add"
-              btnClassName="bg-white text-black border-2 border-grey px-7 py-2 rounded-2xl hover:cursor-pointer"
-              modalHeaderTitle="Add Product for Child"
-            >
-              <div className="flex flex-col gap-4 h-[60vh] overflow-y-scroll">
-                <div className="flex justify-end">
-                  <UIButton
-                    type="contained"
-                    icon={true}
-                    BtnIcon={Plus}
-                    className="border-1 border-grey rounded-full p-0"
-                    btnOnclick={handleAddProductOptions}
-                  />
-                </div>
-
-                {productOptions.map((item, ind) => {
+              <UISelect
+                isLabel={true}
+                labelName="Select Payment Type"
+                name="paymentType"
+                placeholder={"Payment Type"}
+                onValueChange={handlePaymentTypeSelectChange}
+                value={productData?.paymentTypeValue}
+                defaultValue={productData?.paymentTypeValue}
+              >
+                {paymentTypes.map((item, i) => {
                   return (
-                    <div className="flex" key={ind}>
-                      <div className="w-[90%]">
-                        <UIInputField
-                          isLable={true}
-                          lableName="Title"
-                          name="title"
-                          value={item.title}
-                          onChange={(e) => handleProductOptionChange(e, ind)}
-                        />
-                        <UIInputField
-                          isLable={true}
-                          lableName="Price"
-                          name="price"
-                          value={item.price}
-                          onChange={(e) => handleProductOptionChange(e, ind)}
-                        />
-                      </div>
-                      {ind !== 0 && (
-                        <div className="w-[10%]">
-                          <UIButton
-                            type="contained"
-                            icon={true}
-                            BtnIcon={Minus}
-                            btnOnclick={() => handleRemoveProductOptions(ind)}
-                          />
-                        </div>
-                      )}
-                    </div>
+                    <SelectItem key={i} value={item?.value}>
+                      {item?.name}
+                    </SelectItem>
                   );
                 })}
-                <UIButton
-                  type="contained"
-                  icon={false}
-                  title="Save"
-                  btnOnclick={onSaveProductOptions}
-                />
+              </UISelect>
+              {productData.paymentTypeValue == "recurring" ||
+              productData.paymentTypeValue == "both" ? (
+                <>
+                  <UISelect
+                    isLabel={true}
+                    labelName="Select Payment Interval"
+                    name="paymentInterval"
+                    placeholder={"Payment Interval"}
+                    onValueChange={handlePaymentIntervalSelectChange}
+                  >
+                    {paymentInterval.map((item, i) => {
+                      return (
+                        <SelectItem key={i} value={item?.value}>
+                          {item?.name}
+                        </SelectItem>
+                      );
+                    })}
+                  </UISelect>
+                  <FormField
+                    control={form.control}
+                    name="intervalCount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <UITextField
+                          field={field}
+                          formLabel="intervalCount"
+                          type="number"
+                          placeholder="eg: 2"
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              ) : (
+                <></>
+              )}
+
+              {/* Add Product options */}
+              <div className="flex justify-between items-center">
+                <UITypography variant="h6" text="Add Product Options" />
+                {/* <UIButton
+                type="contained"
+                icon={true}
+                BtnIcon={Plus}
+                className="border-1 border-grey rounded-full p-0"
+                btnOnclick={handleAddProductOptions}
+              /> */}
+                <div>
+                  <div
+                    className="border-1 border-grey rounded-full p-3"
+                    onClick={handleAddProductOptions}
+                  >
+                    <Plus onClick={handleAddProductOptions} />
+                  </div>
+                </div>
               </div>
-            </UIModal>
-            <UIFileInput
-              labelName="ProductImage"
-              onChange={handleFileInput}
-              name="productImage"
-            />
 
-            {productData.productImage && (
-              <Image
-                src={`${productData.productImage}`}
-                alt={productData.productImage}
-                height={180}
-                width={140}
-              />
-            )}
+              <div className="bg-[#dddcdc36] p-4 rounded-lg">
+                <DragDropContext
+                  onDragEnd={(result) => {
+                    if (!result.destination) return;
+                    const items = Array.from(productOptions);
+                    const [reorderedItem] = items.splice(
+                      result.source.index,
+                      1
+                    );
+                    items.splice(result.destination.index, 0, reorderedItem);
+                    setProductOptions(items);
+                  }}
+                >
+                  <Droppable droppableId="productOptions">
+                    {(provided) => (
+                      <div
+                        className="bg-[#dddcdc36] p-4 rounded-lg"
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                      >
+                        {productOptions.map((item, ind) => (
+                          <Draggable
+                            key={ind}
+                            draggableId={ind.toString()}
+                            index={ind}
+                          >
+                            {(provided, snapshot) => (
+                              <div
+                                className="flex gap-6 items-center"
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                style={{
+                                  ...provided.draggableProps.style,
+                                  background: snapshot.isDragging
+                                    ? "#f3f3f3"
+                                    : "transparent",
+                                }}
+                              >
+                                {/* Drag handle icon (optional, you can use any icon) */}
+                                <div
+                                  className="cursor-grab"
+                                  {...provided.dragHandleProps}
+                                >
+                                  <svg
+                                    width="20"
+                                    height="20"
+                                    fill="currentColor"
+                                  >
+                                    <circle cx="5" cy="5" r="2" />
+                                    <circle cx="15" cy="5" r="2" />
+                                    <circle cx="5" cy="15" r="2" />
+                                    <circle cx="15" cy="15" r="2" />
+                                  </svg>
+                                </div>
+                                <div>
+                                  <UIInputField
+                                    isLable={true}
+                                    lableName="Title"
+                                    name={`title`}
+                                    value={item.title}
+                                    onChange={(e) =>
+                                      handleProductOptionChange(e, ind)
+                                    }
+                                  />
+                                </div>
+                                <div>
+                                  <UIInputField
+                                    isLable={true}
+                                    lableName="Price"
+                                    name={`price`}
+                                    value={item.price}
+                                    onChange={(e) =>
+                                      handleProductOptionChange(e, ind)
+                                    }
+                                  />
+                                </div>
 
-            <UIFileInput
-              labelName="Product Hover Image"
-              onChange={handleFileInput}
-              name="hoverImage"
-            />
-            {productData.hoverImage && (
-              <Image
-                src={`${productData.hoverImage}`}
-                alt={productData.hoverImage}
-                height={180}
-                width={140}
+                                {ind !== 0 && (
+                                  <div className="w-[10%]">
+                                    <div
+                                      onClick={() =>
+                                        handleRemoveProductOptions(ind)
+                                      }
+                                    >
+                                      <Trash />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
+              </div>
+
+              {/* add product option end */}
+              <UIFileInput
+                labelName="Class Image"
+                onChange={handleFileInput}
+                name="productImage"
               />
-            )}
-            <UIFileInput
-              labelName="Product Gallery Image"
-              multiple={true}
-              onChange={handleGalleryFileUpload}
-            />
-            <div className="flex gap-3">
-              {productData.galleryImages.length > 0 &&
-                productData.galleryImages.map((item, i) => {
-                  return (
-                    <div className="relative">
-                      <div className="absolute right-1 top-1 hover:cursor-pointer">
-                        {/* <UIButton
+
+              {productData.productImage && (
+                <Image
+                  src={`${productData.productImage}`}
+                  alt={productData.productImage}
+                  height={180}
+                  width={140}
+                />
+              )}
+
+              <UIFileInput
+                labelName="Class Gallery Image"
+                multiple={true}
+                onChange={handleGalleryFileUpload}
+              />
+              <div className="flex gap-3">
+                {productData.galleryImages.length > 0 &&
+                  productData.galleryImages.map((item, i) => {
+                    return (
+                      <div className="relative">
+                        <div className="absolute right-1 top-1 hover:cursor-pointer">
+                          {/* <UIButton
                           type="contained"
                           icon={true}
                           BtnIcon={X}
                           className="!bg-white !p-1 rounded"
                           btnOnclick={() => handleGalleryImageRemove(i)}
                         /> */}
-                        <div onClick={() => handleGalleryImageRemove(i)}>
-                          <X />
+                          <div onClick={() => handleGalleryImageRemove(i)}>
+                            <X />
+                          </div>
                         </div>
+                        <Image
+                          src={item.path}
+                          alt={item.path}
+                          key={i}
+                          height={240}
+                          width={240}
+                          objectFit="cover"
+                        />
                       </div>
-                      <Image
-                        src={item.path}
-                        alt={item.path}
-                        key={i}
-                        height={240}
-                        width={240}
-                        objectFit="cover"
-                      />
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+              </div>
+              <SEOForm
+                productName={productName}
+                shortDescription={inputData.shortDescription}
+                metaTitle={inputData.metaTitle}
+                metaDescription={inputData.metaDescription}
+                onChange={handleInputChange}
+              />
+              <div>
+                <UIButton
+                  type="contained"
+                  icon={false}
+                  title="Submit"
+                  btnType="submit"
+                />
+              </div>
             </div>
-            <UIButton
-              type="contained"
-              icon={false}
-              title="Submit"
-              btnType="submit"
-            />
           </form>
         </Form>
       </div>

@@ -4,8 +4,16 @@ import React, { useState } from "react";
 import { FormControl, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
+import { Textarea } from "../ui/textarea";
 
-const UITextField = ({ type, formLabel, field, placeholder, ...rest }) => {
+const UITextField = ({
+  type,
+  formLabel,
+  field,
+  placeholder,
+  isTextArea,
+  ...rest
+}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -36,6 +44,18 @@ const UITextField = ({ type, formLabel, field, placeholder, ...rest }) => {
                 )}
               </button>
             </div>
+          </FormControl>
+        </>
+      ) : isTextArea ? (
+        <>
+          {formLabel && <FormLabel>{formLabel}</FormLabel>}
+          <FormControl>
+            <Textarea
+              placeholder={placeholder}
+              type={type}
+              {...field}
+              {...rest}
+            />
           </FormControl>
         </>
       ) : (

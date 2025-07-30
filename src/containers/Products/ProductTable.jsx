@@ -91,14 +91,6 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
       },
     },
     {
-      name: <UITypography text={"Price"} />,
-      selector: (row) => row?.price,
-      sortable: true,
-      cell: (row) => {
-        return <UITypography text={row?.price} />;
-      },
-    },
-    {
       name: <UITypography text={"Payment Type"} />,
       selector: (row) => row?.paymentType,
       sortable: true,
