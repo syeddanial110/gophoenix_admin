@@ -378,6 +378,7 @@ const EditProductForm = () => {
       `${ApiEndpoints.products.base}${ApiEndpoints.products.getById}${editProductData?.data?.productId}`,
       (res) => {
         setProductName(res?.data?.productName);
+        setCardName(res?.data?.cardName);
         form.reset({
           locationAddress: res?.data.locationAddress || "",
           locationMapLink: res?.data.locationMapLink || "",
@@ -385,6 +386,7 @@ const EditProductForm = () => {
           minAge: res?.data.minAge || "",
           maxAge: res?.data.maxAge || "",
           intervalCount: res?.data.intervalCount || "",
+          slug: res?.data?.slug || "",
         });
         setProductData({
           productName: res?.data?.productName || "",
@@ -414,6 +416,11 @@ const EditProductForm = () => {
             : productOptions
         );
         setEditorValue(res?.data?.description || "");
+        setInputData({
+          metaTitle: res?.data?.metaTitle,
+          metaDescription: res?.data?.metaDescription,
+          shortDescription: res?.data?.shortDesc,
+        });
         setIsLoading(false);
       },
       (err) => {

@@ -78,18 +78,18 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
         return <UITypography text={row?.categoryName} />;
       },
     },
-    {
-      name: <UITypography text={"Sub Category Name"} />,
-      selector: (row) => row?.subCategoryName,
-      sortable: true,
-      cell: (row) => {
-        return (
-          <UITypography
-            text={row?.subCategoryName == null ? "-" : row?.subCategoryName}
-          />
-        );
-      },
-    },
+    // {
+    //   name: <UITypography text={"Sub Category Name"} />,
+    //   selector: (row) => row?.subCategoryName,
+    //   sortable: true,
+    //   cell: (row) => {
+    //     return (
+    //       <UITypography
+    //         text={row?.subCategoryName == null ? "-" : row?.subCategoryName}
+    //       />
+    //     );
+    //   },
+    // },
     {
       name: <UITypography text={"Payment Type"} />,
       selector: (row) => row?.paymentType,
