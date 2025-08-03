@@ -37,10 +37,10 @@ export const Navigation_Menu = [
         name: "Collection",
         link: "/dashboard/products/category",
       },
-      {
-        name: "Class Group",
-        link: "/dashboard/products/sub-category",
-      },
+      // {
+      //   name: "Class Group",
+      //   link: "/dashboard/products/sub-category",
+      // },
       {
         name: "Class",
         link: "/dashboard/products/products",

@@ -17,11 +17,14 @@ import { editPageData, getAllMenus } from "@/store/actions/menus";
 import EditCategoryDataForm from "../Category/EditCategoryDataForm";
 import EditPageModal from "./EditPageModal";
 import UISwitch from "@/components/UISwitch/UISwitch";
+import MenuDragableTable from "./MenuDragableTable";
 
 const PagesTable = () => {
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [rows, setRows] = useState([]);
+
   const menuDataReducer = useSelector(
     (state) => state?.GetAllMenusReducer?.res
   );
@@ -47,7 +50,7 @@ const PagesTable = () => {
     );
   };
 
-  const handleCategoryDelete = (row) => {
+  const handlePageDelete = (row) => {
     apiDelete(
       `${ApiEndpoints.content.base}${ApiEndpoints.content.delete}/${row?.id}`,
       (res) => {
@@ -63,73 +66,20 @@ const PagesTable = () => {
 
   const columns = [
     {
-      name: <UITypography text="Name" />,
-      selector: (row) => row?.name,
-      sortable: true,
-      cell: (row) => {
-        return <UITypography text={row?.name} />;
-      },
+      field: "name",
+      label: "Name",
     },
     {
-      name: <UITypography text={"URL"} />,
-      selector: (row) => row?.slug,
-      sortable: true,
-      cell: (row) => {
-        return <UITypography text={row?.slug} />;
-      },
+      field: "url",
+      label: "URL",
     },
     {
-      name: <UITypography text={"Active/InActive"} />,
-      selector: (row) => row?.isActive,
-      sortable: true,
-      cell: (row) => {
-        return (
-          <UISwitch
-            checked={row?.isActive == 0 ? false : true}
-            onCheckedChange={(value) => handleOnChangeChecked(value, row?.id)}
-          />
-        );
-      },
+      field: "active",
+      label: "Active/InActive",
     },
     {
-      name: <UITypography text="" />,
-
-      style: {
-        display: "flex",
-        justifyContent: "flex-end",
-      },
-      cell: (row) => (
-        <>
-          <UIModal
-            onOpenChange={handleModalOpen}
-            open={modalOpen}
-            modalBtnText={<PencilLine />}
-            btnClassName="hover:cursor-pointer"
-            btnTriggerOnClick={() => handleEditClick(row)}
-            modalHeaderTitle="Edit Page"
-          >
-            <EditPageModal setModalOpen={setModalOpen} />
-          </UIModal>
-          <UITooltip>
-            <TooltipTrigger open={tooltipOpen} onOpenChange={setTooltipOpen}>
-              <Trash />
-            </TooltipTrigger>
-            <TooltipContent>
-              <div className="flex flex-col gap-2">
-                <UITypography text="Are you sure you want to delete this category?" />
-                <div className="flex items-center gap-2">
-                  <UIButton
-                    type="contained"
-                    icon={false}
-                    title="Yes"
-                    btnOnclick={() => handleCategoryDelete(row)}
-                  />
-                </div>
-              </div>
-            </TooltipContent>
-          </UITooltip>
-        </>
-      ),
+      field: "",
+      label: "",
     },
   ];
 
@@ -142,6 +92,12 @@ const PagesTable = () => {
     dispatch(getAllMenus());
   }, []);
 
+  useEffect(() => {
+    if (menuDataReducer?.success && menuDataReducer?.data?.length > 0) {
+      setRows(menuDataReducer?.data);
+    }
+  }, [menuDataReducer]);
+
   const LinearIndeterminate = () => {
     return <Spinner />;
   };
@@ -149,17 +105,26 @@ const PagesTable = () => {
   console.log("menuDataReducer///////////", menuDataReducer);
   console.log("checked", checked);
   return (
-    <UITable
-      columns={columns}
-      data={
-        menuDataReducer?.success && menuDataReducer?.data?.length > 0
-          ? menuDataReducer?.data
-          : []
-      }
-      pagination={true}
-      // progressPending={true}
-      // noDataComponent={LinearIndeterminate}
-    />
+    <>
+      {/* <UITable
+        columns={columns}
+        data={
+          menuDataReducer?.success && menuDataReducer?.data?.length > 0
+            ? menuDataReducer?.data
+            : []
+        }
+        pagination={true}
+        // progressPending={true}
+        // noDataComponent={LinearIndeterminate}
+      /> */}
+      <MenuDragableTable
+        columns={columns}
+        rows={rows}
+        setRows={setRows}
+        handleDeleteClick={handlePageDelete}
+        handleEditClick={handleEditClick}
+      />
+    </>
   );
 };
 

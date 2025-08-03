@@ -153,7 +153,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
       endDate: formattedEndDate,
       // activities: data.activities,
       categoryId: productData.categoryId,
-      subCategoryId: productData.subCategoryId,
+      subCategoryId: null,
       seats: data.seats,
       minAge: data.minAge,
       maxAge: data.maxAge,

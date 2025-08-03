@@ -155,11 +155,11 @@ const EditProductForm = () => {
       currency: "USD",
       paymentType: productData.paymentTypeValue,
       paymentInterval:
-        productData.paymentType == "one-time"
+        productData.paymentTypeValue == "one-time"
           ? null
           : productData.paymentIntervalValue,
       intervalCount:
-        productData.paymentType == "one-time" ? null : data.intervalCount,
+        productData.paymentTypeValue == "one-time" ? null : data.intervalCount,
       image: productData.productImage,
       galleryImages: productData.galleryImages,
       productOptions: productOptions,

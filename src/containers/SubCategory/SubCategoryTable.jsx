@@ -17,6 +17,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import EditSubCategoryDataForm from "./EditSubCategoryDataForm";
 import UIButton from "@/components/UIButton/UIButton";
+import placeholderImage from "../../assets/Images/placeholderImg.webp";
 import { toast } from "sonner";
 import { getAllCategories } from "@/store/actions/category";
 
@@ -81,11 +82,10 @@ const SubCategoryTable = () => {
       selector: (row) => row?.image,
       sortable: true,
       cell: (row) => {
-        const imageSrc =
-          row?.image &&
-          (row.image.startsWith("http") || row.image.startsWith("/"))
-            ? row.image
-            : "/default-image.png";
+        const isValidImage =
+          typeof row?.image === "string" &&
+          (row.image.startsWith("http") || row.image.startsWith("/"));
+        const imageSrc = isValidImage ? row.image : placeholderImage;
         return (
           <UITooltip>
             <TooltipTrigger>
@@ -94,7 +94,7 @@ const SubCategoryTable = () => {
             <TooltipContent>
               <div className="">
                 <Image
-                  src={`${row?.image != null ? row?.image : ""}`}
+                  src={`${isValidImage ? row.image : placeholderImage}`}
                   alt={row?.image}
                   width={100}
                   height={100}

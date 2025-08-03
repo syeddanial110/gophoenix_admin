@@ -16,10 +16,12 @@ import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import UIButton from "@/components/UIButton/UIButton";
 import { toast } from "sonner";
 import UIPopover from "@/components/UIPopover/UIPopover";
+import CollectionDragableTable from "@/components/UITable/CollectionDragableTable";
 
 const CategoryTable = () => {
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState(false);
+  const [rows, setRows] = useState([]);
   const categoryDataReducer = useSelector(
     (state) => state?.GetAllCategoriesReducer?.res
   );
@@ -44,7 +46,7 @@ const CategoryTable = () => {
   };
 
   console.log("categoryDataReducer", categoryDataReducer);
-  const columns = [
+  const columns1 = [
     {
       name: <UITypography text="Name" />,
       selector: (row) => row?.name,
@@ -137,6 +139,25 @@ const CategoryTable = () => {
     },
   ];
 
+  const columns = [
+    {
+      field: "name",
+      label: "Name",
+    },
+    {
+      field: "url",
+      label: "URL",
+    },
+    {
+      field: "image",
+      label: "Image",
+    },
+    {
+      field: "image",
+      label: "",
+    },
+  ];
+
   const handleEditClick = (row) => {
     dispatch(editCategoryData(row));
   };
@@ -149,18 +170,36 @@ const CategoryTable = () => {
     return <Spinner />;
   };
 
+  useEffect(() => {
+    if (
+      categoryDataReducer?.res &&
+      categoryDataReducer?.res?.data?.length > 0
+    ) {
+      setRows(categoryDataReducer?.res?.data);
+    }
+  }, [categoryDataReducer]);
+
   return (
-    <UITable
-      columns={columns}
-      data={
-        categoryDataReducer?.res && categoryDataReducer?.res?.data?.length > 0
-          ? categoryDataReducer?.res?.data
-          : []
-      }
-      pagination={true}
-      // progressPending={true}
-      // noDataComponent={LinearIndeterminate}
-    />
+    <>
+      {/* <UITable
+        columns={columns}
+        data={
+          categoryDataReducer?.res && categoryDataReducer?.res?.data?.length > 0
+            ? categoryDataReducer?.res?.data
+            : []
+        }
+        pagination={true}
+        // progressPending={true}
+        // noDataComponent={LinearIndeterminate}
+      /> */}
+      <CollectionDragableTable
+        columns={columns}
+        rows={rows}
+        setRows={setRows}
+        handleDeleteClick={handleCategoryDelete}
+        handleEditClick={handleEditClick}
+      />
+    </>
   );
 };
 

@@ -20,6 +20,7 @@ export const ApiEndpoints = {
     create: "/create",
     update: "/update",
     delete: "/delete",
+    updateOrder: "/order"
   },
   subCategory: {
     base: "/subCategory",
@@ -58,6 +59,7 @@ export const ApiEndpoints = {
     update: "/update",
     delete: "/delete",
     updateToggle: "/toggle",
+    updateOrder: "/order",
   },
   users: {
     base: "/auth",

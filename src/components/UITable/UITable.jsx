@@ -73,6 +73,7 @@ const UITable = (props) => {
       data={data}
       selectableRows={selectableRows}
       customStyles={customStyles}
+      draggable
       {...props}
     />
   );

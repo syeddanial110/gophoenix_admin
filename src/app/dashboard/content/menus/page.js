@@ -24,6 +24,7 @@ const Menus = () => {
           <AddPagesModal setModalOpen={setModalOpen} />
         </UIModal>
       </div>
+      
       <PagesTable />
     </>
   );
