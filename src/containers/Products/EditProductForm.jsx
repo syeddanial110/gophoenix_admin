@@ -145,7 +145,7 @@ const EditProductForm = () => {
       endDate: formattedEndDate,
       // activities: data.activities,
       categoryId: productData.categoryId,
-      subCategoryId: productData.subCategoryId,
+      // subCategoryId: productData.subCategoryId,
       seats: data.seats,
       minAge: data.minAge,
       maxAge: data.maxAge,
@@ -394,8 +394,8 @@ const EditProductForm = () => {
           slug: res?.data?.slug || "",
           categoryName: res?.data?.categoryName || "",
           categoryId: res?.data?.categoryId || "",
-          subCategoryName: res?.data?.subCategoryName || "",
-          subCategoryId: res?.data?.subCategoryId || "",
+          // subCategoryName: res?.data?.subCategoryName || "",
+          // subCategoryId: res?.data?.subCategoryId || "",
           paymentTypeValue: res?.data?.paymentType || "",
           paymentTypeName: "",
           paymentIntervalValue: res?.data?.paymentInterval || "",
@@ -658,7 +658,7 @@ const EditProductForm = () => {
                     );
                   })}
               </UISelect>
-              <UISelect
+              {/* <UISelect
                 isLabel={true}
                 labelName="Select Class Group"
                 name="subCategoryName"
@@ -677,7 +677,7 @@ const EditProductForm = () => {
                       </SelectItem>
                     );
                   })}
-              </UISelect>
+              </UISelect> */}
 
               <UISelect
                 isLabel={true}
