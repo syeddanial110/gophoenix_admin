@@ -150,7 +150,7 @@ const EditProductForm = () => {
       minAge: data.minAge,
       maxAge: data.maxAge,
       // ageException: data.ageException,
-      descriptidon: editorValue,
+      description: editorValue,
       shortDesc: inputData.shortDescription,
       currency: "USD",
       paymentType: productData.paymentTypeValue,
