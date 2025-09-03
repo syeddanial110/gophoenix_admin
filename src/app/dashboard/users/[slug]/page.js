@@ -1,16 +1,18 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import UITypography from "@/components/UITypography/UITypography";
 import UIButton from "@/components/UIButton/UIButton";
 import UIInputField from "@/components/InputFields/UIInputField";
 import UserPasswordChange from "@/containers/Users/UserPasswordChange";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { apiGet } from "@/apis/ApiRequest";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
 import { toast } from "sonner";
+import { pathLocations } from "@/utils/navigation";
 
 const UserById = () => {
   const { slug } = useParams();
+  const router = useRouter();
   // Dummy order history data
   const orders = [
     { product: "Product A", date: "07-10-2025", price: "$50" },
@@ -22,8 +24,8 @@ const UserById = () => {
       `${ApiEndpoints.users.base}${ApiEndpoints.users.disableUser}/${slug}`,
       (res) => {
         console.log("User disabled successfully", res);
-        if(res?.success){
-          toast.success(res?.message)
+        if (res?.success) {
+          toast.success(res?.message);
         }
       },
       (err) => {
@@ -37,12 +39,18 @@ const UserById = () => {
       `${ApiEndpoints.users.base}${ApiEndpoints.users.deleteUser}/${slug}`,
       (res) => {
         console.log("res", res);
+        toast.success(res?.message);
+        router.push(pathLocations.users);
       },
       (err) => {
         console.log("err", err);
       }
     );
   };
+
+  useEffect(() => {
+    // apiGet(`${ApiEndpoints.users.}`)
+  }, []);
 
   console.log("slug", slug);
 
@@ -57,7 +65,12 @@ const UserById = () => {
             title="Disable User"
             btnOnclick={handleDisableUser}
           />
-          <UIButton type="contained" icon={false} title="Delete User" />
+          <UIButton
+            type="contained"
+            icon={false}
+            title="Delete User"
+            btnOnclick={handleDeleteUser}
+          />
         </div>
       </div>
       <hr />

@@ -31,7 +31,18 @@ const UsersTable = () => {
     setModalOpen(!modalOpen);
   };
 
-  const handleUserDelete = (row) => {};
+  const handleUserDelete = (row) => {
+    apiGet(
+      `${ApiEndpoints.users.base}${ApiEndpoints.users.deleteUser}/${row.id}`,
+      (res) => {
+        console.log("res", res);
+        toast.success(res?.message);
+      },
+      (err) => {
+        console.log("err", err);
+      }
+    );
+  };
 
   const handleOnChangeChecked = (value, id) => {
     setChecked(value);

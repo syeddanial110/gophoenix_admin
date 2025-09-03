@@ -47,7 +47,7 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
 
   const columns = [
     {
-      name: <UITypography text="Product Name" />,
+      name: <UITypography text="Class Name" />,
       selector: (row) => row?.productName,
       sortable: true,
       cell: (row) => {
@@ -71,7 +71,7 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
     //   },
     // },
     {
-      name: <UITypography text={"Category Name"} />,
+      name: <UITypography text={"Collection Name"} />,
       selector: (row) => row?.categoryName,
       sortable: true,
       cell: (row) => {

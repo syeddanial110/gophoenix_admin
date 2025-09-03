@@ -78,5 +78,6 @@ export const pathLocations = {
   dashboard: "/dashboard/home",
   content: {},
   programs: "/",
-  userById : "/dashboard/users"
+  userById : "/dashboard/users",
+  users: "/dashboard/users"
 };

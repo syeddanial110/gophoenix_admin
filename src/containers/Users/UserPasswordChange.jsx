@@ -36,6 +36,7 @@ const UserPasswordChange = ({ slug }) => {
         isLable={true}
         labelName="New Password"
         placeholder="Enter new password"
+        // type="password"
         value={newPassword}
         onChange={(e) => setNewPassword(e.target.value)}
       />

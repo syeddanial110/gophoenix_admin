@@ -32,7 +32,7 @@ export const ApiEndpoints = {
   },
   products: {
     base: "/product",
-    getAll: "/getAllProduct",
+    getAll: "/getAdminProduct",
     getById: "/getProductById/",
     create: "/createProduct",
     update: "/updateProduct/",
