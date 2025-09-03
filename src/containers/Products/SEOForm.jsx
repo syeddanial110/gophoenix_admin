@@ -47,7 +47,7 @@ const SEOForm = ({
             value={metaTitle}
           />
           <div className="text-xs text-gray-500 mt-1">
-            {metaTitle.length} of 70 characters used
+            {metaTitle?.length} of 70 characters used
           </div>
         </div>
 
@@ -61,7 +61,7 @@ const SEOForm = ({
             value={metaDescription}
           />
           <div className="text-xs text-gray-500 mt-1">
-            {metaDescription.length} of 160 characters used
+            {metaDescription?.length} of 160 characters used
           </div>
         </div>
       </div>
