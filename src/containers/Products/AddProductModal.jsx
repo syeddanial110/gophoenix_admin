@@ -60,8 +60,8 @@ const AddProductModal = ({ setIsProductAdd }) => {
   const [startTime, setStartTime] = useState("10:00");
   const [endTime, setEndTime] = useState("14:00");
   const [date, setDate] = useState({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
+    from: new Date(), // Today's date
+    to: addDays(new Date(), 20), // 20 days from today
   });
   const [productName, setProductName] = useState("");
   const [cardName, setCardName] = useState("");
@@ -153,7 +153,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
       endDate: formattedEndDate,
       // activities: data.activities,
       categoryId: productData.categoryId,
-      subCategoryId: null,
+      // subCategoryId: null,
       seats: data.seats,
       minAge: data.minAge,
       maxAge: data.maxAge,
@@ -221,28 +221,15 @@ const AddProductModal = ({ setIsProductAdd }) => {
   };
 
   const handleCategorySelectChange = (value, type) => {
-    if (type == "category") {
-      const selectedItem = getAllCategoriesData?.res?.data.find(
-        (item) => item.name === value
-      );
-      if (selectedItem) {
-        setProductData({
-          ...productData,
-          categoryId: selectedItem.id,
-          categoryName: selectedItem.name,
-        });
-      }
-    } else {
-      const selectedItem = subCategoryDataReducer?.res?.data.find(
-        (item) => item.name === value
-      );
-      if (selectedItem) {
-        setProductData({
-          ...productData,
-          subCategoryId: selectedItem.id,
-          subCategoryName: selectedItem.name,
-        });
-      }
+    const selectedItem = getAllCategoriesData?.res?.data.find(
+      (item) => item.name === value
+    );
+    if (selectedItem) {
+      setProductData({
+        ...productData,
+        categoryId: selectedItem.id,
+        categoryName: selectedItem.name,
+      });
     }
   };
 
@@ -547,7 +534,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                     );
                   })}
               </UISelect>
-              <UISelect
+              {/* <UISelect
                 isLabel={true}
                 labelName="Select Class Group"
                 name="subCategoryName"
@@ -565,7 +552,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                       </SelectItem>
                     );
                   })}
-              </UISelect>
+              </UISelect> */}
 
               <UISelect
                 isLabel={true}

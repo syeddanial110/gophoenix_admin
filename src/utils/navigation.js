@@ -61,6 +61,10 @@ export const Navigation_Menu = [
         link: "/dashboard/content/blogs",
       },
       {
+        name: "Home Page Content",
+        link: "/dashboard/content/home-page",
+      },
+      {
         name: "Menus",
         link: "/dashboard/content/menus",
       },

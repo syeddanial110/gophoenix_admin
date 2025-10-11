@@ -18,3 +18,22 @@ export const addProductSchema = yup.object({
   maxAge: yup.string().required("Max Age is resquired"),
   intervalCount: yup.string(),
 });
+
+export const blogsSchema = yup.object({
+  title: yup.string().required("Title is required"),
+  description: yup.string().required("Description is required"),
+});
+
+export const homepageContentSchema = yup.object({
+  mainHeading: yup.string(),
+  mainDescription: yup.string(),
+  statsCard1Heading: yup.string(),
+  statsCard1SubHeading: yup.string(),
+  statsCard1Description: yup.string(),
+  statsCard2Heading: yup.string(),
+  statsCard2SubHeading: yup.string(),
+  statsCard2Description: yup.string(),
+  statsCard3Heading: yup.string(),
+  statsCard3SubHeading: yup.string(),
+  statsCard3Description: yup.string(),
+});

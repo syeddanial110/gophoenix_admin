@@ -20,7 +20,7 @@ export const ApiEndpoints = {
     create: "/create",
     update: "/update",
     delete: "/delete",
-    updateOrder: "/order"
+    updateOrder: "/order",
   },
   subCategory: {
     base: "/subCategory",
@@ -67,5 +67,16 @@ export const ApiEndpoints = {
     deleteUser: "/deleteUser",
     disableUser: "/disableUser",
     updateUserPassword: "/updateUserPassword",
+  },
+  blogs: {
+    base: "/blogs",
+    getAll: "/getAdmin",
+    create: "/create",
+    update: "/update",
+    delete: "/delete",
+    toggle: "/toggle",
+  },
+  home: {
+    create: "/homePage/create",
   },
 };

@@ -8,6 +8,8 @@ import { GetAllProductsReducer } from "./getAllProductsReducer";
 import { EditProductDataReducer } from "./editProductDataReducer";
 import { GetAllMenusReducer } from "./getAllMenusReducer";
 import { EditPageDataReducer } from "./editPageDataReducer";
+import { GetAllBlogsReducer } from "./getAllBlogsReducer";
+import { EditBlogDataReducer } from "./editBlogDataReducer";
 
 export default combineReducers({
   SignInReducer,
@@ -19,4 +21,6 @@ export default combineReducers({
   EditProductDataReducer,
   GetAllMenusReducer,
   EditPageDataReducer,
+  GetAllBlogsReducer,
+  EditBlogDataReducer,
 });

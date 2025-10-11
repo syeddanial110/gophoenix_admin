@@ -80,13 +80,16 @@ const Editor = ({ editorValue, setEditroValue }) => {
   };
 
   return (
-    <div className={styles.editorWrapper}>
+    <div
+     className={styles.editorWrapper}
+    >
       <ReactQuill
         ref={quillRef}
         theme="snow"
         value={editorValue}
         onChange={setEditroValue}
         modules={modules}
+        preserveWhitespace={true}
         className={styles.quillEditor}
       />
     </div>

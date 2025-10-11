@@ -25,7 +25,7 @@ const UIButton = ({
         </Button>
       ) : type == "outlined" ? (
         <Button
-          className={`bg-transparent border-b-1 border-black text-black hover:bg-transparent ${className}`}
+          className={`bg-transparent border-b-1 border-black hover:border-b-2 transition-all ease-in duration-200 cursor-pointer text-black hover:bg-transparent ${className}`}
           type={btnType}
           onClick={btnOnclick}
           {...props}

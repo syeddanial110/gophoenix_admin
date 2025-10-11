@@ -58,8 +58,6 @@ const EditProductForm = () => {
     description: "",
     categoryName: "",
     categoryId: "",
-    subCategoryName: "",
-    subCategoryId: "",
     paymentTypeValue: "",
     paymentTypeName: "",
     paymentIntervalValue: "",
@@ -204,7 +202,6 @@ const EditProductForm = () => {
   };
 
   const handlePaymentIntervalSelectChange = (value) => {
-    console.log("value", value);
     const selectedItem = paymentInterval.find((item) => item.value === value);
     if (selectedItem) {
       setProductData({
@@ -216,28 +213,15 @@ const EditProductForm = () => {
   };
 
   const handleCategorySelectChange = (value, type) => {
-    if (type == "category") {
-      const selectedItem = getAllCategoriesData?.res?.data.find(
-        (item) => item.name === value
-      );
-      if (selectedItem) {
-        setProductData({
-          ...productData,
-          categoryId: selectedItem.id,
-          categoryName: selectedItem.name,
-        });
-      }
-    } else {
-      const selectedItem = subCategoryDataReducer?.res?.data.find(
-        (item) => item.name === value
-      );
-      if (selectedItem) {
-        setProductData({
-          ...productData,
-          subCategoryId: selectedItem.id,
-          subCategoryName: selectedItem.name,
-        });
-      }
+    const selectedItem = getAllCategoriesData?.res?.data.find(
+      (item) => item.name === value
+    );
+    if (selectedItem) {
+      setProductData({
+        ...productData,
+        categoryId: selectedItem.id,
+        categoryName: selectedItem.name,
+      });
     }
   };
 
