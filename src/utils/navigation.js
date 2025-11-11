@@ -83,5 +83,6 @@ export const pathLocations = {
   content: {},
   programs: "/",
   userById : "/dashboard/users",
-  users: "/dashboard/users"
+  users: "/dashboard/users",
+  orderById: "/dashboard/orders"
 };

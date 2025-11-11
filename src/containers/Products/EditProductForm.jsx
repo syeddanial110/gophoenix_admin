@@ -24,12 +24,12 @@ import UIInputField from "@/components/InputFields/UIInputField";
 import Editor from "../ContentEditor/Editor";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import SEOForm from "./SEOForm";
+import UISwitch from "@/components/UISwitch/UISwitch";
 
 const EditProductForm = () => {
   const paymentTypes = [
     { name: "Recurring", value: "recurring" },
     { name: "One Time", value: "one-time" },
-    { name: "Both", value: "both" },
   ];
   const paymentInterval = [
     { name: "Day", value: "day" },
@@ -72,6 +72,7 @@ const EditProductForm = () => {
       title: "",
       price: "",
       currency: "USD",
+      isJersey: 0,
     },
   ]);
   const [startTime, setStartTime] = useState("");
@@ -109,9 +110,6 @@ const EditProductForm = () => {
     },
   });
 
-  const subCategoryDataReducer = useSelector(
-    (state) => state?.GetAllSubCategoriesReducer?.res
-  );
   const getAllCategoriesData = useSelector(
     (state) => state?.GetAllCategoriesReducer?.res
   );
@@ -346,13 +344,27 @@ const EditProductForm = () => {
     setProductOptions(updatedOptions);
   };
 
+  const handleIsJerseySwitch = (val, ind) => {
+    console.log("val", val);
+    setProductOptions((prev) =>
+      prev.map((item, index) => {
+        if (index === ind) {
+          return {
+            ...item,
+            isJersey: val ? 1 : 0,
+          };
+        }
+        return item;
+      })
+    );
+  };
+
   console.log("productOptions", productOptions);
 
   //end region
 
   useEffect(() => {
     dispatch(getAllCategories());
-    dispatch(getAllSubCategories());
   }, []);
 
   useEffect(() => {
@@ -361,6 +373,7 @@ const EditProductForm = () => {
     apiGet(
       `${ApiEndpoints.products.base}${ApiEndpoints.products.getById}${editProductData?.data?.productId}`,
       (res) => {
+        console.log("res-------", res);
         setProductName(res?.data?.productName);
         setCardName(res?.data?.cardName);
         form.reset({
@@ -395,9 +408,20 @@ const EditProductForm = () => {
         setStartTime(res?.data?.startTime || "");
         setEndTime(res?.data?.endTime || "");
         setProductOptions(
-          res?.data?.productOptions?.length > 0
-            ? res?.data?.productOptions
-            : productOptions
+          res?.data?.productOptions && res?.data?.productOptions.length > 0
+            ? res.data.productOptions.map((opt) => ({
+                title: opt.title ?? "",
+                price: opt.price ?? "",
+                // ensure numeric 0/1 for your UISwitch logic
+                isJersey: opt.isJersey,
+              }))
+            : [
+                {
+                  title: "",
+                  price: "",
+                  isJersey: 0,
+                },
+              ]
         );
         setEditorValue(res?.data?.description || "");
         setInputData({
@@ -434,30 +458,16 @@ const EditProductForm = () => {
 
   // filteration for dropdown of payment types, sub category
   useEffect(() => {
-    if (subCategoryDataReducer?.res) {
-      if (!isLoading) {
-        let filteredPaymentTypeName = paymentTypes.filter(
-          (item) => item.value == productData?.paymentTypeValue
-        );
-
-        let filteredSubCategoryName = [];
-
-        filteredSubCategoryName = subCategoryDataReducer?.res?.data.filter(
-          (item) => item.name == productData?.subCategoryName
-        );
-
-        console.log("filteredSubCategoryName", filteredSubCategoryName);
-        setProductData({
-          ...productData,
-          paymentTypeName: filteredPaymentTypeName[0]?.name,
-          subCategoryName:
-            productData?.subCategoryName !== null
-              ? filteredSubCategoryName[0]?.name
-              : null,
-        });
-      }
+    if (!isLoading) {
+      let filteredPaymentTypeName = paymentTypes.filter(
+        (item) => item.value == productData?.paymentTypeValue
+      );
+      setProductData({
+        ...productData,
+        paymentTypeName: filteredPaymentTypeName[0]?.name,
+      });
     }
-  }, [subCategoryDataReducer?.res, isLoading]);
+  }, [isLoading]);
 
   console.log("productData/////,", productData);
   return (
@@ -680,8 +690,7 @@ const EditProductForm = () => {
                   );
                 })}
               </UISelect>
-              {productData.paymentTypeValue == "recurring" ||
-              productData.paymentTypeValue == "both" ? (
+              {productData.paymentTypeValue == "recurring" ? (
                 <>
                   <UISelect
                     isLabel={true}
@@ -812,6 +821,14 @@ const EditProductForm = () => {
                                     value={item.price}
                                     onChange={(e) =>
                                       handleProductOptionChange(e, ind)
+                                    }
+                                  />
+                                </div>
+                                <div className="">
+                                  <UISwitch
+                                    checked={item.isJersey == 1 ? true : false}
+                                    onCheckedChange={(val) =>
+                                      handleIsJerseySwitch(val, ind)
                                     }
                                   />
                                 </div>

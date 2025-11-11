@@ -1,7 +1,7 @@
 "use client";
 import UIModal from "@/components/UIModal/UIModal";
 import UITypography from "@/components/UITypography/UITypography";
-import UsersTable from "@/containers/Users/UsersTable";
+import OrderTable from "@/containers/Orders/OrderTable";
 import React from "react";
 
 const Users = () => {
@@ -19,7 +19,7 @@ const Users = () => {
           <UpdateUserPassword setModalOpen={setModalOpen} />
         </UIModal> */}
       </div>
-      <UsersTable />
+      <OrderTable />
     </>
   );
 };

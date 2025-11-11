@@ -26,12 +26,13 @@ import Editor from "../ContentEditor/Editor";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import Image from "next/image";
 import SEOForm from "./SEOForm";
+import UICheckbox from "@/components/UICheckbox/UICheckbox";
+import UISwitch from "@/components/UISwitch/UISwitch";
 
 const AddProductModal = ({ setIsProductAdd }) => {
   const paymentTypes = [
     { name: "Recurring", value: "recurring" },
     { name: "One Time", value: "one-time" },
-    { name: "Both", value: "both" },
   ];
   const paymentInterval = [
     { name: "Day", value: "day" },
@@ -87,6 +88,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
       title: "",
       price: "",
       currency: "USD",
+      isJersey: 0,
     },
   ]);
   const [editorValue, setEditorValue] = useState("");
@@ -349,16 +351,32 @@ const AddProductModal = ({ setIsProductAdd }) => {
     setProductOptions(updatedOptions);
   };
 
-  const onSaveProductOptions = () => {
-    setModalOpen(false);
+  const handleIsJerseySwitch = (val, ind) => {
+    console.log("val", val);
+    setProductOptions((prev) =>
+      prev.map((item, index) => {
+        if (index === ind) {
+          return {
+            ...item,
+            isJersey: val ? 1 : 0,
+          };
+        } else {
+          return {
+            ...item,
+            isJersey: 0,
+          };
+        }
+        return item;
+      })
+    );
   };
+
   console.log("productOptions", productOptions);
 
   //end region
 
   useEffect(() => {
     dispatch(getAllCategories());
-    dispatch(getAllSubCategories());
   }, []);
 
   console.log("inputData", inputData);
@@ -569,8 +587,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                   );
                 })}
               </UISelect>
-              {productData.paymentType == "recurring" ||
-              productData.paymentType == "both" ? (
+              {productData.paymentType == "recurring" ? (
                 <>
                   <UISelect
                     isLabel={true}
@@ -625,165 +642,164 @@ const AddProductModal = ({ setIsProductAdd }) => {
                   </div>
                 </div>
               </div>
-
-              <div className="bg-[#dddcdc36] p-4 rounded-lg">
-                <DragDropContext
-                  onDragEnd={(result) => {
-                    if (!result.destination) return;
-                    const items = Array.from(productOptions);
-                    const [reorderedItem] = items.splice(
-                      result.source.index,
-                      1
-                    );
-                    items.splice(result.destination.index, 0, reorderedItem);
-                    setProductOptions(items);
-                  }}
-                >
-                  <Droppable droppableId="productOptions">
-                    {(provided) => (
-                      <div
-                        className="bg-[#dddcdc36] p-4 rounded-lg"
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                      >
-                        {productOptions.map((item, ind) => (
-                          <Draggable
-                            key={ind}
-                            draggableId={ind.toString()}
-                            index={ind}
-                          >
-                            {(provided, snapshot) => (
+            </div>
+            <div className="bg-[#dddcdc36] p-4 rounded-lg w-[60%]">
+              <DragDropContext
+                onDragEnd={(result) => {
+                  if (!result.destination) return;
+                  const items = Array.from(productOptions);
+                  const [reorderedItem] = items.splice(result.source.index, 1);
+                  items.splice(result.destination.index, 0, reorderedItem);
+                  setProductOptions(items);
+                }}
+              >
+                <Droppable droppableId="productOptions">
+                  {(provided) => (
+                    <div
+                      className="bg-[#dddcdc36] p-4 rounded-lg"
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
+                      {productOptions.map((item, ind) => (
+                        <Draggable
+                          key={ind}
+                          draggableId={ind.toString()}
+                          index={ind}
+                        >
+                          {(provided, snapshot) => (
+                            <div
+                              className="flex gap-6 items-center"
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              style={{
+                                ...provided.draggableProps.style,
+                                background: snapshot.isDragging
+                                  ? "#f3f3f3"
+                                  : "transparent",
+                              }}
+                            >
+                              {/* Drag handle icon (optional, you can use any icon) */}
                               <div
-                                className="flex gap-6 items-center"
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
+                                className="cursor-grab"
                                 {...provided.dragHandleProps}
-                                style={{
-                                  ...provided.draggableProps.style,
-                                  background: snapshot.isDragging
-                                    ? "#f3f3f3"
-                                    : "transparent",
-                                }}
                               >
-                                {/* Drag handle icon (optional, you can use any icon) */}
-                                <div
-                                  className="cursor-grab"
-                                  {...provided.dragHandleProps}
-                                >
-                                  <svg
-                                    width="20"
-                                    height="20"
-                                    fill="currentColor"
-                                  >
-                                    <circle cx="5" cy="5" r="2" />
-                                    <circle cx="15" cy="5" r="2" />
-                                    <circle cx="5" cy="15" r="2" />
-                                    <circle cx="15" cy="15" r="2" />
-                                  </svg>
-                                </div>
-                                <div>
-                                  <UIInputField
-                                    isLable={true}
-                                    lableName="Title"
-                                    name={`title`}
-                                    value={item.title}
-                                    onChange={(e) =>
-                                      handleProductOptionChange(e, ind)
-                                    }
-                                  />
-                                </div>
-                                <div>
-                                  <UIInputField
-                                    isLable={true}
-                                    lableName="Price"
-                                    name={`price`}
-                                    value={item.price}
-                                    onChange={(e) =>
-                                      handleProductOptionChange(e, ind)
-                                    }
-                                  />
-                                </div>
-
-                                {ind !== 0 && (
-                                  <div className="w-[10%]">
-                                    <div
-                                      onClick={() =>
-                                        handleRemoveProductOptions(ind)
-                                      }
-                                    >
-                                      <Trash />
-                                    </div>
-                                  </div>
-                                )}
+                                <svg width="20" height="20" fill="currentColor">
+                                  <circle cx="5" cy="5" r="2" />
+                                  <circle cx="15" cy="5" r="2" />
+                                  <circle cx="5" cy="15" r="2" />
+                                  <circle cx="15" cy="15" r="2" />
+                                </svg>
                               </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
-              </div>
+                              <div>
+                                <UIInputField
+                                  isLable={true}
+                                  lableName="Title"
+                                  name={`title`}
+                                  value={item.title}
+                                  onChange={(e) =>
+                                    handleProductOptionChange(e, ind)
+                                  }
+                                />
+                              </div>
+                              <div>
+                                <UIInputField
+                                  isLable={true}
+                                  lableName="Price"
+                                  name={`price`}
+                                  value={item.price}
+                                  onChange={(e) =>
+                                    handleProductOptionChange(e, ind)
+                                  }
+                                />
+                              </div>
+                              <div className="">
+                                <UISwitch
+                                  onCheckedChange={(val) =>
+                                    handleIsJerseySwitch(val, ind)
+                                  }
+                                />
+                              </div>
 
-              {/* add product option end */}
+                              {ind !== 0 && (
+                                <div className="w-[10%]">
+                                  <div
+                                    onClick={() =>
+                                      handleRemoveProductOptions(ind)
+                                    }
+                                  >
+                                    <Trash />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </div>
 
-              <UIFileInput
-                labelName="Product Image"
-                onChange={handleFileInput}
-                name="productImage"
+            {/* add product option end */}
+
+            <UIFileInput
+              labelName="Product Image"
+              onChange={handleFileInput}
+              name="productImage"
+            />
+            {productData?.productImage && (
+              <Image
+                src={`${productData.productImage}`}
+                alt={productData.productImage}
+                height={180}
+                width={140}
               />
-              {productData?.productImage && (
-                <Image
-                  src={`${productData.productImage}`}
-                  alt={productData.productImage}
-                  height={180}
-                  width={140}
-                />
-              )}
+            )}
 
-              <UIFileInput
-                labelName="Product Gallery Image"
-                multiple={true}
-                onChange={handleGalleryFileUpload}
-              />
-              <div className="flex gap-3">
-                {productData.galleryImages.length > 0 &&
-                  productData.galleryImages.map((item, i) => {
-                    return (
-                      <div className="relative">
-                        <div className="absolute right-1 top-1 hover:cursor-pointer">
-                          <div onClick={() => handleGalleryImageRemove(i)}>
-                            <X />
-                          </div>
+            <UIFileInput
+              labelName="Product Gallery Image"
+              multiple={true}
+              onChange={handleGalleryFileUpload}
+            />
+            <div className="flex gap-3">
+              {productData.galleryImages.length > 0 &&
+                productData.galleryImages.map((item, i) => {
+                  return (
+                    <div className="relative">
+                      <div className="absolute right-1 top-1 hover:cursor-pointer">
+                        <div onClick={() => handleGalleryImageRemove(i)}>
+                          <X />
                         </div>
-                        <Image
-                          src={item.path}
-                          alt={item.path}
-                          key={i}
-                          height={240}
-                          width={240}
-                          objectFit="cover"
-                        />
                       </div>
-                    );
-                  })}
-              </div>
-              <SEOForm
-                productName={productName}
-                shortDescription={inputData.shortDescription}
-                metaTitle={inputData.metaTitle}
-                metaDescription={inputData.metaDescription}
-                onChange={(e) => handleInputChange(e)}
+                      <Image
+                        src={item.path}
+                        alt={item.path}
+                        key={i}
+                        height={240}
+                        width={240}
+                        objectFit="cover"
+                      />
+                    </div>
+                  );
+                })}
+            </div>
+            <SEOForm
+              productName={productName}
+              shortDescription={inputData.shortDescription}
+              metaTitle={inputData.metaTitle}
+              metaDescription={inputData.metaDescription}
+              onChange={(e) => handleInputChange(e)}
+            />
+            <div>
+              <UIButton
+                type="contained"
+                icon={false}
+                title="Submit"
+                btnType="submit"
               />
-              <div>
-                <UIButton
-                  type="contained"
-                  icon={false}
-                  title="Submit"
-                  btnType="submit"
-                />
-              </div>
             </div>
           </form>
         </Form>

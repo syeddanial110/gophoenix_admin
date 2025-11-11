@@ -79,4 +79,10 @@ export const ApiEndpoints = {
   home: {
     create: "/homePage/create",
   },
+  orders: {
+    base: "/order",
+    getAll: "/list",
+    cancelRecurring: "/cancel-subscription",
+    getById: "/getbyid",
+  },
 };
