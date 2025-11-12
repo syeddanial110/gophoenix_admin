@@ -212,8 +212,8 @@ const OrderById = () => {
             )}
         </div>
         <div className="flex-1 pl-8">
-          <UITypography variant="h6" text="Change Password" />
-          <UserPasswordChange slug={slug} />
+          {/* <UITypography variant="h6" text="Change Password" />
+          <UserPasswordChange slug={slug} /> */}
         </div>
       </div>
     </div>
