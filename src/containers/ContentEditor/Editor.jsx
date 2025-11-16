@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
@@ -23,6 +23,7 @@ const toolbarOptions = [
 
 const Editor = ({ editorValue, setEditroValue }) => {
   const quillRef = useRef();
+   const editorWrapperRef = useRef();
 
   // Custom image handler
   const imageHandler = () => {
@@ -79,9 +80,32 @@ const Editor = ({ editorValue, setEditroValue }) => {
     },
   };
 
+  useEffect(() => {
+    // Prevent any focus-related layout shifts
+    const handleFocus = (e) => {
+      e.preventDefault();
+    };
+
+    const wrapper = editorWrapperRef.current;
+    if (wrapper) {
+      const buttons = wrapper.querySelectorAll('button, [role="button"]');
+      buttons.forEach(button => {
+        button.addEventListener('mousedown', handleFocus);
+      });
+
+      return () => {
+        buttons.forEach(button => {
+          button.removeEventListener('mousedown', handleFocus);
+        });
+      };
+    }
+  }, []);
+
+
   return (
     <div
      className={styles.editorWrapper}
+      ref={editorWrapperRef}
     >
       <ReactQuill
         ref={quillRef}

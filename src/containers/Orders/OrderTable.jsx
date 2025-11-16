@@ -23,8 +23,6 @@ const OrderTable = () => {
     setModalOpen(!modalOpen);
   };
 
-
-
   const handleOnChangeChecked = (value, id) => {
     setChecked(value);
     apiGet(
@@ -76,10 +74,17 @@ const OrderTable = () => {
     },
     {
       name: <UITypography text={"Child Name"} />,
-      selector: (row) => row?.childName,
+      selector: (row) =>
+        row?.items?.length > 0 && row?.items[0]?.children[0]?.childName,
       sortable: true,
       cell: (row) => {
-        return <UITypography text={row?.childName} />;
+        return (
+          <UITypography
+            text={
+              row?.items?.length > 0 ? row?.items[0]?.children[0]?.childName : ""
+            }
+          />
+        );
       },
     },
     {
@@ -129,7 +134,6 @@ const OrderTable = () => {
               router.push(`${pathLocations.orderById}/${row?.orderId}`)
             }
           />
-         
         </>
       ),
     },

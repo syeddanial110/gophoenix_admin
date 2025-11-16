@@ -67,6 +67,7 @@ export const ApiEndpoints = {
     deleteUser: "/deleteUser",
     disableUser: "/disableUser",
     updateUserPassword: "/updateUserPassword",
+    getUserById: "/getUserById"
   },
   blogs: {
     base: "/blogs",

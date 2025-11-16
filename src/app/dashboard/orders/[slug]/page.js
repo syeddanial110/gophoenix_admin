@@ -28,8 +28,6 @@ const OrderById = () => {
     setModalOpen(!modalOpen);
   };
 
-
-
   useEffect(() => {
     apiGet(
       `${ApiEndpoints.orders.base}${ApiEndpoints.orders.getById}/${slug}`,
@@ -49,7 +47,6 @@ const OrderById = () => {
     <div className="mb-40">
       <div className="flex justify-between mb-4">
         <UITypography variant="h2" text="User Details" />
-       
       </div>
       <hr />
       <div className="flex mt-9">
@@ -87,7 +84,7 @@ const OrderById = () => {
                           orderDetail?.items?.length > 0 &&
                           orderDetail?.items[0]?.payment?.status
                         }`}
-                        className="!text-[18px]"
+                        className="!text-[18px] capitalize"
                       />
                     </div>
                   )}
@@ -97,16 +94,16 @@ const OrderById = () => {
           {/* Selected Option */}
           <div className="border-1 border-gray-200 mt-4 p-4 rounded-2xl bg-gray-50">
             <div className="flex flex-col gap-2">
+              <UITypography variant="h6" text="Children" />
               {orderDetail?.items?.length > 0 &&
                 orderDetail?.items[0]?.children?.map((item) => {
                   return (
                     <>
-                      <UITypography variant="h6" text="Children" />
-                      <UITypography variant="p" text={`${item?.childName}`} />
+                      <UITypography variant="h6" text={`${item?.childName}`} className='!font-bold' />
                       {item?.options?.length > 0 &&
                         item?.options?.map((elm) => {
                           return (
-                            <div className="flex">
+                            <div className="flex space-x-6">
                               <div>
                                 <CornerDownRight />
                               </div>
@@ -135,7 +132,7 @@ const OrderById = () => {
                                   />
                                   <UITypography
                                     variant="p"
-                                    text={`Jersey Size: $${elm?.jerseySize}`}
+                                    text={`Jersey Size: ${elm?.jerseySize}`}
                                   />
                                 </div>
                               )}
@@ -147,6 +144,10 @@ const OrderById = () => {
                 })}
             </div>
           </div>
+        </div>
+        <div className="flex-1 pl-8">
+          {/* <UITypography variant="h6" text="Change Password" />
+          <UserPasswordChange slug={slug} /> */}
           {/* Payment Details */}
           {orderDetail?.items?.length > 0 &&
             orderDetail?.items[0]?.payment != null &&
@@ -195,7 +196,7 @@ const OrderById = () => {
                       variant="p"
                       text={`Amount $${
                         orderDetail?.items?.length > 0 &&
-                        orderDetail?.items[0]?.payment?.amount
+                        orderDetail?.items[0]?.payment?.paymentAmount
                       }`}
                       className="!text-[18px]"
                     />
@@ -210,10 +211,6 @@ const OrderById = () => {
                 </div>
               </div>
             )}
-        </div>
-        <div className="flex-1 pl-8">
-          {/* <UITypography variant="h6" text="Change Password" />
-          <UserPasswordChange slug={slug} /> */}
         </div>
       </div>
     </div>
