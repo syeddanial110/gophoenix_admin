@@ -65,8 +65,12 @@ export const Navigation_Menu = [
         link: "/dashboard/content/home-page",
       },
       {
-        name: "Menus",
-        link: "/dashboard/content/menus",
+        name: "Pages",
+        link: "/dashboard/content/pages",
+      },
+      {
+        name: "Menu",
+        link: "/dashboard/content/menu",
       },
     ],
   },

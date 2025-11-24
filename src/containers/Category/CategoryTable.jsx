@@ -69,26 +69,13 @@ const CategoryTable = () => {
       sortable: true,
       cell: (row) => {
         return (
-          <UITooltip>
-            <TooltipTrigger>
-              <Image
-                src={`${row?.image != null ? row?.image : ""}`}
-                alt={row?.image}
-                width={40}
-                height={40}
-              />
-            </TooltipTrigger>
-            <TooltipContent>
-              <div className="">
-                <Image
-                  src={`${row?.image}`}
-                  alt={row?.image}
-                  width={100}
-                  height={100}
-                />
-              </div>
-            </TooltipContent>
-          </UITooltip>
+          <Image
+            src={`${row?.image != null ? row?.image : ""}`}
+            alt={row?.image}
+            width={40}
+            height={1080}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+          />
         );
       },
     },

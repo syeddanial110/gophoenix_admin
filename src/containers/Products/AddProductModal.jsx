@@ -108,6 +108,11 @@ const AddProductModal = ({ setIsProductAdd }) => {
   function onSubmit(data, e) {
     console.log("data", data, e);
 
+    if(productData?.productImage == ''){
+      toast.error("Please upload product image");
+      return;
+    }
+
     const formattedStartDate = date.from.toISOString().split("T")[0];
     const formattedEndDate = date.to.toISOString().split("T")[0];
 
@@ -624,15 +629,9 @@ const AddProductModal = ({ setIsProductAdd }) => {
                 <></>
               )}
               {/* Add Product options */}
-              <div className="flex justify-between items-center">
+            </div>
+              <div className="flex justify-between items-center w-[80%]">
                 <UITypography variant="h6" text="Add Product Options" />
-                {/* <UIButton
-                type="contained"
-                icon={true}
-                BtnIcon={Plus}
-                className="border-1 border-grey rounded-full p-0"
-                btnOnclick={handleAddProductOptions}
-              /> */}
                 <div>
                   <div
                     className="border-1 border-grey rounded-full p-3"
@@ -642,8 +641,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="bg-[#dddcdc36] p-4 rounded-lg w-[60%]">
+            <div className="bg-[#dddcdc36] p-4 rounded-lg w-[80%]">
               <DragDropContext
                 onDragEnd={(result) => {
                   if (!result.destination) return;
@@ -652,6 +650,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                   items.splice(result.destination.index, 0, reorderedItem);
                   setProductOptions(items);
                 }}
+                className='w-full'
               >
                 <Droppable droppableId="productOptions">
                   {(provided) => (
@@ -691,7 +690,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                                   <circle cx="15" cy="15" r="2" />
                                 </svg>
                               </div>
-                              <div>
+                              <div className="w-full">
                                 <UIInputField
                                   isLable={true}
                                   lableName="Title"
@@ -700,20 +699,23 @@ const AddProductModal = ({ setIsProductAdd }) => {
                                   onChange={(e) =>
                                     handleProductOptionChange(e, ind)
                                   }
+                                  className="w-[100%]"
                                 />
                               </div>
-                              <div>
+                              <div className="w-[60%]">
                                 <UIInputField
                                   isLable={true}
                                   lableName="Price"
                                   name={`price`}
                                   value={item.price}
+                                  type='number'
                                   onChange={(e) =>
                                     handleProductOptionChange(e, ind)
                                   }
                                 />
                               </div>
-                              <div className="">
+                              <div className="flex flex-col gap-3 justify-start">
+                                <UITypography variant='h6' text='Jersey' />
                                 <UISwitch
                                   onCheckedChange={(val) =>
                                     handleIsJerseySwitch(val, ind)
@@ -721,8 +723,8 @@ const AddProductModal = ({ setIsProductAdd }) => {
                                 />
                               </div>
 
+                              <div className="w-[10%]">
                               {ind !== 0 && (
-                                <div className="w-[10%]">
                                   <div
                                     onClick={() =>
                                       handleRemoveProductOptions(ind)
@@ -730,8 +732,8 @@ const AddProductModal = ({ setIsProductAdd }) => {
                                   >
                                     <Trash />
                                   </div>
-                                </div>
                               )}
+                              </div>
                             </div>
                           )}
                         </Draggable>

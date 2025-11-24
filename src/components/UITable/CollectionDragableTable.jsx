@@ -62,7 +62,7 @@ const CollectionDragableTable = ({
       `${ApiEndpoints.categories.base}${ApiEndpoints.categories.updateOrder}`,
       dataObj,
       (res) => {
-        toast.success(res?.message)
+        toast.success(res?.message);
         console.log("res", res);
       },
       (err) => {
@@ -120,8 +120,13 @@ const CollectionDragableTable = ({
                           <Image
                             src={row.image}
                             alt={row.name}
-                            height={50}
+                            height={400}
                             width={50}
+                            style={{
+                              width: "100%",
+                              height: "40%",
+                              objectFit: "contain",
+                            }}
                             className="w-20 h-12 object-cover rounded"
                           />
                         </td>
