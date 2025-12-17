@@ -118,8 +118,11 @@ export default function MenuEditor() {
       const parent = pathParts.length
         ? getItemByPath(newTree, pathParts)
         : null;
-      const levelArr = parent ? parent.children : newTree;
 
+      console.log("parent", parent);
+      console.log("newTree", newTree);
+      const levelArr = parent ? parent.children : newTree;
+      console.log("levelArr", levelArr);
       // Because active is already removed, we splice it in newIndex
       levelArr.splice(newIndex, 0, removedItem);
 
@@ -167,6 +170,13 @@ export default function MenuEditor() {
 
     setSelectedItems([]);
   };
+
+  const handleDelete = (id) => {
+  setTree((prevTree) => {
+    const { newTree } = removeItemById(prevTree, id);
+    return [...newTree];
+  });
+};
 
   useEffect(() => {
     dispatch(getAllMenus());
@@ -236,6 +246,7 @@ export default function MenuEditor() {
                       checked={selectedItems.includes(menu.id)}
                       onChange={() => handleCheckboxChange(menu.id)}
                       className="w-4 h-4 mr-2 cursor-pointer"
+                      disabled={tree.some((item) => item.id === menu.id)}
                     />
                     <span className="text-sm">{menu.title}</span>
                   </label>
@@ -268,7 +279,7 @@ export default function MenuEditor() {
       >
         <SortableLevel items={tree} pathKey="root">
           {tree.map((item) => (
-            <MenuItem key={item.id} item={item} pathKey="root" />
+            <MenuItem key={item.id} item={item} pathKey="root" onDelete={handleDelete} />
           ))}
         </SortableLevel>
 
@@ -280,7 +291,11 @@ export default function MenuEditor() {
       </DndContext>
       <div className="flex justify-end mt-4">
         <div style={styles.actions}>
-          <button onClick={onSave} style={styles.btnPrimary} className="bg-main text-white">
+          <button
+            onClick={onSave}
+            style={styles.btnPrimary}
+            className="bg-main text-white"
+          >
             Save
           </button>
         </div>
