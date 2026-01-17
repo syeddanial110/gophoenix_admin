@@ -1,4 +1,5 @@
 "use client";
+import UIInputField from "@/components/InputFields/UIInputField";
 import UIButton from "@/components/UIButton/UIButton";
 import UITypography from "@/components/UITypography/UITypography";
 import AddProductModal from "@/containers/Products/AddProductModal";
@@ -27,6 +28,7 @@ const Products = () => {
           btnOnclick={handleAddProduct}
         />
       </div>
+    
       {isProductAdd && <AddProductModal setIsProductAdd={setIsProductAdd} />}
       {isProductEdit && <EditProductForm />}
       {!isProductAdd && !isProductEdit && (

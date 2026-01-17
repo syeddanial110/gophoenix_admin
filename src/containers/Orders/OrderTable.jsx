@@ -48,7 +48,7 @@ const OrderTable = () => {
       cell: (row) => {
         return (
           <div
-            className="mt-6 prose max-w-none [&>h1]:text-[26px] [&>h1]:font-bold [&>h2]:text-[24px] [&>h2]:font-semibold [&>h3]:text-[22px] [&>h3]:font-semibold [&>h4]:text-[20px] [&>h4]:font-semibold [&>h5]:text-[18px] [&>h5]:font-semibold [&>h6]:text-[18px] [&>h6]:font-semibold [&>p]:text-[16px]"
+            className="mt-6 prose max-w-none [&>h1]:text-[12px] [&>h1]:font-bold [&>h2]:text-[12px] [&>h2]:font-semibold [&>h3]:text-[12px] [&>h3]:font-semibold [&>h4]:text-[12px] [&>h4]:font-semibold [&>h5]:text-[12px] [&>h5]:font-semibold [&>h6]:text-[12px] [&>h6]:font-semibold [&>p]:text-[12px]"
             dangerouslySetInnerHTML={{
               __html: row?.items[0]?.productName,
             }}

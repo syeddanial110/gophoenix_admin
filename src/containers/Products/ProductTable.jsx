@@ -1,4 +1,5 @@
 import { apiDelete, ImageBaseUrl } from "@/apis/ApiRequest";
+import UIInputField from "@/components/InputFields/UIInputField";
 import {
   Popover,
   PopoverContent,
@@ -15,16 +16,36 @@ import { editProductData, getAllProducts } from "@/store/actions/products";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
 import { PencilLine, Trash } from "lucide-react";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
+import { apiGet } from "@/apis/ApiRequest";
 
 const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
   const dispatch = useDispatch();
   const [totalRows, setTotalRows] = useState(0);
   const [perPage, setPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allProductsList, setAllProductsList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const allProducts = useSelector((state) => state?.GetAllProductsReducer?.res);
+
+  // Fetch all products
+  const fetchAllProducts = () => {
+    apiGet(
+      `${ApiEndpoints.products.base}${ApiEndpoints.products.getAll}/?page=1&limit=10000`,
+      (res) => {
+        if (res?.data?.data) {
+          setAllProductsList(res?.data?.data);
+          setTotalRows(res?.data?.data?.length);
+        }
+      },
+      (err) => {
+        toast.error("Failed to fetch products");
+      }
+    );
+  };
 
   const handleEditClick = (row) => {
     setIsProductEdit(true);
@@ -37,13 +58,27 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
       `${ApiEndpoints.products.base}${ApiEndpoints.products.delete}/${row.id}`,
       (res) => {
         toast.success(res?.message);
-        dispatch(getAllProducts({ page: 1 }));
+        fetchAllProducts();
       },
       (err) => {
         toast.error(err?.message);
-      }
+      },
     );
   };
+
+  // Filter products based on search query
+  const filteredProducts = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return allProductsList;
+    }
+
+    const query = searchQuery.toLowerCase();
+    return allProductsList.filter((product) => {
+      const productName = product?.productName?.toLowerCase() || "";
+      const categoryName = product?.categoryName?.toLowerCase() || "";
+      return productName.includes(query) || categoryName.includes(query);
+    });
+  }, [allProductsList, searchQuery]);
 
   const columns = [
     {
@@ -51,7 +86,12 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
       selector: (row) => row?.productName,
       sortable: true,
       cell: (row) => {
-        return <div dangerouslySetInnerHTML={{ __html: row?.productName }} />;
+        return (
+          <div
+            className="mt-6 prose max-w-none [&>h1]:text-[12px] [&>h1]:font-bold [&>h2]:text-[12px] [&>h2]:font-semibold [&>h3]:text-[12px] [&>h3]:font-semibold [&>h4]:text-[12px] [&>h4]:font-semibold [&>h5]:text-[12px] [&>h5]:font-semibold [&>h6]:text-[12px] [&>h6]:font-semibold [&>p]:text-[12px]"
+            dangerouslySetInnerHTML={{ __html: row?.productName }}
+          />
+        );
       },
     },
     {
@@ -62,14 +102,6 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
         return <UITypography text={row?.slug} />;
       },
     },
-    // {
-    //   name: <UITypography text={"Description"} />,
-    //   selector: (row) => row?.description,
-    //   sortable: true,
-    //   cell: (row) => {
-    //     return <UITypography text={row?.description} />;
-    //   },
-    // },
     {
       name: <UITypography text={"Collection Name"} />,
       selector: (row) => row?.categoryName,
@@ -78,18 +110,6 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
         return <UITypography text={row?.categoryName} />;
       },
     },
-    // {
-    //   name: <UITypography text={"Sub Category Name"} />,
-    //   selector: (row) => row?.subCategoryName,
-    //   sortable: true,
-    //   cell: (row) => {
-    //     return (
-    //       <UITypography
-    //         text={row?.subCategoryName == null ? "-" : row?.subCategoryName}
-    //       />
-    //     );
-    //   },
-    // },
     {
       name: <UITypography text={"Payment Type"} />,
       selector: (row) => row?.paymentType,
@@ -160,50 +180,51 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
   ];
 
   const handlePageChange = (page) => {
-    const data = {
-      page: page,
-    };
-    dispatch(getAllProducts(data));
+    setCurrentPage(page);
   };
 
   const handlePerRowsChange = async (newPerPage, page) => {
-    const data = {
-      page: page,
-    };
-    dispatch(getAllProducts(data));
-
     setPerPage(newPerPage);
+    setCurrentPage(page);
+  };
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
   };
 
   useEffect(() => {
-    const data = {
-      page: 1,
-    };
-    dispatch(getAllProducts(data));
+    fetchAllProducts();
   }, []);
 
-  useEffect(() => {
-    setTotalRows(allProducts?.res?.data?.pagination.totalItems);
-  }, [allProducts?.res?.success]);
-
-  console.log("allProducts", allProducts);
+  console.log("filteredProducts", filteredProducts);
 
   return (
-    <UITable
-      columns={columns}
-      data={
-        allProducts?.res &&
-        allProducts?.res?.data?.data?.length > 0 &&
-        allProducts?.res?.data?.data
-      }
-      pagination={true}
-      paginationServer
-      paginationTotalRows={totalRows}
-      onChangeRowsPerPage={handlePerRowsChange}
-      onChangePage={handlePageChange}
-      // progressPending={true}
-      // noDataComponent={LinearIndeterminate}
-    />
+    <div>
+      <div className="pt-4">
+        <UIInputField
+          isLable={true}
+          lableName="Search"
+          name="search"
+          onChange={handleSearch}
+          value={searchQuery}
+        />
+      </div>
+      <UITable
+        columns={columns}
+        data={
+          Array.isArray(filteredProducts) && filteredProducts.length > 0
+            ? filteredProducts
+            : []
+        }
+        pagination={true}
+        paginationServer={false}
+        paginationTotalRows={
+          Array.isArray(filteredProducts) ? filteredProducts.length : 0
+        }
+        onChangeRowsPerPage={handlePerRowsChange}
+        onChangePage={handlePageChange}
+      />
+    </div>
   );
 };
 

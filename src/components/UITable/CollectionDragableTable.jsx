@@ -17,33 +17,11 @@ const CollectionDragableTable = ({
   rows,
   setRows,
 }) => {
-  // const columns = [
-  //   { field: "name", label: "Name" },
-  //   { field: "url", label: "URL" },
-  //   { field: "image", label: "Image" },
-  //   { field: "actions", label: "Actions" },
-  // ];
+  const [openModalId, setOpenModalId] = useState(null);
 
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const handleModalOpen = () => {
-    setModalOpen(!modalOpen);
+  const handleModalOpen = (rowId) => {
+    setOpenModalId(openModalId === rowId ? null : rowId);
   };
-
-  // const [rows, setRows] = useState([
-  //   {
-  //     id: 1,
-  //     name: "Carlsbad Toddler Soccer",
-  //     url: "carlsbad-toddler-soccer",
-  //     image: "/images/carlsbad.png",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Oceanside Toddler Soccer",
-  //     url: "oceanside-toddler-soccer",
-  //     image: "/images/oceanside.png",
-  //   },
-  // ]);
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -120,26 +98,26 @@ const CollectionDragableTable = ({
                           <Image
                             src={row.image}
                             alt={row.name}
-                            height={400}
+                            height={200}
                             width={50}
                             style={{
                               width: "100%",
-                              height: "40%",
+                              height: "100px",
                               objectFit: "contain",
                             }}
-                            className="w-20 h-12 object-cover rounded"
+                            className="w-20 h-2 object-cover rounded"
                           />
                         </td>
                         <td className="px-4 py-2 border-b space-x-2">
                           <UIModal
-                            onOpenChange={handleModalOpen}
-                            open={modalOpen}
+                            onOpenChange={() => handleModalOpen(row.id)}
+                            open={openModalId === row.id}
                             modalBtnText={<PencilLine />}
                             btnClassName="hover:cursor-pointer"
                             btnTriggerOnClick={() => handleEditClick(row)}
                             modalHeaderTitle="Edit Collection"
                           >
-                            <EditCategoryDataForm setModalOpen={setModalOpen} />
+                            <EditCategoryDataForm setModalOpen={() => setOpenModalId(null)} />
                           </UIModal>
 
                           <UIPopover

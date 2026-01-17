@@ -19,12 +19,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllSubCategories } from "@/store/actions/subCategory";
 import { toast } from "sonner";
 import Image from "next/image";
-import { Plus, Trash, X } from "lucide-react";
+import { Info, Plus, Trash, X } from "lucide-react";
 import UIInputField from "@/components/InputFields/UIInputField";
 import Editor from "../ContentEditor/Editor";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import SEOForm from "./SEOForm";
 import UISwitch from "@/components/UISwitch/UISwitch";
+import UITooltip from "@/components/UITooltip/UITooltip";
+import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const EditProductForm = () => {
   const paymentTypes = [
@@ -40,7 +42,7 @@ const EditProductForm = () => {
 
   const dispatch = useDispatch();
   const editProductData = useSelector(
-    (state) => state?.EditProductDataReducer?.data
+    (state) => state?.EditProductDataReducer?.data,
   );
 
   console.log("editProductData", editProductData);
@@ -91,6 +93,8 @@ const EditProductForm = () => {
     metaDescription: "",
   });
 
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
   const form = useForm({
     resolver: yupResolver(addProductSchema),
     defaultValues: {
@@ -111,7 +115,7 @@ const EditProductForm = () => {
   });
 
   const getAllCategoriesData = useSelector(
-    (state) => state?.GetAllCategoriesReducer?.res
+    (state) => state?.GetAllCategoriesReducer?.res,
   );
 
   const handleInputChange = (e) => {
@@ -181,7 +185,7 @@ const EditProductForm = () => {
       },
       (err) => {
         console.log("err", err);
-      }
+      },
       // { "Content-Type": "multipart/form-data" }
     );
   }
@@ -212,7 +216,7 @@ const EditProductForm = () => {
 
   const handleCategorySelectChange = (value, type) => {
     const selectedItem = getAllCategoriesData?.res?.data.find(
-      (item) => item.name === value
+      (item) => item.name === value,
     );
     if (selectedItem) {
       setProductData({
@@ -262,7 +266,7 @@ const EditProductForm = () => {
         (err) => {
           console.log("err", err);
         },
-        { "Content-Type": "multipart/form-data" }
+        { "Content-Type": "multipart/form-data" },
       );
     }
   };
@@ -296,14 +300,14 @@ const EditProductForm = () => {
         (err) => {
           console.log("err", err);
         },
-        { "Content-Type": "multipart/form-data" }
+        { "Content-Type": "multipart/form-data" },
       );
     }
   };
 
   const handleGalleryImageRemove = (i) => {
     const filteredGalleryImages = productData.galleryImages.filter(
-      (_, index) => index !== i
+      (_, index) => index !== i,
     );
     setProductData({
       ...productData,
@@ -355,7 +359,7 @@ const EditProductForm = () => {
           };
         }
         return item;
-      })
+      }),
     );
   };
 
@@ -421,7 +425,7 @@ const EditProductForm = () => {
                   price: "",
                   isJersey: 0,
                 },
-              ]
+              ],
         );
         setEditorValue(res?.data?.description || "");
         setInputData({
@@ -433,7 +437,7 @@ const EditProductForm = () => {
       },
       (err) => {
         console.log("err", err);
-      }
+      },
     );
     // eslint-disable-next-line
   }, [editProductData?.data?.productId, form.reset]);
@@ -460,7 +464,7 @@ const EditProductForm = () => {
   useEffect(() => {
     if (!isLoading) {
       let filteredPaymentTypeName = paymentTypes.filter(
-        (item) => item.value == productData?.paymentTypeValue
+        (item) => item.value == productData?.paymentTypeValue,
       );
       setProductData({
         ...productData,
@@ -708,21 +712,36 @@ const EditProductForm = () => {
                       );
                     })}
                   </UISelect>
-                  <FormField
-                    control={form.control}
-                    name="intervalCount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <UITextField
-                          field={field}
-                          formLabel="intervalCount"
-                          type="number"
-                          placeholder="eg: 2"
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="flex">
+                    <FormField
+                      control={form.control}
+                      name="intervalCount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <UITextField
+                            field={field}
+                            formLabel="Interval Count"
+                            type="number"
+                            placeholder="eg: 2"
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <UITooltip>
+                      <TooltipTrigger
+                        open={tooltipOpen}
+                        onOpenChange={setTooltipOpen}
+                      >
+                        <Info />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <div className="flex flex-col gap-2">
+                          <UITypography text="Interval Count means Choose how many times your payment amount will change, based on your selected billing cycle" />
+                        </div>
+                      </TooltipContent>
+                    </UITooltip>
+                  </div>
                 </>
               ) : (
                 <></>
@@ -810,7 +829,7 @@ const EditProductForm = () => {
                                   onChange={(e) =>
                                     handleProductOptionChange(e, ind)
                                   }
-                                  type='number'
+                                  type="number"
                                 />
                               </div>
                               <div className="flex flex-col gap-3 justify-start">

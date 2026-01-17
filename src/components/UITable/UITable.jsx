@@ -28,20 +28,24 @@ const UITable = (props) => {
     },
     cells: {
       style: {
-        padding: 16,
+        padding: "10px !important",
         display: "flex",
         fontSize: "15px",
-        justifyContent: "flex-start",
+        height: "80px",
+        overflowY: "hidden",
+        // justifyContent: "flex-start",
         "&:nth-child(1)": { paddingLeft: "8px" },
-        borderBottomWidth: "0.5px",
-        borderBottomStyle: "solid",
-        borderBottomColor: "#A4A4A4",
+       
       },
     },
     rows: {
       style: {
         backgroundColor: "white !important",
         color: "black !important",
+        padding: "10px 0px",
+         borderBottomWidth: "0.5px",
+        borderBottomStyle: "solid",
+        borderBottomColor: "#A4A4A4",
         "&:nth-child": {
           borderTop: "1px solid rgba(0, 0, 0, .12)",
           marginTop: "8px",

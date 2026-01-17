@@ -616,7 +616,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                       <FormItem>
                         <UITextField
                           field={field}
-                          formLabel="intervalCount"
+                          formLabel="Interval Count"
                           type="number"
                           placeholder="eg: 2"
                         />
