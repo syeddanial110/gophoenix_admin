@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllSubCategories } from "@/store/actions/subCategory";
 import { toast } from "sonner";
 import UIModal from "@/components/UIModal/UIModal";
-import { Minus, Plus, Trash, X } from "lucide-react";
+import { Info, Minus, Plus, Trash, X } from "lucide-react";
 import UIInputField from "@/components/InputFields/UIInputField";
 import Editor from "../ContentEditor/Editor";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -28,6 +28,8 @@ import Image from "next/image";
 import SEOForm from "./SEOForm";
 import UICheckbox from "@/components/UICheckbox/UICheckbox";
 import UISwitch from "@/components/UISwitch/UISwitch";
+import UITooltip from "@/components/UITooltip/UITooltip";
+import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const AddProductModal = ({ setIsProductAdd }) => {
   const paymentTypes = [
@@ -93,12 +95,13 @@ const AddProductModal = ({ setIsProductAdd }) => {
   ]);
   const [editorValue, setEditorValue] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const subCategoryDataReducer = useSelector(
-    (state) => state?.GetAllSubCategoriesReducer?.res
+    (state) => state?.GetAllSubCategoriesReducer?.res,
   );
   const getAllCategoriesData = useSelector(
-    (state) => state?.GetAllCategoriesReducer?.res
+    (state) => state?.GetAllCategoriesReducer?.res,
   );
 
   const handleInputChange = (e) => {
@@ -108,7 +111,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
   function onSubmit(data, e) {
     console.log("data", data, e);
 
-    if(productData?.productImage == ''){
+    if (productData?.productImage == "") {
       toast.error("Please upload product image");
       return;
     }
@@ -201,7 +204,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
       },
       (err) => {
         console.log("err", err);
-      }
+      },
     );
   }
 
@@ -229,7 +232,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
 
   const handleCategorySelectChange = (value, type) => {
     const selectedItem = getAllCategoriesData?.res?.data.find(
-      (item) => item.name === value
+      (item) => item.name === value,
     );
     if (selectedItem) {
       setProductData({
@@ -271,7 +274,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
         (err) => {
           console.log("err", err);
         },
-        { "Content-Type": "multipart/form-data" }
+        { "Content-Type": "multipart/form-data" },
       );
     }
 
@@ -306,14 +309,14 @@ const AddProductModal = ({ setIsProductAdd }) => {
         (err) => {
           console.log("err", err);
         },
-        { "Content-Type": "multipart/form-data" }
+        { "Content-Type": "multipart/form-data" },
       );
     }
   };
 
   const handleGalleryImageRemove = (i) => {
     const filteredGalleryImages = productData.galleryImages.filter(
-      (_, index) => index !== i
+      (_, index) => index !== i,
     );
     setProductData({
       ...productData,
@@ -372,7 +375,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
           };
         }
         return item;
-      })
+      }),
     );
   };
 
@@ -609,38 +612,53 @@ const AddProductModal = ({ setIsProductAdd }) => {
                       );
                     })}
                   </UISelect>
-                  <FormField
-                    control={form.control}
-                    name="intervalCount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <UITextField
-                          field={field}
-                          formLabel="Interval Count"
-                          type="number"
-                          placeholder="eg: 2"
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="flex gap-2 items-center">
+                    <FormField
+                      control={form.control}
+                      name="intervalCount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <UITextField
+                            field={field}
+                            formLabel="Interval Count"
+                            type="number"
+                            placeholder="eg: 2"
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <UITooltip>
+                      <TooltipTrigger
+                        open={tooltipOpen}
+                        onOpenChange={setTooltipOpen}
+                      >
+                        <Info />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <div className="flex flex-col gap-2">
+                          <UITypography text="Interval Count means Choose how many times your payment amount will change, based on your selected billing cycle" />
+                        </div>
+                      </TooltipContent>
+                    </UITooltip>
+                  </div>
                 </>
               ) : (
                 <></>
               )}
               {/* Add Product options */}
             </div>
-              <div className="flex justify-between items-center w-[80%]">
-                <UITypography variant="h6" text="Add Product Options" />
-                <div>
-                  <div
-                    className="border-1 border-grey rounded-full p-3"
-                    onClick={handleAddProductOptions}
-                  >
-                    <Plus onClick={handleAddProductOptions} />
-                  </div>
+            <div className="flex justify-between items-center w-[80%]">
+              <UITypography variant="h6" text="Add Product Options" />
+              <div>
+                <div
+                  className="border-1 border-grey rounded-full p-3"
+                  onClick={handleAddProductOptions}
+                >
+                  <Plus onClick={handleAddProductOptions} />
                 </div>
               </div>
+            </div>
             <div className="bg-[#dddcdc36] p-4 rounded-lg w-[80%]">
               <DragDropContext
                 onDragEnd={(result) => {
@@ -650,7 +668,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                   items.splice(result.destination.index, 0, reorderedItem);
                   setProductOptions(items);
                 }}
-                className='w-full'
+                className="w-full"
               >
                 <Droppable droppableId="productOptions">
                   {(provided) => (
@@ -708,14 +726,14 @@ const AddProductModal = ({ setIsProductAdd }) => {
                                   lableName="Price"
                                   name={`price`}
                                   value={item.price}
-                                  type='number'
+                                  type="number"
                                   onChange={(e) =>
                                     handleProductOptionChange(e, ind)
                                   }
                                 />
                               </div>
                               <div className="flex flex-col gap-3 justify-start">
-                                <UITypography variant='h6' text='Jersey' />
+                                <UITypography variant="h6" text="Jersey" />
                                 <UISwitch
                                   onCheckedChange={(val) =>
                                     handleIsJerseySwitch(val, ind)
@@ -724,7 +742,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                               </div>
 
                               <div className="w-[10%]">
-                              {ind !== 0 && (
+                                {ind !== 0 && (
                                   <div
                                     onClick={() =>
                                       handleRemoveProductOptions(ind)
@@ -732,7 +750,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                                   >
                                     <Trash />
                                   </div>
-                              )}
+                                )}
                               </div>
                             </div>
                           )}

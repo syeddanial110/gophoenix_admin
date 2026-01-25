@@ -712,7 +712,7 @@ const EditProductForm = () => {
                       );
                     })}
                   </UISelect>
-                  <div className="flex">
+                  <div className="flex gap-2">
                     <FormField
                       control={form.control}
                       name="intervalCount"
