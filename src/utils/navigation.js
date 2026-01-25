@@ -8,6 +8,7 @@ import {
   Image,
   ImagePlus,
   Logs,
+  Mails,
   SquarePen,
   Tag,
   User,
@@ -78,6 +79,11 @@ export const Navigation_Menu = [
     name: "Content Editor",
     link: "/dashboard/content-editor",
     icon: SquarePen,
+  },
+  {
+    name: "Newsletter",
+    link: "/dashboard/newsletter",
+    icon: Mails,
   },
 ];
 

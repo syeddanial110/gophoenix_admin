@@ -67,7 +67,7 @@ export const ApiEndpoints = {
     deleteUser: "/deleteUser",
     disableUser: "/disableUser",
     updateUserPassword: "/updateUserPassword",
-    getUserById: "/getUserById"
+    getUserById: "/getUserById",
   },
   blogs: {
     base: "/blogs",
@@ -85,5 +85,10 @@ export const ApiEndpoints = {
     getAll: "/list",
     cancelRecurring: "/cancel-subscription",
     getById: "/getbyid",
+  },
+  newsletter: {
+    base: "/newsletter",
+    getAll: "/all",
+    syncContacts: "/sync"
   },
 };
