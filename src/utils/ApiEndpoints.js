@@ -89,6 +89,11 @@ export const ApiEndpoints = {
   newsletter: {
     base: "/newsletter",
     getAll: "/all",
-    syncContacts: "/sync"
+    syncContacts: "/sync",
+  },
+  menu: {
+    base: "/header",
+    create: "/create",
+    get:"/get"
   },
 };

@@ -25,20 +25,16 @@ import {
 import UIModal from "@/components/UIModal/UIModal";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllMenus } from "@/store/actions/menus";
+import { ApiEndpoints } from "@/utils/ApiEndpoints";
+import { apiGet, apiPost, BASEURL } from "@/apis/ApiRequest";
+import { toast } from "sonner";
 
-const initialMenu = [
-  { id: "home", title: "Home", url: "/", children: [] },
-  { id: "menu", title: "Menu", url: "/menu", children: [] },
-  { id: "brunch", title: "Brunch", url: "/brunch", children: [] },
-  { id: "location", title: "Location", url: "/location", children: [] },
-  { id: "events", title: "Events", url: "/events", children: [] },
-  { id: "contact", title: "Contact", url: "/contact", children: [] },
-];
+const initialMenu = [{ id: "home", title: "Home", url: "/", children: [] }];
 
 export default function MenuEditor() {
   const dispatch = useDispatch();
   const menuDataReducer = useSelector(
-    (state) => state?.GetAllMenusReducer?.res
+    (state) => state?.GetAllMenusReducer?.res,
   );
 
   const [tree, setTree] = useState(initialMenu);
@@ -51,7 +47,7 @@ export default function MenuEditor() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 6 },
-    })
+    }),
   );
 
   const levelIds = useMemo(() => flattenLevelIds(tree), [tree]);
@@ -102,7 +98,7 @@ export default function MenuEditor() {
       // Otherwise, reorder within same level using SortableContext order
       const topLevelOrder = levelIds.root; // ids at root
       const levelKey = Object.keys(levelIds).find(
-        (k) => levelIds[k].includes(active.id) && levelIds[k].includes(overId)
+        (k) => levelIds[k].includes(active.id) && levelIds[k].includes(overId),
       );
       if (!levelKey) {
         // If we cannot identify same-level, just append to root
@@ -131,33 +127,55 @@ export default function MenuEditor() {
     });
   };
 
-  const onSave = async () => {
-    try {
-      // Replace with your API endpoint
-      await fetch("/api/menu", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(tree),
-      });
-      alert("Menu saved");
-    } catch (e) {
-      console.error(e);
-      alert("Failed to save");
-    }
+  // const onSave = async () => {
+  //   try {
+  //     // Replace with your API endpoint
+  //     await fetch(`${BASEURL}${ApiEndpoints.menu.base}${ApiEndpoints.menu.create}`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(tree),
+  //     });
+  //     alert("Menu saved");
+  //   } catch (e) {
+  //     console.error(e);
+  //     alert("Failed to save");
+  //   }
+  // };
+
+  const onSave = () => {
+    console.log("tree", tree);
+    const dataObj = {
+      text: JSON.stringify(tree),
+    };
+    apiPost(
+      `${ApiEndpoints.menu.base}${ApiEndpoints.menu.create}`,
+      dataObj,
+      (res) => {
+        console.log("res", res);
+        if (res?.success) {
+          toast.success(res?.message);
+        } else {
+          toast?.error(res?.message);
+        }
+      },
+      (err) => {
+        console.log("err", err);
+      },
+    );
   };
 
   const handleCheckboxChange = (menuId) => {
     setSelectedItems((prev) =>
       prev.includes(menuId)
         ? prev.filter((id) => id !== menuId)
-        : [...prev, menuId]
+        : [...prev, menuId],
     );
   };
 
   const handleSaveSelectedItems = () => {
     // Add selected items to tree
     const itemsToAdd = availableMenus.filter((menu) =>
-      selectedItems.includes(menu.id)
+      selectedItems.includes(menu.id),
     );
 
     setTree((prev) => [
@@ -172,25 +190,54 @@ export default function MenuEditor() {
   };
 
   const handleDelete = (id) => {
-  setTree((prevTree) => {
-    const { newTree } = removeItemById(prevTree, id);
-    return [...newTree];
-  });
-};
+    setTree((prevTree) => {
+      const { newTree } = removeItemById(prevTree, id);
+      return [...newTree];
+    });
+  };
 
   useEffect(() => {
     dispatch(getAllMenus());
   }, [dispatch]);
 
   useEffect(() => {
+    apiGet(
+      `${ApiEndpoints.menu.base}${ApiEndpoints.menu.get}`,
+      (res) => {
+        console.log("menus", res);
+        if (res?.success) {
+          if (res?.data.length > 0) {
+            setTree(res?.data);
+          }
+        }
+      },
+      (err) => {
+        console.log("err", err);
+      },
+    );
+  }, []);
+
+  useEffect(() => {
     if (menuDataReducer?.data && Array.isArray(menuDataReducer.data)) {
-      const menus = menuDataReducer.data
+      const menusFromApi = menuDataReducer.data
         .sort((a, b) => a.orderNum - b.orderNum)
         .map((item) => ({
           id: item.id.toString(),
           title: item.name,
           url: `/${item.slug}`,
         }));
+
+      const programsItem = {
+        id: "programs",
+        title: "Programs",
+        url: "/categories",
+      };
+
+      const menus = [
+        programsItem,
+        ...menusFromApi.filter((m) => m.id !== programsItem.id),
+      ];
+
       setAvailableMenus(menus);
     }
   }, [menuDataReducer]);
@@ -279,7 +326,12 @@ export default function MenuEditor() {
       >
         <SortableLevel items={tree} pathKey="root">
           {tree.map((item) => (
-            <MenuItem key={item.id} item={item} pathKey="root" onDelete={handleDelete} />
+            <MenuItem
+              key={item.id}
+              item={item}
+              pathKey="root"
+              onDelete={handleDelete}
+            />
           ))}
         </SortableLevel>
 
