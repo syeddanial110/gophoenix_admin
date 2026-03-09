@@ -58,8 +58,8 @@ const EditProductForm = () => {
     minAge: "",
     maxAge: "",
     description: "",
-    categoryName: "",
-    categoryId: "",
+    selectedCollections: [],
+    selectedCollectionIds: [],
     paymentTypeValue: "",
     paymentTypeName: "",
     paymentIntervalValue: "",
@@ -68,6 +68,7 @@ const EditProductForm = () => {
     productImage: "",
     galleryImages: [],
   });
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
 
   const [productOptions, setProductOptions] = useState([
     {
@@ -144,7 +145,7 @@ const EditProductForm = () => {
       startDate: formattedStartDate,
       endDate: formattedEndDate,
       // activities: data.activities,
-      categoryId: productData.categoryId,
+      categories: productData.selectedCollectionIds,
       // subCategoryId: productData.subCategoryId,
       seats: data.seats,
       minAge: data.minAge,
@@ -214,17 +215,32 @@ const EditProductForm = () => {
     }
   };
 
-  const handleCategorySelectChange = (value, type) => {
-    const selectedItem = getAllCategoriesData?.res?.data.find(
-      (item) => item.name === value,
-    );
-    if (selectedItem) {
-      setProductData({
-        ...productData,
-        categoryId: selectedItem.id,
-        categoryName: selectedItem.name,
-      });
-    }
+  const handleCategorySelectChange = (categoryObject, type) => {
+    setProductData((prev) => {
+      const selectedCollections = prev.selectedCollections || [];
+      const selectedCollectionIds = prev.selectedCollectionIds || [];
+      const existingIndex = selectedCollections.findIndex(
+        (item) => item.id === categoryObject.id
+      );
+      
+      if (existingIndex > -1) {
+        // Remove if already selected
+        const updated = selectedCollections.filter((_, i) => i !== existingIndex);
+        const updatedIds = selectedCollectionIds.filter((id) => id !== categoryObject.id);
+        return {
+          ...prev,
+          selectedCollections: updated,
+          selectedCollectionIds: updatedIds,
+        };
+      } else {
+        // Add if not selected
+        return {
+          ...prev,
+          selectedCollections: [...selectedCollections, categoryObject],
+          selectedCollectionIds: [...selectedCollectionIds, categoryObject.id],
+        };
+      }
+    });
   };
 
   // end region select downdown functions
@@ -393,8 +409,8 @@ const EditProductForm = () => {
           productName: res?.data?.productName || "",
           cardName: res?.data?.cardName || "",
           slug: res?.data?.slug || "",
-          categoryName: res?.data?.categoryName || "",
-          categoryId: res?.data?.categoryId || "",
+          selectedCollections: Array.isArray(res?.data?.categories) ? res?.data?.categories : [],
+          selectedCollectionIds: Array.isArray(res?.data?.categories) ? res?.data?.categories.map((cat) => cat.id) : [],
           // subCategoryName: res?.data?.subCategoryName || "",
           // subCategoryId: res?.data?.subCategoryId || "",
           paymentTypeValue: res?.data?.paymentType || "",
@@ -472,6 +488,21 @@ const EditProductForm = () => {
       });
     }
   }, [isLoading]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!categoryDropdownOpen) return;
+
+    const handleClickOutside = (event) => {
+      const dropdown = document.querySelector('[data-category-dropdown]');
+      if (dropdown && !dropdown.contains(event.target)) {
+        setCategoryDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [categoryDropdownOpen]);
 
   console.log("productData/////,", productData);
   return (
@@ -636,26 +667,90 @@ const EditProductForm = () => {
                 setEditroValue={setEditorValue}
               />
 
-              <UISelect
-                isLabel={true}
-                labelName="Select Collection"
-                name="categoryName"
-                placeholder={"Collection"}
-                value={productData.categoryName}
-                onValueChange={(val) =>
-                  handleCategorySelectChange(val, "category")
-                }
-              >
-                {getAllCategoriesData?.res &&
-                  getAllCategoriesData?.res?.data.length > 0 &&
-                  getAllCategoriesData?.res?.data?.map((item, i) => {
-                    return (
-                      <SelectItem key={i} value={item?.name}>
-                        {item?.name}
-                      </SelectItem>
-                    );
-                  })}
-              </UISelect>
+              <div className="relative w-full" data-category-dropdown>
+                <UITypography
+                  variant="h6"
+                  text="Select Collection"
+                  className="!text-[14px] mb-2"
+                />
+                <button
+                  type="button"
+                  onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg flex items-center justify-between bg-white hover:bg-gray-50"
+                >
+                  <span className="text-sm">
+                    {productData.selectedCollections?.length > 0
+                      ? `${productData.selectedCollections?.length} selected`
+                      : "Select Collections"}
+                  </span>
+                  <svg
+                    className={`w-4 h-4 transition-transform ${
+                      categoryDropdownOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    />
+                  </svg>
+                </button>
+
+                {categoryDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+                    {getAllCategoriesData?.res?.data?.length > 0 ? (
+                      getAllCategoriesData?.res?.data?.map((item) => (
+                        <label
+                          key={item.id}
+                          className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={productData.selectedCollections?.some(
+                              (selected) => selected.id === item.id
+                            )}
+                            onChange={() =>
+                              handleCategorySelectChange(item, "category")
+                            }
+                            className="w-4 h-4 mr-2 cursor-pointer"
+                          />
+                          <span className="text-sm">{item.name}</span>
+                        </label>
+                      ))
+                    ) : (
+                      <div className="px-4 py-2 text-sm text-gray-500">
+                        No collections available
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {productData.selectedCollections?.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {productData.selectedCollections?.map((collection, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                      >
+                        <span>{collection.name}</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleCategorySelectChange(collection, "category")
+                          }
+                          className="cursor-pointer hover:text-blue-600"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
               {/* <UISelect
                 isLabel={true}
                 labelName="Select Class Group"

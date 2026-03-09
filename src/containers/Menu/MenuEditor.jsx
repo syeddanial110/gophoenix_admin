@@ -233,9 +233,16 @@ export default function MenuEditor() {
         url: "/categories",
       };
 
+      const allWeOfferItem = {
+        id: "all",
+        title: "All We Offer",
+        url: "/all-we-offer",
+      };
+
       const menus = [
         programsItem,
-        ...menusFromApi.filter((m) => m.id !== programsItem.id),
+        allWeOfferItem,
+        ...menusFromApi.filter((m) => m.id !== programsItem.id && m.id !== allWeOfferItem.id),
       ];
 
       setAvailableMenus(menus);

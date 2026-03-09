@@ -24,16 +24,4 @@ export const blogsSchema = yup.object({
   description: yup.string().required("Description is required"),
 });
 
-export const homepageContentSchema = yup.object({
-  mainHeading: yup.string(),
-  mainDescription: yup.string(),
-  statsCard1Heading: yup.string(),
-  statsCard1SubHeading: yup.string(),
-  statsCard1Description: yup.string(),
-  statsCard2Heading: yup.string(),
-  statsCard2SubHeading: yup.string(),
-  statsCard2Description: yup.string(),
-  statsCard3Heading: yup.string(),
-  statsCard3SubHeading: yup.string(),
-  statsCard3Description: yup.string(),
-});
+
