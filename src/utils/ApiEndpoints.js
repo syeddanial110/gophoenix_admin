@@ -79,6 +79,8 @@ export const ApiEndpoints = {
   },
   home: {
     create: "/homePage/create",
+    updateLatestSelling: "/homePage/updateLatestSelling",
+    updateTopSelling: "/homePage/updateTopSelling",
   },
   orders: {
     base: "/order",
@@ -94,6 +96,6 @@ export const ApiEndpoints = {
   menu: {
     base: "/header",
     create: "/create",
-    get:"/get"
+    get: "/get",
   },
 };
