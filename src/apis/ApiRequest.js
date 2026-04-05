@@ -77,6 +77,21 @@ export function apiGet(endpoint, onSuccess, onFailure, headers) {
     });
 }
 
+// Helper to download binary/file responses (returns Blob via onSuccess)
+export function apiGetFile(endpoint, onSuccess, onFailure, headers, responseType = "blob") {
+  API.get(apiBaseUrl + endpoint, {
+    headers: getCommonHeaders(headers),
+    responseType,
+  })
+    .then((response) => {
+      if (onSuccess) onSuccess(response.data, response);
+    })
+    .catch((error) => {
+      console.log("error", error);
+      if (onFailure) onFailure(error);
+    });
+}
+
 export function apiPut(endPoint, body, onSuccess, onFailure, headers) {
   API.put(apiBaseUrl + endPoint, body, {
     headers: getCommonCustomHeaders(headers),

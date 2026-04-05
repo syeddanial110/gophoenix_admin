@@ -68,6 +68,7 @@ export const ApiEndpoints = {
     disableUser: "/disableUser",
     updateUserPassword: "/updateUserPassword",
     getUserById: "/getUserById",
+    downloadExcel: "/userExcelFile",
   },
   blogs: {
     base: "/blogs",
@@ -87,6 +88,7 @@ export const ApiEndpoints = {
     getAll: "/list",
     cancelRecurring: "/cancel-subscription",
     getById: "/getbyid",
+    downloadExcel: "/orderExcel",
   },
   newsletter: {
     base: "/newsletter",
