@@ -85,7 +85,13 @@ const SubCategoryTable = () => {
         const isValidImage =
           typeof row?.image === "string" &&
           (row.image.startsWith("http") || row.image.startsWith("/"));
-        const imageSrc = isValidImage ? row.image : placeholderImage;
+        const getImageSrc = (imagePath) => {
+          if (!imagePath) return placeholderImage;
+          if (imagePath.startsWith("http") || imagePath.startsWith("/"))
+            return imagePath;
+          return `${ImageBaseUrl}${imagePath}`;
+        };
+        const imageSrc = isValidImage ? getImageSrc(row.image) : placeholderImage;
         return (
           <UITooltip>
             <TooltipTrigger>
@@ -94,7 +100,7 @@ const SubCategoryTable = () => {
             <TooltipContent>
               <div className="">
                 <Image
-                  src={`${isValidImage ? row.image : placeholderImage}`}
+                  src={getImageSrc(row.image)}
                   alt={row?.image}
                   width={100}
                   height={100}

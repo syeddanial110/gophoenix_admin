@@ -70,7 +70,7 @@ const CategoryTable = () => {
       cell: (row) => {
         return (
           <Image
-            src={`${row?.image != null ? row?.image : ""}`}
+            src={`${ImageBaseUrl}${row?.image != null ? row?.image : ""}`}
             alt={row?.image}
             width={40}
             height={1080}

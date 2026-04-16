@@ -9,7 +9,7 @@ import UIButton from "@/components/UIButton/UIButton";
 import Editor from "../ContentEditor/Editor";
 import SEOForm from "../Products/SEOForm";
 import BlogSEOForm from "./BlogSEOForm";
-import { apiPost } from "@/apis/ApiRequest";
+import { apiPost, ImageBaseUrl } from "@/apis/ApiRequest";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
 import UIFileInput from "@/components/InputFields/UIFileInput";
 import { toast } from "sonner";
@@ -154,7 +154,12 @@ const AddBlog = ({ setIsBlogAdd }) => {
 
             {inputData.featuredImage && (
               <Image
-                src={inputData.featuredImage}
+                src={
+                  inputData.featuredImage.startsWith("http") ||
+                  inputData.featuredImage.startsWith("/")
+                    ? inputData.featuredImage
+                    : `${ImageBaseUrl}${inputData.featuredImage}`
+                }
                 alt="Featured"
                 className="w-32 h-32 object-cover mt-2"
                 width={128}

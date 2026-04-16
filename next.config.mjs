@@ -3,9 +3,9 @@ const nextConfig = {
   reactStrictMode: false,
   images: {
     domains: [
-      "sports-new-production.up.railway.app",
-      "res.cloudinary.com",
+      "api.activityphysical.tech",
       "wcx78p18-5000.inc1.devtunnels.ms",
+      "api.activityphysical.tech/uploads"
       // add other allowed domains here
     ],
   },

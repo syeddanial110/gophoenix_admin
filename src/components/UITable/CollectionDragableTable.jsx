@@ -6,7 +6,7 @@ import UIPopover from "../UIPopover/UIPopover";
 import UIModal from "../UIModal/UIModal";
 import EditCategoryDataForm from "@/containers/Category/EditCategoryDataForm";
 import Image from "next/image";
-import { apiPut } from "@/apis/ApiRequest";
+import { apiPut, ImageBaseUrl } from "@/apis/ApiRequest";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
 import { toast } from "sonner";
 
@@ -96,7 +96,12 @@ const CollectionDragableTable = ({
                         <td className="px-4 py-2 border-b">{row.slug}</td>
                         <td className="px-4 py-2 border-b">
                           <Image
-                            src={row.image}
+                            src={
+                              row.image?.startsWith("http") ||
+                              row.image?.startsWith("/")
+                                ? row.image
+                                : `${ImageBaseUrl}${row.image}`
+                            }
                             alt={row.name}
                             height={200}
                             width={50}

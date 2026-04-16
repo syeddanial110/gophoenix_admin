@@ -2,14 +2,22 @@ import React from "react";
 import UITypography from "../../components/UITypography/UITypography";
 import UIButton from "../../components/UIButton/UIButton";
 import Image from "next/image";
+import { ImageBaseUrl } from "@/apis/ApiRequest";
 
 const BlogCard = ({ image, title, excerpt, onEdit, onDelete }) => {
+  const getImageSrc = (imagePath) => {
+    if (!imagePath) return "";
+    if (imagePath.startsWith("http") || imagePath.startsWith("/"))
+      return imagePath;
+    return `${ImageBaseUrl}${imagePath}`;
+  };
+
   return (
     <div className="max-w-sm bg-white border rounded-lg overflow-hidden shadow-sm">
       <div className="w-full h-44 overflow-hidden bg-gray-100">
         {image ? (
           <Image
-            src={image}
+            src={getImageSrc(image)}
             alt={title}
             className="w-full h-full object-cover"
             width={400}

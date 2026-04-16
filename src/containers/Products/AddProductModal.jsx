@@ -1,5 +1,5 @@
 "use client";
-import { apiGet, apiPost } from "@/apis/ApiRequest";
+import { apiGet, apiPost, ImageBaseUrl } from "@/apis/ApiRequest";
 import UIFileInput from "@/components/InputFields/UIFileInput";
 import UITextField from "@/components/InputFields/UITextField";
 import UIButton from "@/components/UIButton/UIButton";
@@ -851,7 +851,12 @@ const AddProductModal = ({ setIsProductAdd }) => {
             />
             {productData?.productImage && (
               <Image
-                src={`${productData.productImage}`}
+                src={
+                  productData.productImage.startsWith("http") ||
+                  productData.productImage.startsWith("/")
+                    ? productData.productImage
+                    : `${ImageBaseUrl}${productData.productImage}`
+                }
                 alt={productData.productImage}
                 height={180}
                 width={140}
@@ -874,7 +879,11 @@ const AddProductModal = ({ setIsProductAdd }) => {
                         </div>
                       </div>
                       <Image
-                        src={item.path}
+                        src={
+                          item.path.startsWith("http") || item.path.startsWith("/")
+                            ? item.path
+                            : `${ImageBaseUrl}${item.path}`
+                        }
                         alt={item.path}
                         key={i}
                         height={240}

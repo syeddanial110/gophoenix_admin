@@ -123,13 +123,19 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
       selector: (row) => row?.image,
       sortable: true,
       cell: (row) => {
+        const getImageSrc = (imagePath) => {
+          if (!imagePath) return "";
+          if (imagePath.startsWith("http") || imagePath.startsWith("/"))
+            return imagePath;
+          return `${ImageBaseUrl}${imagePath}`;
+        };
         return (
           <>
             {row?.image !== null ? (
               <UITooltip>
                 <TooltipTrigger>
                   <Image
-                    src={`${row?.image}`}
+                    src={getImageSrc(row?.image)}
                     alt={row?.image}
                     width={40}
                     height={40}
@@ -138,7 +144,7 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
                 <TooltipContent>
                   <div className="">
                     <Image
-                      src={`${row?.image}`}
+                      src={getImageSrc(row?.image)}
                       alt={row?.image}
                       width={100}
                       height={100}
