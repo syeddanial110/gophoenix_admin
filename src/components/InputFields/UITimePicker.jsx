@@ -1,15 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import UITypography from "../UITypography/UITypography";
 
 export const UITimePicker = ({ time, setTime, labelName }) => {
   const [hours, setHours] = useState("10");
   const [minutes, setMinutes] = useState("00");
   const [period, setPeriod] = useState("AM");
+  const isInternalUpdate = useRef(false);
 
-  // Parse incoming time prop once on mount
+  // Parse incoming time prop when it changes externally
   useEffect(() => {
+    if (isInternalUpdate.current) {
+      isInternalUpdate.current = false;
+      return;
+    }
     if (time) {
       const [h, m] = time.split(":");
       const hour = parseInt(h);
@@ -19,7 +24,7 @@ export const UITimePicker = ({ time, setTime, labelName }) => {
       setMinutes(m);
       setPeriod(newPeriod);
     }
-  }, []); // Only on mount
+  }, [time]);
 
   // Convert 12-hour to 24-hour and update parent only when local state changes
   useEffect(() => {
@@ -31,6 +36,8 @@ export const UITimePicker = ({ time, setTime, labelName }) => {
     }
     const formattedHour = String(hour).padStart(2, "0");
     const formattedTime = `${formattedHour}:${minutes}`;
+    console.log("formattedTime", formattedTime);
+    isInternalUpdate.current = true;
     setTime(formattedTime);
   }, [hours, minutes, period, setTime]); // Only when local state changes
 

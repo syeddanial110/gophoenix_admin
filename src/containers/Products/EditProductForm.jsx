@@ -27,6 +27,7 @@ import SEOForm from "./SEOForm";
 import UISwitch from "@/components/UISwitch/UISwitch";
 import UITooltip from "@/components/UITooltip/UITooltip";
 import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import UIRichTextEditor from "@/components/UIRichTextEditor/UIRichTextEditor";
 
 const EditProductForm = () => {
   const paymentTypes = [
@@ -55,6 +56,7 @@ const EditProductForm = () => {
     startTime: "",
     endTime: "",
     seats: "",
+    dateOff: "",
     minAge: "",
     maxAge: "",
     description: "",
@@ -69,7 +71,7 @@ const EditProductForm = () => {
     galleryImages: [],
   });
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
-
+  const [seatsOpen, setSeatsOpen] = useState("");
   const [productOptions, setProductOptions] = useState([
     {
       title: "",
@@ -107,6 +109,7 @@ const EditProductForm = () => {
         ? productData?.locationMapLink
         : "",
       seats: productData?.seats ? productData?.seats : "",
+      dateOff: productData?.dateOff ? productData?.dateOff : "",
       minAge: productData?.minAge ? productData?.minAge : "",
       maxAge: productData?.maxAge ? productData?.maxAge : "",
       intervalCount: productData?.intervalCount
@@ -148,6 +151,7 @@ const EditProductForm = () => {
       categories: productData.selectedCollectionIds,
       // subCategoryId: productData.subCategoryId,
       seats: data.seats,
+      dateOff: data.dateOff,
       minAge: data.minAge,
       maxAge: data.maxAge,
       // ageException: data.ageException,
@@ -222,7 +226,7 @@ const EditProductForm = () => {
       const existingIndex = selectedCollections.findIndex(
         (item) => item.id === categoryObject.id
       );
-      
+
       if (existingIndex > -1) {
         // Remove if already selected
         const updated = selectedCollections.filter((_, i) => i !== existingIndex);
@@ -400,6 +404,7 @@ const EditProductForm = () => {
           locationAddress: res?.data.locationAddress || "",
           locationMapLink: res?.data.locationMapLink || "",
           seats: res?.data.seats || "",
+          dateOff: res?.data.dateOff || "",
           minAge: res?.data.minAge || "",
           maxAge: res?.data.maxAge || "",
           intervalCount: res?.data.intervalCount || "",
@@ -421,27 +426,34 @@ const EditProductForm = () => {
           productImage: res?.data?.image || "",
           galleryImages: res?.data?.galleryImages || [],
         });
+        setSeatsOpen(res?.data?.seatsOpen);
+        // Parse ISO date strings as local dates to avoid timezone offset issues
+        const parseLocalDate = (dateStr) => {
+          if (!dateStr) return new Date();
+          const [year, month, day] = dateStr.split("T")[0].split("-").map(Number);
+          return new Date(year, month - 1, day);
+        };
         setDate({
-          from: new Date(res?.data?.startDate),
-          to: new Date(res?.data?.endDate),
+          from: parseLocalDate(res?.data?.startDate),
+          to: parseLocalDate(res?.data?.endDate),
         });
         setStartTime(res?.data?.startTime || "");
         setEndTime(res?.data?.endTime || "");
         setProductOptions(
           res?.data?.productOptions && res?.data?.productOptions.length > 0
             ? res.data.productOptions.map((opt) => ({
-                title: opt.title ?? "",
-                price: opt.price ?? "",
-                // ensure numeric 0/1 for your UISwitch logic
-                isJersey: opt.isJersey,
-              }))
+              title: opt.title ?? "",
+              price: opt.price ?? "",
+              // ensure numeric 0/1 for your UISwitch logic
+              isJersey: opt.isJersey,
+            }))
             : [
-                {
-                  title: "",
-                  price: "",
-                  isJersey: 0,
-                },
-              ],
+              {
+                title: "",
+                price: "",
+                isJersey: 0,
+              },
+            ],
         );
         setEditorValue(res?.data?.description || "");
         setInputData({
@@ -505,6 +517,10 @@ const EditProductForm = () => {
   }, [categoryDropdownOpen]);
 
   console.log("productData/////,", productData);
+
+  console.log("startTime", startTime)
+  console.log("endTime", endTime)
+
   return (
     <>
       <div className="border-y-1 border-gray-300 my-4"></div>
@@ -527,15 +543,27 @@ const EditProductForm = () => {
                 className="!text-[14px] mt-8"
               />
 
-              <Editor editorValue={cardName} setEditroValue={setCardName} />
+              {/* <Editor editorValue={cardName} setEditroValue={setCardName} /> */}
+              <UIRichTextEditor
+                placeholder="Start typing here..."
+                onChange={(html) => console.log(html)}
+                setHtmlOutput={setCardName}
+                htmlOutput={cardName}
+              />
               <UITypography
                 variant="h6"
                 text="Class Name"
                 className="!text-[14px]"
               />
-              <Editor
+              {/* <Editor
                 editorValue={productName}
                 setEditroValue={setProductName}
+              /> */}
+              <UIRichTextEditor
+                placeholder="Start typing here..."
+                onChange={(html) => console.log(html)}
+                setHtmlOutput={setProductName}
+                htmlOutput={productName}
               />
               <UIInputField
                 isLable={true}
@@ -618,6 +646,21 @@ const EditProductForm = () => {
                   </FormItem>
                 )}
               />
+              <UITypography variant='h6' text={`Spots Open: ${seatsOpen}`} />
+              <FormField
+                control={form.control}
+                name="dateOff"
+                render={({ field }) => (
+                  <FormItem>
+                    <UITextField
+                      field={field}
+                      formLabel="Dates Off"
+                      placeholder="eg: 4/24, 4/25"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="minAge"
@@ -662,9 +705,15 @@ const EditProductForm = () => {
                 className="!font-[600]"
                 text="Description"
               />
-              <Editor
+              {/* <Editor
                 editorValue={editorValue}
                 setEditroValue={setEditorValue}
+              /> */}
+              <UIRichTextEditor
+                placeholder="Start typing here..."
+                onChange={(html) => console.log(html)}
+                setHtmlOutput={setEditorValue}
+                htmlOutput={editorValue}
               />
 
               <div className="relative w-full" data-category-dropdown>
@@ -684,9 +733,8 @@ const EditProductForm = () => {
                       : "Select Collections"}
                   </span>
                   <svg
-                    className={`w-4 h-4 transition-transform ${
-                      categoryDropdownOpen ? "rotate-180" : ""
-                    }`}
+                    className={`w-4 h-4 transition-transform ${categoryDropdownOpen ? "rotate-180" : ""
+                      }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -971,7 +1019,7 @@ const EditProductForm = () => {
               <Image
                 src={
                   productData.productImage.startsWith("http") ||
-                  productData.productImage.startsWith("/")
+                    productData.productImage.startsWith("/")
                     ? productData.productImage
                     : `${ImageBaseUrl}${productData.productImage}`
                 }

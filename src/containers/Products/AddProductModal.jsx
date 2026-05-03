@@ -30,6 +30,7 @@ import UICheckbox from "@/components/UICheckbox/UICheckbox";
 import UISwitch from "@/components/UISwitch/UISwitch";
 import UITooltip from "@/components/UITooltip/UITooltip";
 import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import UIRichTextEditor from "@/components/UIRichTextEditor/UIRichTextEditor";
 
 const AddProductModal = ({ setIsProductAdd }) => {
   const paymentTypes = [
@@ -53,6 +54,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
       // activities: "",
       slug: "",
       seats: "",
+      dateOff: "",
       minAge: "",
       maxAge: "",
       // ageException: "",
@@ -112,8 +114,68 @@ const AddProductModal = ({ setIsProductAdd }) => {
   function onSubmit(data, e) {
     console.log("data", data, e);
 
-    if (productData?.productImage == "") {
+    // Validate all required fields before calling the API
+    if (!productName || productName.trim() === "" || productName === "<p><br></p>") {
+      toast.error("Please enter the class name");
+      return;
+    }
+
+    if (!cardName || cardName.trim() === "" || cardName === "<p><br></p>") {
+      toast.error("Please enter the card name");
+      return;
+    }
+
+    if (!date?.from || !date?.to) {
+      toast.error("Please select start and end dates");
+      return;
+    }
+
+    if (!startTime) {
+      toast.error("Please select start time");
+      return;
+    }
+
+    if (!endTime) {
+      toast.error("Please select end time");
+      return;
+    }
+
+
+
+    if (!editorValue || editorValue.trim() === "" || editorValue === "<p><br></p>") {
+      toast.error("Please enter the description");
+      return;
+    }
+
+    if (!productData?.selectedCollectionIds || productData.selectedCollectionIds.length === 0) {
+      toast.error("Please select at least one collection");
+      return;
+    }
+
+    if (!productData?.paymentType || productData.paymentType.trim() === "") {
+      toast.error("Please select a payment type");
+      return;
+    }
+
+    if (productData.paymentType === "recurring") {
+      if (!productData?.paymentInterval || productData.paymentInterval.trim() === "") {
+        toast.error("Please select a payment interval");
+        return;
+      }
+
+    }
+
+    if (!productData?.productImage || productData.productImage === "") {
       toast.error("Please upload product image");
+      return;
+    }
+
+    // Validate product options
+    const hasEmptyOption = productOptions.some(
+      (opt) => !opt.title || opt.title.trim() === "" || !opt.price || opt.price.toString().trim() === ""
+    );
+    if (hasEmptyOption) {
+      toast.error("Please fill in all product option titles and prices");
       return;
     }
 
@@ -166,6 +228,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
       categories: productData.selectedCollectionIds,
       // subCategoryId: null,
       seats: data.seats,
+      dateOff: data.dateOff,
       minAge: data.minAge,
       maxAge: data.maxAge,
       // ageException: data.ageException,
@@ -238,7 +301,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
       const existingIndex = selectedCollections.findIndex(
         (item) => item.id === categoryObject.id
       );
-      
+
       if (existingIndex > -1) {
         // Remove if already selected
         const updated = selectedCollections.filter((_, i) => i !== existingIndex);
@@ -426,16 +489,25 @@ const AddProductModal = ({ setIsProductAdd }) => {
                 text="Enter Class Name (This shows on card)"
                 className="!text-[14px] mt-8"
               />
-
-              <Editor editorValue={cardName} setEditroValue={setCardName} />
+              <UIRichTextEditor
+                placeholder="Start typing here..."
+                onChange={(html) => console.log(html)}
+                setHtmlOutput={setCardName}
+              />
+              {/* <Editor editorValue={cardName} setEditroValue={setCardName} /> */}
               <UITypography
                 variant="h6"
                 text="Enter Class Name"
                 className="!text-[14px] mt-8"
               />
-              <Editor
+              {/* <Editor
                 editorValue={productName}
                 setEditroValue={setProductName}
+              /> */}
+              <UIRichTextEditor
+                placeholder="Start typing here..."
+                onChange={(html) => console.log(html)}
+                setHtmlOutput={setProductName}
               />
               <UIInputField
                 isLable={true}
@@ -519,6 +591,20 @@ const AddProductModal = ({ setIsProductAdd }) => {
               />
               <FormField
                 control={form.control}
+                name="dateOff"
+                render={({ field }) => (
+                  <FormItem>
+                    <UITextField
+                      field={field}
+                      formLabel="Dates Off"
+                      placeholder="eg: 4/12, 8/12"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="minAge"
                 render={({ field }) => (
                   <FormItem>
@@ -526,7 +612,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                       field={field}
                       formLabel="Min Age"
                       placeholder="eg: 04"
-                      // type="number"
+                    // type="number"
                     />
                     <FormMessage />
                   </FormItem>
@@ -541,7 +627,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
                       field={field}
                       formLabel="Max Age"
                       placeholder="eg: 12"
-                      // type="number"
+                    // type="number"
                     />
                     <FormMessage />
                   </FormItem>
@@ -552,9 +638,14 @@ const AddProductModal = ({ setIsProductAdd }) => {
                 className="!font-[600]"
                 text="Description"
               />
-              <Editor
+              {/* <Editor
                 editorValue={editorValue}
                 setEditroValue={setEditorValue}
+              /> */}
+               <UIRichTextEditor
+                placeholder="Start typing here..."
+                onChange={(html) => console.log(html)}
+                setHtmlOutput={setEditorValue}
               />
 
               <div className="relative w-full">
@@ -574,9 +665,8 @@ const AddProductModal = ({ setIsProductAdd }) => {
                       : "Select Collections"}
                   </span>
                   <svg
-                    className={`w-4 h-4 transition-transform ${
-                      categoryDropdownOpen ? "rotate-180" : ""
-                    }`}
+                    className={`w-4 h-4 transition-transform ${categoryDropdownOpen ? "rotate-180" : ""
+                      }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -853,7 +943,7 @@ const AddProductModal = ({ setIsProductAdd }) => {
               <Image
                 src={
                   productData.productImage.startsWith("http") ||
-                  productData.productImage.startsWith("/")
+                    productData.productImage.startsWith("/")
                     ? productData.productImage
                     : `${ImageBaseUrl}${productData.productImage}`
                 }

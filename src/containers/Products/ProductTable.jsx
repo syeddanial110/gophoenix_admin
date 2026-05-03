@@ -107,7 +107,16 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
       selector: (row) => row?.categoryName,
       sortable: true,
       cell: (row) => {
-        return <UITypography text={row?.categoryName} />;
+        return (<>
+          {
+            row?.categories?.map((item, ind) => {
+              return (
+                <UITypography text={`${item?.name}, `} />
+              )
+            })
+          }
+        </>
+        )
       },
     },
     {
