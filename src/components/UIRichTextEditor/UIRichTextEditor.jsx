@@ -14,6 +14,26 @@ const HEADING_OPTIONS = [
   { label: "Code Block", value: "pre" },
 ];
 
+const FONT_SIZE_OPTIONS = [
+  { label: "4px", value: 4 },
+  { label: "6px", value: 6 },
+  { label: "8px", value: 8 },
+  { label: "10px", value: 10 },
+  { label: "12px", value: 12 },
+  { label: "14px", value: 14 },
+  { label: "16px", value: 16 },
+  { label: "18px", value: 18 },
+  { label: "20px", value: 20 },
+  { label: "24px", value: 24 },
+  { label: "28px", value: 28 },
+  { label: "32px", value: 32 },
+  { label: "36px", value: 36 },
+  { label: "40px", value: 40 },
+  { label: "48px", value: 48 },
+  { label: "56px", value: 56 },
+  { label: "60px", value: 60 },
+];
+
 function ToolbarButton({ onClick, title, active, children, className = "" }) {
   return (
     <button
@@ -46,6 +66,7 @@ export default function RichTextEditor({
   const editorRef = useRef(null);
   const [activeFormats, setActiveFormats] = useState({});
   const [headingValue, setHeadingValue] = useState("p");
+  const [fontSizeValue, setFontSizeValue] = useState("");
   const [showLinkDialog, setShowLinkDialog] = useState(false);
   const [linkUrl, setLinkUrl] = useState("https://");
   const [showSource, setShowSource] = useState(false);
@@ -163,6 +184,60 @@ export default function RichTextEditor({
     document.execCommand("formatBlock", false, value === "p" ? "p" : value);
     setHeadingValue(value);
     updateState();
+  };
+
+  const stripFontSize = (fragment) => {
+    fragment.querySelectorAll("*").forEach((el) => {
+      if (el.style.fontSize) {
+        el.style.fontSize = "";
+        if (!el.getAttribute("style")) el.removeAttribute("style");
+      }
+    });
+  };
+
+  const handleFontSizeChange = (size) => {
+    editorRef.current?.focus();
+
+    const selection = window.getSelection();
+    if (selection.rangeCount === 0) return;
+
+    const range = selection.getRangeAt(0);
+
+    if (!range.collapsed) {
+      const contents = range.extractContents();
+      stripFontSize(contents);
+      const span = document.createElement("span");
+      span.style.fontSize = `${size}px`;
+      span.appendChild(contents);
+      range.insertNode(span);
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.selectNodeContents(span);
+      selection.addRange(newRange);
+    } else {
+      const span = document.createElement("span");
+      span.style.fontSize = `${size}px`;
+      span.textContent = "\u00A0";
+      range.insertNode(span);
+      range.setStartAfter(span);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+
+    setFontSizeValue(size);
+    updateState();
+  };
+
+  const changeFontSizeByStep = (direction) => {
+    const sizes = FONT_SIZE_OPTIONS.map((o) => o.value);
+    const currentIndex = fontSizeValue ? sizes.indexOf(Number(fontSizeValue)) : sizes.indexOf(16);
+    const nextIndex = direction === "up"
+      ? Math.min(currentIndex + 1, sizes.length - 1)
+      : Math.max(currentIndex - 1, 0);
+    if (nextIndex !== currentIndex) {
+      handleFontSizeChange(sizes[nextIndex]);
+    }
   };
 
   const toggleSourceView = () => {
@@ -290,7 +365,7 @@ export default function RichTextEditor({
           padding: 14px 16px;
           outline: none;
           font-size: 15px;
-          line-height: 1.7;
+          line-height: 1.3;
           color: #111827;
           overflow-y: auto;
         }
@@ -300,6 +375,9 @@ export default function RichTextEditor({
           pointer-events: none;
           font-style: italic;
         }
+        .rte-editor p { margin: 0; line-height: 1.5; }
+        .rte-editor p + p { margin-top: 0.3em; }
+        .rte-editor div { margin: 0; line-height: 1.5; }
         .rte-editor h1 { font-size: 2em; font-weight: 700; margin: 0.5em 0; }
         .rte-editor h2 { font-size: 1.5em; font-weight: 700; margin: 0.5em 0; }
         .rte-editor h3 { font-size: 1.25em; font-weight: 600; margin: 0.5em 0; }
@@ -424,14 +502,24 @@ export default function RichTextEditor({
 
           <select
             className="rte-select"
-            value={headingValue}
-            onChange={(e) => handleHeadingChange(e.target.value)}
-            title="Paragraph style"
+            value={fontSizeValue}
+            onChange={(e) => handleFontSizeChange(Number(e.target.value))}
+            title="Font size"
+            style={{ width: 72 }}
           >
-            {HEADING_OPTIONS.map((o) => (
+            <option value="" disabled>Size</option>
+            {FONT_SIZE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
+
+          <ToolbarButton title="Decrease font size" onClick={() => changeFontSizeByStep("down")}>
+            <span style={{ fontSize: 13, fontWeight: 700 }}>A<span style={{ fontSize: 9, verticalAlign: "sub" }}>▼</span></span>
+          </ToolbarButton>
+
+          <ToolbarButton title="Increase font size" onClick={() => changeFontSizeByStep("up")}>
+            <span style={{ fontSize: 13, fontWeight: 700 }}>A<span style={{ fontSize: 9, verticalAlign: "super" }}>▲</span></span>
+          </ToolbarButton>
 
           <Separator />
 

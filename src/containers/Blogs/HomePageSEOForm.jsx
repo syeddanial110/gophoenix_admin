@@ -5,7 +5,7 @@ import UIButton from "@/components/UIButton/UIButton";
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import UITextField from "@/components/InputFields/UITextField";
 
-const BlogSEOForm = ({
+const HomePageSEOForm = ({
   productName,
   shortDescription,
   metaTitle,
@@ -66,4 +66,4 @@ const BlogSEOForm = ({
   );
 };
 
-export default BlogSEOForm;
+export default HomePageSEOForm;

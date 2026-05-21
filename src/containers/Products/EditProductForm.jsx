@@ -339,6 +339,17 @@ const EditProductForm = () => {
     // }));
   };
 
+  const handleGalleryImageReorder = (result) => {
+    if (!result.destination) return;
+    const updatedGalleryImages = Array.from(productData.galleryImages);
+    const [removed] = updatedGalleryImages.splice(result.source.index, 1);
+    updatedGalleryImages.splice(result.destination.index, 0, removed);
+    setProductData({
+      ...productData,
+      galleryImages: updatedGalleryImages,
+    });
+  };
+
   // end region
 
   // product options add , remove, on save btn click
@@ -1034,39 +1045,64 @@ const EditProductForm = () => {
               multiple={true}
               onChange={handleGalleryFileUpload}
             />
-            <div className="flex gap-3">
-              {productData.galleryImages.length > 0 &&
-                productData.galleryImages.map((item, i) => {
-                  return (
-                    <div className="relative">
-                      <div className="absolute right-1 top-1 hover:cursor-pointer">
-                        {/* <UIButton
-                          type="contained"
-                          icon={true}
-                          BtnIcon={X}
-                          className="!bg-white !p-1 rounded"
-                          btnOnclick={() => handleGalleryImageRemove(i)}
-                        /> */}
-                        <div onClick={() => handleGalleryImageRemove(i)}>
-                          <X />
-                        </div>
-                      </div>
-                      <Image
-                        src={
-                          item.path.startsWith("http") || item.path.startsWith("/")
-                            ? item.path
-                            : `${ImageBaseUrl}${item.path}`
-                        }
-                        alt={item.path}
-                        key={i}
-                        height={240}
-                        width={240}
-                        objectFit="cover"
-                      />
-                    </div>
-                  );
-                })}
-            </div>
+            <DragDropContext onDragEnd={handleGalleryImageReorder}>
+              <Droppable droppableId="gallery-images" direction="horizontal">
+                {(provided) => (
+                  <div
+                    className="flex gap-3 mt-4 flex-wrap"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {productData.galleryImages.length > 0 &&
+                      productData.galleryImages.map((item, i) => {
+                        return (
+                          <Draggable
+                            key={`gallery-${i}`}
+                            draggableId={`gallery-${i}`}
+                            index={i}
+                          >
+                            {(provided, snapshot) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className="relative"
+                                style={{
+                                  ...provided.draggableProps.style,
+                                  backgroundColor: snapshot.isDragging
+                                    ? "#f0f0f0"
+                                    : "transparent",
+                                  borderRadius: "8px",
+                                  cursor: "grab",
+                                }}
+                              >
+                                <div className="absolute right-1 top-1 hover:cursor-pointer hover:bg-red-100 p-1 rounded">
+                                  <div onClick={() => handleGalleryImageRemove(i)}>
+                                    <X size={20} className="text-red-600" />
+                                  </div>
+                                </div>
+                                <Image
+                                  src={
+                                    item.path.startsWith("http") ||
+                                    item.path.startsWith("/")
+                                      ? item.path
+                                      : `${ImageBaseUrl}${item.path}`
+                                  }
+                                  alt={item.path}
+                                  height={240}
+                                  width={240}
+                                  style={{ objectFit: "cover", borderRadius: "8px" }}
+                                />
+                              </div>
+                            )}
+                          </Draggable>
+                        );
+                      })}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
             <SEOForm
               productName={productName}
               shortDescription={inputData.shortDescription}

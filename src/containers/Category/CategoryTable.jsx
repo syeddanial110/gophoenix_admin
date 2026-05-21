@@ -1,36 +1,19 @@
 "use client";
-import { apiDelete, apiGet, ImageBaseUrl } from "@/apis/ApiRequest";
-import { Spinner } from "@/components/ui/spinner";
-import UIModal from "@/components/UIModal/UIModal";
-import UITable from "@/components/UITable/UITable";
+import { apiDelete } from "@/apis/ApiRequest";
 import UITypography from "@/components/UITypography/UITypography";
 import { editCategoryData, getAllCategories } from "@/store/actions/category";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
-import { DeleteIcon, PencilLine, Trash } from "lucide-react";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import EditCategoryDataForm from "./EditCategoryDataForm";
-import UITooltip from "@/components/UITooltip/UITooltip";
-import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import UIButton from "@/components/UIButton/UIButton";
 import { toast } from "sonner";
-import UIPopover from "@/components/UIPopover/UIPopover";
 import CollectionDragableTable from "@/components/UITable/CollectionDragableTable";
 
-const CategoryTable = () => {
+const CategoryTable = ({ setIsEdit }) => {
   const dispatch = useDispatch();
-  const [modalOpen, setModalOpen] = useState(false);
   const [rows, setRows] = useState([]);
   const categoryDataReducer = useSelector(
     (state) => state?.GetAllCategoriesReducer?.res
   );
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-
-  const handleModalOpen = () => {
-    setModalOpen(!modalOpen);
-  };
-
   const handleCategoryDelete = (row) => {
     apiDelete(
       `${ApiEndpoints.categories.base}${ApiEndpoints.categories.delete}/${row?.id}`,
@@ -147,6 +130,7 @@ const CategoryTable = () => {
 
   const handleEditClick = (row) => {
     dispatch(editCategoryData(row));
+    setIsEdit(true);
   };
 
   useEffect(() => {

@@ -14,7 +14,7 @@ import UITooltip from "@/components/UITooltip/UITooltip";
 import UITypography from "@/components/UITypography/UITypography";
 import { editProductData, getAllProducts } from "@/store/actions/products";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
-import { PencilLine, Trash } from "lucide-react";
+import { Copy, PencilLine, Trash } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -63,6 +63,21 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
       (err) => {
         toast.error(err?.message);
       },
+    );
+  };
+
+   const handleDuplicateProduct = (row) => {
+    apiGet(
+      `${ApiEndpoints.products.base}${ApiEndpoints.products.duplicate}${row?.id}`,
+      (res) => {
+        if (res?.data?.data) {
+         toast.success(res?.message);
+         fetchAllProducts();
+        }
+      },
+      (err) => {
+        toast.error("Failed to duplicate product");
+      }
     );
   };
 
@@ -176,7 +191,13 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
         justifyContent: "flex-end",
       },
       cell: (row) => (
-        <>
+        <div className="flex gap-3">
+          <button
+            onClick={() => handleDuplicateProduct(row)}
+            className="hover:cursor-pointer"
+          >
+            <Copy />
+          </button>
           <button
             onClick={() => handleEditClick(row)}
             className="hover:cursor-pointer"
@@ -189,7 +210,7 @@ const ProductTable = ({ setIsProductEdit, setIsProductAdd }) => {
             btnTrigger={<Trash />}
             onBtnClick={() => handleProductDelete(row)}
           ></UIPopover>
-        </>
+        </div>
       ),
     },
   ];

@@ -16,11 +16,11 @@ export const ApiEndpoints = {
   categories: {
     base: "/category",
     getAll: "/get",
-    getById: "/getById",
+    getById: "/get",
     create: "/create",
     update: "/update",
     delete: "/delete",
-    updateOrder: "/order",
+    updateOrder: "/product/categories/reorder",
   },
   subCategory: {
     base: "/subCategory",
@@ -37,6 +37,7 @@ export const ApiEndpoints = {
     create: "/createProduct",
     update: "/updateProduct/",
     delete: "/deleteProduct",
+    duplicate: "/duplicateProduct/",
   },
   pages: {
     base: "/pages",
@@ -82,6 +83,8 @@ export const ApiEndpoints = {
     create: "/homePage/create",
     updateLatestSelling: "/homePage/updateLatestSelling",
     updateTopSelling: "/homePage/updateTopSelling",
+    get: "/homePage/get",
+    dashboard: "/dashboard/get",
   },
   orders: {
     base: "/order",

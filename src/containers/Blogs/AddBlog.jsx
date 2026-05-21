@@ -8,7 +8,7 @@ import UITextField from "@/components/InputFields/UITextField";
 import UIButton from "@/components/UIButton/UIButton";
 import Editor from "../ContentEditor/Editor";
 import SEOForm from "../Products/SEOForm";
-import BlogSEOForm from "./BlogSEOForm";
+import BlogSEOForm from "./HomePageSEOForm";
 import { apiPost, ImageBaseUrl } from "@/apis/ApiRequest";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
 import UIFileInput from "@/components/InputFields/UIFileInput";

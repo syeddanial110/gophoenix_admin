@@ -1,10 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { PencilLine, Trash } from "lucide-react";
 import UIPopover from "../UIPopover/UIPopover";
-import UIModal from "../UIModal/UIModal";
-import EditCategoryDataForm from "@/containers/Category/EditCategoryDataForm";
 import Image from "next/image";
 import { apiPut, ImageBaseUrl } from "@/apis/ApiRequest";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
@@ -17,11 +15,6 @@ const CollectionDragableTable = ({
   rows,
   setRows,
 }) => {
-  const [openModalId, setOpenModalId] = useState(null);
-
-  const handleModalOpen = (rowId) => {
-    setOpenModalId(openModalId === rowId ? null : rowId);
-  };
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -114,17 +107,13 @@ const CollectionDragableTable = ({
                           />
                         </td>
                         <td className="px-4 py-2 border-b space-x-2">
-                          <UIModal
-                            onOpenChange={() => handleModalOpen(row.id)}
-                            open={openModalId === row.id}
-                            modalBtnText={<PencilLine />}
-                            btnClassName="hover:cursor-pointer"
-                            btnTriggerOnClick={() => handleEditClick(row)}
-                            modalHeaderTitle="Edit Collection"
+                          <button
+                            type="button"
+                            onClick={() => handleEditClick(row)}
+                            className="hover:cursor-pointer text-gray-600 hover:text-main"
                           >
-                            <EditCategoryDataForm setModalOpen={() => setOpenModalId(null)} />
-                          </UIModal>
-
+                            <PencilLine />
+                          </button>
                           <UIPopover
                             title="Are you sure you want to delete this collection?"
                             btnTrigger={<Trash />}

@@ -1,32 +1,50 @@
 "use client";
-import UIModal from "@/components/UIModal/UIModal";
+import UIButton from "@/components/UIButton/UIButton";
 import UITypography from "@/components/UITypography/UITypography";
 import AddCategoryModal from "@/containers/Category/AddCategoryModal";
+import EditCategoryDataForm from "@/containers/Category/EditCategoryDataForm";
 import CategoryTable from "@/containers/Category/CategoryTable";
 import React, { useState } from "react";
 
 const Category = () => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const handleModalOpen = () => {
-    setModalOpen(!modalOpen);
+  const [isAdd, setIsAdd] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+
+  const handleIsAdd = () => {
+    setIsAdd(!isAdd);
+    setIsEdit(false);
   };
+
+  const handleCancelEdit = () => {
+    setIsEdit(false);
+  };
+
+  const showTable = !isAdd && !isEdit;
 
   return (
     <>
       <div className="flex justify-between gap-4">
         <UITypography variant="h2" text="Collection" />
-        {/* <UIButton type="contained" icon={false} title="Add Category" /> */}
-        <UIModal
-          open={modalOpen}
-          onOpenChange={handleModalOpen}
-          modalBtnText="Add Collection"
-          btnClassName="bg-main text-white px-7 py-2 rounded-2xl hover:cursor-pointer"
-          modalHeaderTitle='Add Collection'
-        >
-          <AddCategoryModal setModalOpen={setModalOpen} />
-        </UIModal>
+        {showTable && (
+          <UIButton
+            type="contained"
+            icon={false}
+            title="Add Collection"
+            onClick={handleIsAdd}
+          />
+        )}
+        {(isAdd || isEdit) && (
+          <UIButton
+            type="outlined"
+            icon={false}
+            title="Cancel"
+            onClick={isAdd ? handleIsAdd : handleCancelEdit}
+          />
+        )}
       </div>
-      <CategoryTable />
+      {isAdd && <AddCategoryModal setIsAdd={setIsAdd} />}
+      {isEdit && <EditCategoryDataForm setModalOpen={handleCancelEdit} />}
+      {showTable && <CategoryTable setIsEdit={setIsEdit} />}
     </>
   );
 };

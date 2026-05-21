@@ -8,13 +8,14 @@ import { homepageContentSchema } from "@/utils/schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import UITextField from "@/components/InputFields/UITextField";
 import UIButton from "@/components/UIButton/UIButton";
-import { apiPost, apiPut } from "@/apis/ApiRequest";
+import { apiGet, apiPost, apiPut } from "@/apis/ApiRequest";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
 import SEOForm from "@/containers/Products/SEOForm";
-import BlogSEOForm from "@/containers/Blogs/BlogSEOForm";
+import HomePageSEOForm from "@/containers/Blogs/HomePageSEOForm";
 import { toast } from "sonner";
 import { getAllCategories } from "@/store/actions/category";
 import { getAllProducts } from "@/store/actions/products";
+import UIInputField from "@/components/InputFields/UIInputField";
 
 const page = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,10 @@ const page = () => {
   const [inputData, setInputData] = useState({
     metaTitle: "",
     metaDescription: "",
+  });
+  const [headingVal, setHeadingVal] = useState({
+    heading1Val: "",
+    heading2Val: "",
   });
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -129,6 +134,7 @@ const page = () => {
     ];
 
     const dataObj = {
+      section1Heading: headingVal.heading1Val,
       topSelling: topSellingArray,
     };
     console.log("dataObj", dataObj);
@@ -144,6 +150,13 @@ const page = () => {
       },
     );
   }
+
+  const handleHeadingUpdate = (e) => {
+    setHeadingVal({ ...headingVal, [e.target.name]: e.target.value });
+  };
+
+  console.log("headingVal", headingVal);
+
   function onSubmitLatestClases() {
     const latestSelingsArray = selectedLatestClasses.map((product) => ({
       type: "class",
@@ -151,6 +164,7 @@ const page = () => {
     }));
 
     const dataObj = {
+      section2Heading: headingVal.heading2Val,
       latestSellings: latestSelingsArray,
     };
     console.log("dataObj", dataObj);
@@ -170,10 +184,18 @@ const page = () => {
   useEffect(() => {
     dispatch(getAllCategories());
     dispatch(getAllProducts());
+    // apiGet(
+    //   `${ApiEndpoints.home.get}`,
+    //   (res) => {
+    //     console.log("home page content", res);
+    //     const data = res?.data;
+    //     // Do something with the retrieved data
+    //   },
+    //   (err) => {
+    //     console.log("err", err);
+    //   },
+    // );
   }, []);
-
-  console.log("getAllCategoriesData", getAllCategoriesData);
-  console.log("allProducts", allProducts);
 
   return (
     <div className="flex flex-col gap-3">
@@ -182,7 +204,13 @@ const page = () => {
       </div>
       <div className="flex flex-col gap-3 w-[50%]">
         <div>
-          <UITypography variant="h5" text="Top Selling Collections" />
+          <UIInputField
+            isLable={true}
+            lableName="Enter the heading for the first section"
+            name="heading1Val"
+            value={headingVal.heading1Val}
+            onChange={handleHeadingUpdate}
+          />
           <p className="text-sm text-gray-600 mt-2">
             Total selections:{" "}
             {selectedProducts.length + selectedCategories.length}/
@@ -225,7 +253,7 @@ const page = () => {
           </button>
 
           {productsDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+            <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
               {allProducts?.res?.data?.data?.length > 0 ? (
                 allProducts?.res?.data?.data?.map((item) => (
                   <label
@@ -247,7 +275,11 @@ const page = () => {
                       }
                       className="w-4 h-4 mr-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     />
-                    <span className="text-sm">{item.productName}</span>
+                    <div
+                      className="mt-6 prose max-w-none [&>h1]:text-[16px] [&>h1]:font-bold [&>h2]:text-[15px] [&>h2]:font-semibold [&>h3]:text-[14px] [&>h3]:font-semibold [&>h4]:text-[14px] [&>h4]:font-semibold [&>h5]:text-[14px] [&>h5]:font-semibold [&>h6]:text-[14px] [&>h6]:font-semibold [&>p]:text-[14px]"
+                      dangerouslySetInnerHTML={{ __html: item.productName }}
+                    />
+                    {/* <div className="text-sm">{item.productName}</div> */}
                   </label>
                 ))
               ) : (
@@ -259,17 +291,20 @@ const page = () => {
           )}
 
           {selectedProducts?.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="mt-2 border border-gray-200 rounded-lg overflow-hidden">
               {selectedProducts?.map((product, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                  className="flex items-center justify-between px-4 py-2 text-sm border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
                 >
-                  <span>{product.productName}</span>
+                  <div
+                    className="prose max-w-none flex-1 [&>*]:!m-0 [&>*]:!text-[13px] [&>*]:!font-normal [&>*]:!text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: product.productName }}
+                  />
                   <button
                     type="button"
                     onClick={() => handleProductSelect(product)}
-                    className="cursor-pointer hover:text-blue-600"
+                    className="ml-3 text-gray-400 hover:text-red-500 cursor-pointer flex-shrink-0"
                   >
                     ✕
                   </button>
@@ -314,7 +349,7 @@ const page = () => {
           </button>
 
           {categoriesDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+            <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
               {getAllCategoriesData?.res?.data?.length > 0 ? (
                 getAllCategoriesData?.res?.data?.map((item) => (
                   <label
@@ -348,17 +383,17 @@ const page = () => {
           )}
 
           {selectedCategories?.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="mt-2 border border-gray-200 rounded-lg overflow-hidden">
               {selectedCategories?.map((category, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
+                  className="flex items-center justify-between px-4 py-2 text-sm border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
                 >
-                  <span>{category.name}</span>
+                  <span className="text-gray-700">{category.name}</span>
                   <button
                     type="button"
                     onClick={() => handleCategorySelect(category)}
-                    className="cursor-pointer hover:text-green-600"
+                    className="ml-3 text-gray-400 hover:text-red-500 cursor-pointer flex-shrink-0"
                   >
                     ✕
                   </button>
@@ -367,18 +402,25 @@ const page = () => {
             </div>
           )}
         </div>
-
-        <UIButton
-          type="contained"
-          title="Submit"
-          icon={false}
-          btnOnclick={onSubmitTopSelling}
-        />
+        <div>
+          <UIButton
+            type="contained"
+            title="Submit"
+            icon={false}
+            btnOnclick={onSubmitTopSelling}
+          />
+        </div>
 
         {/* Latest Classes Section */}
         <div className="mt-8 pt-6 border-t border-gray-300">
           <div>
-            <UITypography variant="h5" text="Latest Classes" />
+            <UIInputField
+              isLable={true}
+              lableName="Enter the heading for the second section"
+              name="heading2Val"
+              value={headingVal.heading2Val}
+              onChange={handleHeadingUpdate}
+            />
             <p className="text-sm text-gray-600 mt-2">
               Total selections: {selectedLatestClasses.length}/9
             </p>
@@ -421,7 +463,7 @@ const page = () => {
             </button>
 
             {latestClassesDropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+              <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
                 {allProducts?.res?.data?.data?.length > 0 ? (
                   allProducts?.res?.data?.data?.map((item) => (
                     <label
@@ -442,7 +484,11 @@ const page = () => {
                         }
                         className="w-4 h-4 mr-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                       />
-                      <span className="text-sm">{item.productName}</span>
+                      <div
+                        className="mt-6 prose max-w-none [&>h1]:text-[16px] [&>h1]:font-bold [&>h2]:text-[15px] [&>h2]:font-semibold [&>h3]:text-[14px] [&>h3]:font-semibold [&>h4]:text-[14px] [&>h4]:font-semibold [&>h5]:text-[14px] [&>h5]:font-semibold [&>h6]:text-[14px] [&>h6]:font-semibold [&>p]:text-[14px]"
+                        dangerouslySetInnerHTML={{ __html: item.productName }}
+                      />
+                      {/* <span className="text-sm">{item.productName}</span> */}
                     </label>
                   ))
                 ) : (
@@ -454,17 +500,21 @@ const page = () => {
             )}
 
             {selectedLatestClasses?.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div className="mt-2 border border-gray-200 rounded-lg overflow-hidden">
                 {selectedLatestClasses?.map((product, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-1 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm"
+                    className="flex items-center justify-between px-4 py-2 text-sm border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
                   >
-                    <span>{product.productName}</span>
+                    <div
+                      className="mt-6 prose max-w-none [&>h1]:text-[16px] [&>h1]:font-bold [&>h2]:text-[15px] [&>h2]:font-semibold [&>h3]:text-[14px] [&>h3]:font-semibold [&>h4]:text-[14px] [&>h4]:font-semibold [&>h5]:text-[14px] [&>h5]:font-semibold [&>h6]:text-[14px] [&>h6]:font-semibold [&>p]:text-[14px]"
+                      dangerouslySetInnerHTML={{ __html: product.productName }}
+                    />
+                    {/* <span className="text-gray-700">{product.productName}</span> */}
                     <button
                       type="button"
                       onClick={() => handleLatestClassSelect(product)}
-                      className="cursor-pointer hover:text-purple-600"
+                      className="ml-3 text-gray-400 hover:text-red-500 cursor-pointer flex-shrink-0"
                     >
                       ✕
                     </button>
@@ -485,7 +535,7 @@ const page = () => {
 
         <div className="mt-6">
           <UITypography variant="h5" text="SEO Details" />
-          <BlogSEOForm
+          <HomePageSEOForm
             shortDescription={inputData.shortDescription}
             metaTitle={inputData.metaTitle}
             metaDescription={inputData.metaDescription}

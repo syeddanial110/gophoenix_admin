@@ -12,12 +12,15 @@ import { slugify } from "@/utils/slugify";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
+import SEOForm from "../Products/SEOForm";
 
-const AddCategoryModal = ({ setModalOpen }) => {
+const AddCategoryModal = ({ setIsAdd }) => {
   const [categoryData, setCategoryData] = useState({
     categoryName: "",
     categoryImage: "",
     slug: "",
+    metaTitle: "",
+    metaDescription: "",
   });
   const dispatch = useDispatch();
 
@@ -32,12 +35,16 @@ const AddCategoryModal = ({ setModalOpen }) => {
     setCategoryData({ ...categoryData, categoryImage: e.target.files[0] });
   };
 
+
+
   const handleAddCategory = () => {
     const formData = new FormData();
 
     formData.append("name", categoryData.categoryName);
     formData.append("slug", categoryData.slug);
     formData.append("image", categoryData.categoryImage);
+    formData.append("metaTitle", categoryData.metaTitle);
+    formData.append("metaDescription", categoryData.metaDescription);
     // const dataObj = {
     //   name: categoryData.categoryName,
     //   image: categoryData.categoryImage,
@@ -50,14 +57,14 @@ const AddCategoryModal = ({ setModalOpen }) => {
         console.log("res", res);
         if (res?.success) {
           toast.success(res?.message);
-          setModalOpen(false);
+          setIsAdd(false);
           dispatch(getAllCategories());
         }
       },
       (err) => {
         console.log("err", err);
       },
-      { "Content-Type": "multipart/form-data" }
+      { "Content-Type": "multipart/form-data" },
     );
   };
 
@@ -65,7 +72,7 @@ const AddCategoryModal = ({ setModalOpen }) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 mt-3">
+      <div className="w-[60%] flex flex-col gap-4 mt-6">
         <div className="flex flex-col gap-3">
           <UIInputField
             name="categoryName"
@@ -92,15 +99,23 @@ const AddCategoryModal = ({ setModalOpen }) => {
               text="Upload Image"
               className="!text-[14px]"
             />
-
             <UIFileInput onChange={handleFileUpload} />
           </div>
-          <UIButton
-            type="contained"
-            icon={false}
-            title="Add"
-            btnOnclick={handleAddCategory}
+
+          <SEOForm
+            productName={categoryData.categoryName}
+            metaTitle={categoryData.metaTitle}
+            metaDescription={categoryData.metaDescription}
+            onChange={handleChange}
           />
+          <div>
+            <UIButton
+              type="contained"
+              icon={false}
+              title="Submit"
+              btnOnclick={handleAddCategory}
+            />
+          </div>
         </div>
       </div>
     </>
