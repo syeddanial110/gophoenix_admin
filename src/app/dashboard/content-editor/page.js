@@ -82,7 +82,7 @@ const ContentEditor = () => {
           <div>
             <UISelect
               name="categoryId"
-              placeholder="Select Category"
+              placeholder="Select Page"
               value={selectedPage?.id || ""}
               onValueChange={handleSelectChange}
             >
