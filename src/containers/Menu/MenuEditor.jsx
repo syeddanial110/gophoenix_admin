@@ -225,6 +225,7 @@ export default function MenuEditor() {
           id: item.id.toString(),
           title: item.name,
           url: `/${item.slug}`,
+          type: item.type,
         }));
 
       const programsItem = {
@@ -249,7 +250,7 @@ export default function MenuEditor() {
     }
   }, [menuDataReducer]);
 
-  console.log("availableMenus", availableMenus);
+  console.log("menuDataReducer", menuDataReducer);
   console.log("selectedItems", selectedItems);
   console.log("tree", tree);
 

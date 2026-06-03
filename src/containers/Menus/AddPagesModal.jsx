@@ -1,6 +1,7 @@
 import { apiGet, apiPost } from "@/apis/ApiRequest";
 import UIFileInput from "@/components/InputFields/UIFileInput";
 import UIInputField from "@/components/InputFields/UIInputField";
+import UISelect from "@/components/InputFields/UISelect";
 
 import UIButton from "@/components/UIButton/UIButton";
 import UITypography from "@/components/UITypography/UITypography";
@@ -12,11 +13,13 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import SEOForm from "../Products/SEOForm";
+import { SelectItem } from "@/components/ui/select";
 
 const AddPagesModal = ({ setModalOpen }) => {
   const [menuData, setMenuData] = useState({
     pageName: "",
     slug: "",
+    pageType: "",
     metaTitle: "",
     metaDescription: "",
   });
@@ -31,6 +34,7 @@ const AddPagesModal = ({ setModalOpen }) => {
     const dataObj = {
       name: menuData.pageName,
       slug: menuData.slug,
+      type: menuData.pageType,
       metaTitle: menuData.metaTitle,
       metaDescription: menuData.metaDescription,
     };
@@ -76,6 +80,19 @@ const AddPagesModal = ({ setModalOpen }) => {
             lableName="URL"
             onChange={(e) => handleChange(e)}
           />
+          <UISelect
+            isLabel={true}
+            labelName="Page Type"
+            placeholder="Select page type"
+            value={menuData.pageType}
+            onValueChange={(value) =>
+              setMenuData({ ...menuData, pageType: value })
+            }
+          >
+            <SelectItem value="content">Content</SelectItem>
+            <SelectItem value="collection">Collection</SelectItem>
+            <SelectItem value="class">Class</SelectItem>
+          </UISelect>
           <SEOForm
             productName={menuData.pageName}
             // shortDescription={menuData.me}

@@ -19,19 +19,17 @@ const UIModal = ({
   children,
 }) => {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange} >
       <DialogTrigger onClick={btnTriggerOnClick} className={btnClassName}>
         {modalBtnText}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>{modalHeaderTitle}</DialogTitle>
-          {children}
-          {/* <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </DialogDescription> */}
         </DialogHeader>
+        <div className="overflow-y-auto flex-1 pr-1">
+          {children}
+        </div>
       </DialogContent>
     </Dialog>
   );

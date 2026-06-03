@@ -1,6 +1,7 @@
 import { apiGet, apiPost, apiPut } from "@/apis/ApiRequest";
 import UIFileInput from "@/components/InputFields/UIFileInput";
 import UIInputField from "@/components/InputFields/UIInputField";
+import UISelect from "@/components/InputFields/UISelect";
 
 import UIButton from "@/components/UIButton/UIButton";
 import UITypography from "@/components/UITypography/UITypography";
@@ -12,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import SEOForm from "../Products/SEOForm";
+import { SelectItem } from "@/components/ui/select";
 
 const EditPageModal = ({ setModalOpen }) => {
   const menuDataReducer = useSelector((state) => state?.EditPageDataReducer);
@@ -20,6 +22,7 @@ const EditPageModal = ({ setModalOpen }) => {
     id: "",
     pageName: "",
     slug: "",
+    pageType: "",
     metaTitle: "",
     metaDescription: "",
   });
@@ -35,6 +38,7 @@ const EditPageModal = ({ setModalOpen }) => {
       name: menuData.pageName,
       content: menuDataReducer?.data?.data?.content,
       slug: menuData.slug,
+      type: menuData.pageType,
       metaTitle: menuData.metaTitle,
       metaDescription: menuData.metaDescription,
     };
@@ -65,6 +69,7 @@ const EditPageModal = ({ setModalOpen }) => {
         id: menuDataReducer?.data?.data?.id,
         pageName: menuDataReducer?.data?.data?.name,
         slug: menuDataReducer?.data?.data?.slug,
+        pageType: menuDataReducer?.data?.data?.type ?? "",
         metaTitle:
           menuDataReducer?.data?.data?.metaTitle == null
             ? ""
@@ -100,6 +105,19 @@ const EditPageModal = ({ setModalOpen }) => {
             lableName="URL"
             onChange={(e) => handleChange(e)}
           />
+          <UISelect
+            isLabel={true}
+            labelName="Page Type"
+            placeholder="Select page type"
+            value={menuData.pageType}
+            onValueChange={(value) =>
+              setMenuData({ ...menuData, pageType: value })
+            }
+          >
+            <SelectItem value="content">Content</SelectItem>
+            <SelectItem value="collection">Collection</SelectItem>
+            <SelectItem value="class">Class</SelectItem>
+          </UISelect>
           <SEOForm
             productName={menuData.pageName}
             // shortDescription={menuData.me}
