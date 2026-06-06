@@ -2,7 +2,9 @@
   border: 1px solid #d1d5db;
   border-radius: 6px;
   background: #fff;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 400px;
 }
 
 /* Toolbar */
@@ -66,10 +68,12 @@
 /* Editor area */
 .editor-inner {
   position: relative;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .editor-input {
-  min-height: 150px;
+  min-height: 100%;
   padding: 12px;
   outline: none;
   font-size: 15px;
