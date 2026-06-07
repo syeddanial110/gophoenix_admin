@@ -1,5 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import logo from "../../assets/Images/logo2.png";
+import logo from "../../assets/Images/logo3.svg";
 import Image from "next/image";
 const geistSans = Geist({
   variable: "--font-geist-sans",

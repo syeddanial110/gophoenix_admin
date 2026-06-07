@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -11,18 +11,14 @@ import {
 import {
   SortableContext,
   verticalListSortingStrategy,
-  arrayMove,
 } from "@dnd-kit/sortable";
 import MenuItem from "./MenuItem";
-import { nanoid } from "nanoid";
 import {
   findItemPath,
   getItemByPath,
   removeItemById,
-  insertItemAtPath,
   flattenLevelIds,
 } from "../../lib/treeUtils";
-import UIModal from "@/components/UIModal/UIModal";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllMenus } from "@/store/actions/menus";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
@@ -50,8 +46,6 @@ export default function MenuEditor() {
     }),
   );
 
-  const levelIds = useMemo(() => flattenLevelIds(tree), [tree]);
-
   const onDragStart = (event) => {
     setActiveId(event.active.id);
   };
@@ -61,25 +55,21 @@ export default function MenuEditor() {
     setActiveId(null);
     if (!over) return;
 
-    // If dropped onto a "child-drop zone", its id will be child-drop:<parentId>
     const overId = over.id;
     const isChildDrop = String(overId).startsWith("child-drop:");
     const targetParentId = isChildDrop ? String(overId).split(":")[1] : null;
 
-    // Avoid self-nesting
     if (targetParentId && targetParentId === active.id) return;
 
     setTree((prevTree) => {
-      // Remove active from current location
       const { newTree, removedItem } = removeItemById(prevTree, active.id);
       if (!removedItem) return prevTree;
 
       if (isChildDrop) {
-        // Drop into another item as a child
         const parentPath = findItemPath(newTree, targetParentId);
         if (!parentPath) return prevTree;
         const parent = getItemByPath(newTree, parentPath);
-        // Prevent circular nesting by ensuring active isn't an ancestor of target
+        // Prevent dropping a parent into its own descendant
         const activePathBefore = findItemPath(prevTree, active.id);
         const targetPathBefore = findItemPath(prevTree, targetParentId);
         if (
@@ -87,7 +77,6 @@ export default function MenuEditor() {
           activePathBefore &&
           targetPathBefore.join(".").startsWith(activePathBefore.join("."))
         ) {
-          // Trying to drop a parent into its own descendant — ignore
           return prevTree;
         }
         parent.children = parent.children || [];
@@ -95,34 +84,32 @@ export default function MenuEditor() {
         return [...newTree];
       }
 
-      // Otherwise, reorder within same level using SortableContext order
-      const topLevelOrder = levelIds.root; // ids at root
-      const levelKey = Object.keys(levelIds).find(
-        (k) => levelIds[k].includes(active.id) && levelIds[k].includes(overId),
+      // Recompute level IDs fresh from prevTree so indices are accurate
+      const freshLevelIds = flattenLevelIds(prevTree);
+      const levelKey = Object.keys(freshLevelIds).find(
+        (k) =>
+          freshLevelIds[k].includes(active.id) &&
+          freshLevelIds[k].includes(overId),
       );
+
       if (!levelKey) {
-        // If we cannot identify same-level, just append to root
         return [...newTree, removedItem];
       }
 
-      const idsAtLevel = levelIds[levelKey];
-      const oldIndex = idsAtLevel.findIndex((id) => id === active.id);
+      const idsAtLevel = freshLevelIds[levelKey];
       const newIndex = idsAtLevel.findIndex((id) => id === overId);
 
-      // Place active back into that level in the new order
-      const pathParts = levelKey === "root" ? [] : levelKey.split("."); // path to that level
-      const parent = pathParts.length
+      const pathParts = levelKey === "root" ? [] : levelKey.split(".");
+      // getItemByPath with a path ending in "children" returns the children array itself
+      const levelArr = pathParts.length
         ? getItemByPath(newTree, pathParts)
-        : null;
+        : newTree;
 
-      console.log("parent", parent);
-      console.log("newTree", newTree);
-      const levelArr = parent ? parent.children : newTree;
-      console.log("levelArr", levelArr);
-      // Because active is already removed, we splice it in newIndex
-      levelArr.splice(newIndex, 0, removedItem);
+      if (!Array.isArray(levelArr)) return [...newTree, removedItem];
 
-      // If over index < old index we already handle; for safety, we could normalize but arrayMove not needed since we removed and inserted.
+      const safeIndex = newIndex < 0 ? levelArr.length : newIndex;
+      levelArr.splice(safeIndex, 0, removedItem);
+
       return [...newTree];
     });
   };
@@ -249,10 +236,6 @@ export default function MenuEditor() {
       setAvailableMenus(menus);
     }
   }, [menuDataReducer]);
-
-  console.log("menuDataReducer", menuDataReducer);
-  console.log("selectedItems", selectedItems);
-  console.log("tree", tree);
 
   return (
     <div style={styles.wrapper}>

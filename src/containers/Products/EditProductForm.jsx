@@ -131,11 +131,14 @@ const EditProductForm = () => {
   function onSubmit(data, e) {
     console.log("data", data, e);
 
-    const formattedStartDate = date.from.toISOString().split("T")[0];
-    const formattedEndDate = date.to.toISOString().split("T")[0];
-
-    console.log("formattedStartDate", formattedStartDate);
-    console.log("formattedEndDate", formattedEndDate);
+    const formatLocalDate = (d) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    };
+    const formattedStartDate = formatLocalDate(date.from);
+    const formattedEndDate = formatLocalDate(date.to);
 
     const dataObj = {
       productName: productName,

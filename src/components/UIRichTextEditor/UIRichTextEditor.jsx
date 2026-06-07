@@ -16,11 +16,17 @@ import {
   $getSelection,
   $isRangeSelection,
   $getRoot,
-  $insertNodes,
+  $createParagraphNode,
+  $createTextNode,
 } from 'lexical'
 import { $patchStyleText, $getSelectionStyleValueForProperty } from '@lexical/selection'
-import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND } from '@lexical/list'
-import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
+import {
+  INSERT_ORDERED_LIST_COMMAND,
+  INSERT_UNORDERED_LIST_COMMAND,
+  $createListNode,
+  $createListItemNode,
+} from '@lexical/list'
+import { $generateHtmlFromNodes } from '@lexical/html'
 
 const FONT_SIZES = ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px', '36px', '48px']
 
@@ -56,11 +62,84 @@ function HtmlOutputPlugin({ setHtmlOutput }) {
       editorState.read(() => {
         const html = $generateHtmlFromNodes(editor, null)
         setHtmlOutput?.(html)
-      })
+      }, { editor })
     })
   }, [editor, setHtmlOutput])
 
   return null
+}
+
+// Walk inline DOM nodes, accumulate bold/italic/underline/strikethrough/fontSize/color,
+// and append Lexical TextNodes directly. This avoids $generateNodesFromDOM's limitation
+// of only applying one level's forChild callback, which caused font-size to be dropped
+// when it appeared on <strong> or <span> inside <strong>.
+function parseInline(domNode, fmt, lexicalParent) {
+  for (const child of domNode.childNodes) {
+    if (child.nodeType === Node.TEXT_NODE) {
+      const text = child.textContent
+      if (!text) continue
+      const textNode = $createTextNode(text)
+      if (fmt.bold) textNode.toggleFormat('bold')
+      if (fmt.italic) textNode.toggleFormat('italic')
+      if (fmt.underline) textNode.toggleFormat('underline')
+      if (fmt.strikethrough) textNode.toggleFormat('strikethrough')
+      const styleParts = []
+      if (fmt.fontSize) styleParts.push(`font-size: ${fmt.fontSize}`)
+      if (fmt.color) styleParts.push(`color: ${fmt.color}`)
+      if (styleParts.length) textNode.setStyle(styleParts.join('; '))
+      lexicalParent.append(textNode)
+    } else if (child.nodeType === Node.ELEMENT_NODE) {
+      const tag = child.tagName.toLowerCase()
+      if (tag === 'br') continue
+      const f = { ...fmt }
+      if (tag === 'b' || tag === 'strong') f.bold = true
+      if (tag === 'i' || tag === 'em') f.italic = true
+      if (tag === 'u') f.underline = true
+      if (tag === 's' || tag === 'del' || tag === 'strike') f.strikethrough = true
+      if (child.style.fontSize) f.fontSize = child.style.fontSize
+      if (child.style.color) f.color = child.style.color
+      if (child.style.fontWeight === 'bold' || child.style.fontWeight === '700') f.bold = true
+      if (child.style.fontStyle === 'italic') f.italic = true
+      parseInline(child, f, lexicalParent)
+    }
+  }
+}
+
+function parseBlock(el) {
+  const tag = el.tagName?.toLowerCase()
+  if (!tag) return null
+
+  if (tag === 'ul' || tag === 'ol') {
+    const listNode = $createListNode(tag === 'ul' ? 'bullet' : 'number')
+    for (const child of el.childNodes) {
+      if (child.nodeType !== Node.ELEMENT_NODE) continue
+      if (child.tagName?.toLowerCase() !== 'li') continue
+      const listItem = $createListItemNode()
+      parseInline(child, {}, listItem)
+      listNode.append(listItem)
+    }
+    return listNode
+  }
+
+  const para = $createParagraphNode()
+  if (el.style?.textAlign) para.setFormat(el.style.textAlign)
+  parseInline(el, {}, para)
+  return para
+}
+
+function loadHtmlIntoEditor(editor, html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+  editor.update(() => {
+    const root = $getRoot()
+    root.clear()
+    let hasContent = false
+    for (const child of doc.body.childNodes) {
+      if (child.nodeType !== Node.ELEMENT_NODE) continue
+      const node = parseBlock(child)
+      if (node) { root.append(node); hasContent = true }
+    }
+    if (!hasContent) root.append($createParagraphNode())
+  })
 }
 
 // Loads htmlOutput into the editor once when it first becomes non-empty
@@ -71,16 +150,7 @@ function InitialHtmlPlugin({ htmlOutput }) {
   useEffect(() => {
     if (!htmlOutput || hasLoaded.current) return
     hasLoaded.current = true
-
-    editor.update(() => {
-      const parser = new DOMParser()
-      const dom = parser.parseFromString(htmlOutput, 'text/html')
-      const nodes = $generateNodesFromDOM(editor, dom)
-      const root = $getRoot()
-      root.clear()
-      root.select()
-      $insertNodes(nodes)
-    })
+    loadHtmlIntoEditor(editor, htmlOutput)
   }, [htmlOutput, editor])
 
   return null
@@ -131,7 +201,7 @@ function ToolbarPlugin() {
     return editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
         updateToolbar()
-      })
+      }, { editor })
     })
   }, [editor, updateToolbar])
 

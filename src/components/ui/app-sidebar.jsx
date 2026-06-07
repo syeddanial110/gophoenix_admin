@@ -23,7 +23,7 @@ import {
   CollapsibleContent,
 } from "@/components/ui/collapsible";
 import Image from "next/image";
-import logo from "../../assets/Images/logo2.png";
+import logo from "../../assets/Images/logo3.svg";
 import { Navigation_Menu } from "@/utils/navigation";
 import Link from "next/link";
 import UITypography from "../UITypography/UITypography";

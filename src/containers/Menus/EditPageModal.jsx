@@ -1,14 +1,9 @@
-import { apiGet, apiPost, apiPut } from "@/apis/ApiRequest";
-import UIFileInput from "@/components/InputFields/UIFileInput";
+import { apiPut } from "@/apis/ApiRequest";
 import UIInputField from "@/components/InputFields/UIInputField";
 import UISelect from "@/components/InputFields/UISelect";
-
 import UIButton from "@/components/UIButton/UIButton";
-import UITypography from "@/components/UITypography/UITypography";
-import { getAllCategories } from "@/store/actions/category";
 import { getAllMenus } from "@/store/actions/menus";
 import { ApiEndpoints } from "@/utils/ApiEndpoints";
-import { slugify } from "@/utils/slugify";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -118,13 +113,14 @@ const EditPageModal = ({ setModalOpen }) => {
             <SelectItem value="collection">Collection</SelectItem>
             <SelectItem value="class">Class</SelectItem>
           </UISelect>
-          <SEOForm
-            productName={menuData.pageName}
-            // shortDescription={menuData.me}
-            metaTitle={menuData.metaTitle}
-            metaDescription={menuData.metaDescription}
-            onChange={(e) => handleChange(e)}
-          />
+          {menuData.pageType === "content" && (
+            <SEOForm
+              productName={menuData.pageName}
+              metaTitle={menuData.metaTitle}
+              metaDescription={menuData.metaDescription}
+              onChange={(e) => handleChange(e)}
+            />
+          )}
           <UIButton
             type="contained"
             icon={false}

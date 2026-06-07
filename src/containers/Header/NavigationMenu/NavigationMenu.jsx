@@ -3,7 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import React, { useEffect, useState } from "react";
 import { AppSidebar } from "../../../components/ui/app-sidebar";
 import Image from "next/image";
-import logo from "../../../assets/Images/logo2.png";
+import logo from "../../../assets/Images/logo3.svg";
 import { User } from "lucide-react";
 import Cookies from "js-cookie";
 

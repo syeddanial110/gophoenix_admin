@@ -271,6 +271,8 @@ const page = () => {
     setRawTopSelling(null);
   }, [rawTopSelling, allProducts, getAllCategoriesData]);
 
+
+  console.log('rawTopSelling', rawTopSelling)
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-between gap-4">
@@ -525,7 +527,7 @@ const page = () => {
 
 
         {/* Latest Classes Section */}
-        <div className="mt-8 pt-6 border-t border-gray-300">
+        {/* <div className="mt-8 pt-6 border-t border-gray-300">
           <div>
             <UIInputField
               isLable={true}
@@ -539,7 +541,7 @@ const page = () => {
             </p>
           </div>
 
-          {/* Latest Classes Dropdown */}
+          Latest Classes Dropdown
           <div className="relative w-full mt-4">
             <UITypography
               variant="h6"
@@ -601,7 +603,6 @@ const page = () => {
                         className="mt-6 prose max-w-none [&>h1]:text-[16px] [&>h1]:font-bold [&>h2]:text-[15px] [&>h2]:font-semibold [&>h3]:text-[14px] [&>h3]:font-semibold [&>h4]:text-[14px] [&>h4]:font-semibold [&>h5]:text-[14px] [&>h5]:font-semibold [&>h6]:text-[14px] [&>h6]:font-semibold [&>p]:text-[14px]"
                         dangerouslySetInnerHTML={{ __html: item.productName }}
                       />
-                      {/* <span className="text-sm">{item.productName}</span> */}
                     </label>
                   ))
                 ) : (
@@ -623,7 +624,6 @@ const page = () => {
                       className="mt-6 prose max-w-none [&>h1]:text-[16px] [&>h1]:font-bold [&>h2]:text-[15px] [&>h2]:font-semibold [&>h3]:text-[14px] [&>h3]:font-semibold [&>h4]:text-[14px] [&>h4]:font-semibold [&>h5]:text-[14px] [&>h5]:font-semibold [&>h6]:text-[14px] [&>h6]:font-semibold [&>p]:text-[14px]"
                       dangerouslySetInnerHTML={{ __html: product.productName }}
                     />
-                    {/* <span className="text-gray-700">{product.productName}</span> */}
                     <button
                       type="button"
                       onClick={() => handleLatestClassSelect(product)}
@@ -644,7 +644,7 @@ const page = () => {
             btnOnclick={onSubmitLatestClases}
             className="mt-4"
           />
-        </div>
+        </div> */}
 
         <div className="mt-6">
           <UITypography variant="h5" text="SEO Details" />

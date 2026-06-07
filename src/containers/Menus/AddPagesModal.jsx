@@ -93,13 +93,14 @@ const AddPagesModal = ({ setModalOpen }) => {
             <SelectItem value="collection">Collection</SelectItem>
             <SelectItem value="class">Class</SelectItem>
           </UISelect>
-          <SEOForm
-            productName={menuData.pageName}
-            // shortDescription={menuData.me}
-            metaTitle={menuData.metaTitle}
-            metaDescription={menuData.metaDescription}
-            onChange={(e) => handleChange(e)}
-          />
+          {menuData.pageType === "content" && (
+            <SEOForm
+              productName={menuData.pageName}
+              metaTitle={menuData.metaTitle}
+              metaDescription={menuData.metaDescription}
+              onChange={(e) => handleChange(e)}
+            />
+          )}
           <UIButton
             type="contained"
             icon={false}

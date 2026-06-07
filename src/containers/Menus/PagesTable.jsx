@@ -15,7 +15,6 @@ import UIButton from "@/components/UIButton/UIButton";
 import { toast } from "sonner";
 import { editPageData, getAllMenus } from "@/store/actions/menus";
 import EditCategoryDataForm from "../Category/EditCategoryDataForm";
-import EditPageModal from "./EditPageModal";
 import UISwitch from "@/components/UISwitch/UISwitch";
 import MenuDragableTable from "./MenuDragableTable";
 

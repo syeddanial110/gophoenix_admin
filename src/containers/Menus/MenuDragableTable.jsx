@@ -29,10 +29,6 @@ const MenuDragableTable = ({
 
   const [modalOpen, setModalOpen] = useState(false);
 
-  const handleModalOpen = () => {
-    setModalOpen(!modalOpen);
-  };
-
   // const [rows, setRows] = useState([
   //   {
   //     id: 1,
@@ -146,16 +142,15 @@ const MenuDragableTable = ({
                           />
                         </td>
                         <td className="px-4 py-2 border-b space-x-2">
-                          <UIModal
-                            onOpenChange={handleModalOpen}
-                            open={modalOpen}
-                            modalBtnText={<PencilLine />}
-                            btnClassName="hover:cursor-pointer"
-                            btnTriggerOnClick={() => handleEditClick(row)}
-                            modalHeaderTitle="Edit Page"
+                          <button
+                            className="hover:cursor-pointer"
+                            onClick={() => {
+                              handleEditClick(row)
+                              setModalOpen(true)
+                            }}
                           >
-                            <EditPageModal setModalOpen={setModalOpen} />
-                          </UIModal>
+                            <PencilLine />
+                          </button>
 
                           <UIPopover
                             title="Are you sure you want to delete this collection?"
@@ -173,6 +168,14 @@ const MenuDragableTable = ({
           )}
         </Droppable>
       </DragDropContext>
+
+      <UIModal
+        open={modalOpen}
+        onOpenChange={(open) => setModalOpen(open)}
+        modalHeaderTitle="Edit Page"
+      >
+        <EditPageModal setModalOpen={setModalOpen} />
+      </UIModal>
     </div>
   );
 };
