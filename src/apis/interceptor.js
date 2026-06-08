@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "./Auth";
 import { pathLocations } from "@/utils/navigation";
 
-const BASEURL = "https://api.activityphysical.tech/api";
+const BASEURL = "https://api.gophoenixsports.com/api";
 // const BASEURL = "https://wcx78p18-5000.inc1.devtunnels.ms/api";
 const API = axios.create({ baseURL: BASEURL });
 

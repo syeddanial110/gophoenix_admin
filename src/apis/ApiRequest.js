@@ -2,10 +2,10 @@ import axios from "axios";
 import { getToken } from "./Auth";
 import API from "./interceptor";
 
-export const BASEURL = "https://api.activityphysical.tech/api";
+export const BASEURL = "https://api.gophoenixsports.com/api";
 // export const BASEURL = "https://wcx78p18-5000.inc1.devtunnels.ms/api";
 // export const ImageBaseUrl = "https://wcx78p18-5000.inc1.devtunnels.ms/";
-export const ImageBaseUrl = "https://api.activityphysical.tech/";
+export const ImageBaseUrl = "https://api.gophoenixsports.com/";
 export const apiBaseUrl = `${BASEURL}`;
 
 export function getCommonHeaders(h) {

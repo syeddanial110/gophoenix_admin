@@ -102,7 +102,10 @@ const page = () => {
         };
       }
       if (s.selectedCategories.length < remainingSlots) {
-        return { ...s, selectedCategories: [...s.selectedCategories, category] };
+        return {
+          ...s,
+          selectedCategories: [...s.selectedCategories, category],
+        };
       }
       return s;
     });
@@ -152,7 +155,16 @@ const page = () => {
   };
 
   function onSubmitSeo() {
+    if(inputData.metaTitle  === "" ){
+      toast.error("Meta Title is required");
+      return;
+    }
+    if(inputData.metaDescription  === "" ){
+      toast.error("Meta Description is required");
+      return;
+    }
     const dataObj = {
+      statsMainHeading: ".",
       metaTitle: inputData.metaTitle,
       metaDescription: inputData.metaDescription,
     };
@@ -161,7 +173,11 @@ const page = () => {
       dataObj,
       (res) => {
         console.log("res", res);
-        toast.success(res?.data?.message);
+        if (res?.success) {
+          toast.success(res?.message);
+        } else {
+          toast.error(res?.message);
+        }
       },
       (err) => {
         console.log("err", err);
@@ -185,7 +201,7 @@ const page = () => {
     console.log("dataObj", dataObj);
     apiPut(
       `${ApiEndpoints.home.updateTopSelling}`,
-      {sections: dataObj},
+      { sections: dataObj },
       (res) => {
         console.log("res", res);
         toast.success(res?.data?.message);
@@ -271,8 +287,7 @@ const page = () => {
     setRawTopSelling(null);
   }, [rawTopSelling, allProducts, getAllCategoriesData]);
 
-
-  console.log('rawTopSelling', rawTopSelling)
+  console.log("rawTopSelling", rawTopSelling);
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-between gap-4">
@@ -310,12 +325,15 @@ const page = () => {
               <RichTextEditor
                 placeholder="Start typing here..."
                 htmlOutput={section.heading}
-                setHtmlOutput={(html) => handleSectionHeading(sectionIndex, html)}
+                setHtmlOutput={(html) =>
+                  handleSectionHeading(sectionIndex, html)
+                }
               />
               <p className="text-sm text-gray-600 mt-2">
                 Total selections:{" "}
-                {section.selectedProducts.length + section.selectedCategories.length}/
-                {MAX_TOTAL_SELECTIONS}
+                {section.selectedProducts.length +
+                  section.selectedCategories.length}
+                /{MAX_TOTAL_SELECTIONS}
               </p>
             </div>
 
@@ -366,7 +384,9 @@ const page = () => {
                           checked={section.selectedProducts.some(
                             (selected) => selected.id === item.id,
                           )}
-                          onChange={() => handleProductSelect(sectionIndex, item)}
+                          onChange={() =>
+                            handleProductSelect(sectionIndex, item)
+                          }
                           disabled={
                             section.selectedProducts.length +
                               section.selectedCategories.length >=
@@ -400,11 +420,15 @@ const page = () => {
                     >
                       <div
                         className="prose max-w-none flex-1 [&>*]:!m-0 [&>*]:!text-[13px] [&>*]:!font-normal [&>*]:!text-gray-700"
-                        dangerouslySetInnerHTML={{ __html: product.productName }}
+                        dangerouslySetInnerHTML={{
+                          __html: product.productName,
+                        }}
                       />
                       <button
                         type="button"
-                        onClick={() => handleProductSelect(sectionIndex, product)}
+                        onClick={() =>
+                          handleProductSelect(sectionIndex, product)
+                        }
                         className="ml-3 text-gray-400 hover:text-red-500 cursor-pointer flex-shrink-0"
                       >
                         ✕
@@ -462,7 +486,9 @@ const page = () => {
                           checked={section.selectedCategories.some(
                             (selected) => selected.id === item.id,
                           )}
-                          onChange={() => handleCategorySelect(sectionIndex, item)}
+                          onChange={() =>
+                            handleCategorySelect(sectionIndex, item)
+                          }
                           disabled={
                             section.selectedProducts.length +
                               section.selectedCategories.length >=
@@ -494,7 +520,9 @@ const page = () => {
                       <span className="text-gray-700">{category.name}</span>
                       <button
                         type="button"
-                        onClick={() => handleCategorySelect(sectionIndex, category)}
+                        onClick={() =>
+                          handleCategorySelect(sectionIndex, category)
+                        }
                         className="ml-3 text-gray-400 hover:text-red-500 cursor-pointer flex-shrink-0"
                       >
                         ✕
@@ -522,9 +550,6 @@ const page = () => {
             btnOnclick={onSubmitTopSelling}
           />
         </div>
-
-
-
 
         {/* Latest Classes Section */}
         {/* <div className="mt-8 pt-6 border-t border-gray-300">

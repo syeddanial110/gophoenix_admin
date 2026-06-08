@@ -3,9 +3,10 @@ const nextConfig = {
   reactStrictMode: false,
   images: {
     domains: [
-      "api.activityphysical.tech",
+      "api.gophoenixsports.com",
       "wcx78p18-5000.inc1.devtunnels.ms",
-      "api.activityphysical.tech/uploads"
+      "api.activityphysical.tech/uploads",
+      "api.gophoenixsports.com/uploads",
       // add other allowed domains here
     ],
   },
