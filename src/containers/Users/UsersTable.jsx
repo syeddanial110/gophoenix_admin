@@ -36,11 +36,12 @@ const UsersTable = () => {
       `${ApiEndpoints.users.base}${ApiEndpoints.users.deleteUser}/${row.id}`,
       (res) => {
         console.log("res", res);
-        toast.success(res?.message);
+        toast.success("User deleted successfully");
+        getAllUsers(1);
       },
       (err) => {
         console.log("err", err);
-      }
+      },
     );
   };
 
@@ -57,7 +58,7 @@ const UsersTable = () => {
       },
       (err) => {
         console.error("Error disabling user", err);
-      }
+      },
     );
   };
 
@@ -144,7 +145,7 @@ const UsersTable = () => {
       },
       (err) => {
         console.log("err", err);
-      }
+      },
     );
   };
 

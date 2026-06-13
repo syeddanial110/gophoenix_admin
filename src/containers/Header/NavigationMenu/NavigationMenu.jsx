@@ -6,6 +6,8 @@ import Image from "next/image";
 import logo from "../../../assets/Images/logo3.svg";
 import { User } from "lucide-react";
 import Cookies from "js-cookie";
+import Link from "next/link";
+import { pathLocations } from "@/utils/navigation";
 
 const NavigationMenu = ({ children }) => {
   const [defaultOpen, setDefaultOpen] = useState(false);
@@ -14,7 +16,7 @@ const NavigationMenu = ({ children }) => {
     const sidebarState = Cookies.get("sidebar_state");
     setDefaultOpen(sidebarState === "true");
   }, []);
-  
+
   useEffect(() => {
     const handler = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
@@ -34,7 +36,7 @@ const NavigationMenu = ({ children }) => {
           <div className="flex justify-between items-center px-4 bg-white w-full sticky top-0 border-b-1 border-gray z-9">
             <SidebarTrigger />
             <Image src={logo} alt="log" height={70} />
-            <User />
+            <Link href={`${pathLocations.login}`}>Logout</Link>
           </div>
           <div className="px-8 pt-6">{children}</div>
         </main>

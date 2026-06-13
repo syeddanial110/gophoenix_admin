@@ -21,7 +21,10 @@ const UIPopover = ({ btnTrigger, onBtnClick, title }) => {
               type="contained"
               icon={false}
               title="Yes"
-              btnOnclick={onBtnClick}
+              btnOnclick={() => {
+                onBtnClick();
+                setOpen(false);
+              }}
             />
             <UIButton
               type="contained"
